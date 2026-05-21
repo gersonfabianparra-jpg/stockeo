@@ -2100,6 +2100,14 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
       </div>
       <div class="form-group-m"><label>Nombre del cliente</label>
         <input type="text" id="cl-nombre" placeholder="Ej: Juan Pérez"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="form-group-m"><label>Teléfono</label><input type="text" id="cl-tel" placeholder="+56 9 1234 5678"/></div>
+        <div class="form-group-m"><label>Email</label><input type="text" id="cl-email" placeholder="correo@ejemplo.com"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary);margin-bottom:.75rem;user-select:none;">
+        <input type="checkbox" id="cl-guardar" style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer;"/>
+        Guardar / actualizar cliente en el CRM
+      </label>
       <div id="cl-cliente-info" style="display:none;background:var(--navy-light);border:1px solid var(--gold);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;font-size:12px;">
         <div style="color:var(--gold);font-weight:600;margin-bottom:4px;">⭐ Cliente frecuente</div>
         <div id="cl-cliente-stats" style="color:var(--text-secondary);"></div>
@@ -3675,6 +3683,9 @@ function abrirCobro(){
   // Mostrar resumen en modal cliente
   document.getElementById('cl-nombre').value='';
   document.getElementById('cl-rut').value='';
+  document.getElementById('cl-tel').value='';
+  document.getElementById('cl-email').value='';
+  const clGuardar=document.getElementById('cl-guardar');if(clGuardar)clGuardar.checked=false;
   const resumen=document.getElementById('cl-resumen');
   if(resumen){
     const filas=carrito.map(({item,qty})=>
@@ -3710,6 +3721,9 @@ async function ejecutarVentaConBoleta(){
   if(!ventaPendiente)return;
   const clienteNombre=document.getElementById('cl-nombre').value.trim();
   const clienteRut=document.getElementById('cl-rut').value.trim();
+  const clienteTel=document.getElementById('cl-tel')?.value.trim()||'';
+  const clienteEmail=document.getElementById('cl-email')?.value.trim()||'';
+  const guardarEnCRM=document.getElementById('cl-guardar')?.checked||false;
 
   // Soporte multi-producto (carrito) y mono-producto (legacy scanner)
   const items = ventaPendiente.carrito || [{item:ventaPendiente.item, qty:ventaPendiente.qty}];
@@ -3751,11 +3765,18 @@ async function ejecutarVentaConBoleta(){
   // Insertar todas las ventas
   await sbRun(()=>sb.from('ventas').insert(ventasInsert));
 
-  // Guardar cliente si tiene RUT
-  if(clienteRut&&clienteNombre&&currentNegocioId){
-    await sbRun(()=>sb.from('clientes').upsert({
-      negocio_id:currentNegocioId, nombre:clienteNombre, rut:clienteRut
-    },{onConflict:'negocio_id,rut',ignoreDuplicates:false}));
+  // Guardar cliente si tiene nombre y (tiene RUT o eligió guardar en CRM)
+  if(clienteNombre&&currentNegocioId&&(clienteRut||guardarEnCRM)){
+    const payload={negocio_id:currentNegocioId,nombre:clienteNombre};
+    if(clienteRut) payload.rut=clienteRut;
+    if(clienteTel) payload.telefono=clienteTel;
+    if(clienteEmail) payload.email=clienteEmail;
+    if(clienteRut){
+      await sbRun(()=>sb.from('clientes').upsert(payload,{onConflict:'negocio_id,rut',ignoreDuplicates:false}));
+    } else {
+      await sbRun(()=>sb.from('clientes').insert(payload));
+    }
+    await cargarClientes();
   }
 
   const netoTotal=Math.round(totalConIVA/1.19);
@@ -3764,7 +3785,7 @@ async function ejecutarVentaConBoleta(){
   const boleta={
     id:'bol_'+Date.now(), numero:boletaSeq++, fecha:new Date().toISOString(),
     negocio:{...cfgNegocio},
-    cliente:{nombre:clienteNombre, rut:clienteRut},
+    cliente:{nombre:clienteNombre, rut:clienteRut, telefono:clienteTel||null, email:clienteEmail||null},
     items:boletaItems,
     neto:netoTotal, iva:ivaTotal, total:Math.round(totalConIVA),
     ventaId:ventasInsert[0]?.id
@@ -3972,6 +3993,9 @@ async function confirmarScanAccion(){
     const iva   = Math.round((total-neto)*100)/100;
     document.getElementById('cl-nombre').value='';
     document.getElementById('cl-rut').value='';
+    document.getElementById('cl-tel').value='';
+    document.getElementById('cl-email').value='';
+    const clGuardar2=document.getElementById('cl-guardar');if(clGuardar2)clGuardar2.checked=false;
     document.getElementById('cl-resumen').innerHTML=`
       <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Artículo</span><span style="font-weight:600">${item.nombre}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Cantidad</span><span>${qty} ud.</span></div>
@@ -4547,6 +4571,8 @@ function htmlBoleta(b){
       <div style="font-weight:600;margin-bottom:3px">Cliente</div>
       ${b.cliente.nombre?`<div>${b.cliente.nombre}</div>`:''}
       ${b.cliente.rut?`<div style="color:#555">RUT: ${b.cliente.rut}</div>`:''}
+      ${b.cliente.telefono?`<div style="color:#555">Tel: ${b.cliente.telefono}</div>`:''}
+      ${b.cliente.email?`<div style="color:#555">${b.cliente.email}</div>`:''}
     </div>`:''}
     <table style="width:100%;border-collapse:collapse;margin-bottom:1rem;">
       <thead><tr style="border-bottom:2px solid #111">
@@ -5073,9 +5099,14 @@ function _mostrarClienteSeleccionado(c,soloInfo){
   if(!soloInfo){
     document.getElementById('cl-rut').value=c.rut||'';
     document.getElementById('cl-nombre').value=c.nombre||'';
+    document.getElementById('cl-tel').value=c.telefono||'';
+    document.getElementById('cl-email').value=c.email||'';
   } else {
     document.getElementById('cl-nombre').value=c.nombre||'';
+    document.getElementById('cl-tel').value=c.telefono||'';
+    document.getElementById('cl-email').value=c.email||'';
   }
+  const clGuardar=document.getElementById('cl-guardar');if(clGuardar)clGuardar.checked=true;
   // Cerrar sugerencias
   const sug=document.getElementById('cl-rut-sugerencias');
   if(sug)sug.style.display='none';
