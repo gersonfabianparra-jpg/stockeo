@@ -3585,10 +3585,12 @@ function renderVentaArticulos(){
 
 function agregarAlCarrito(id){
   const item=inventario.find(i=>i.id===id);
-  if(!item||Number(item.cantidad)<=0)return;
+  if(!item)return;
+  const esServicio=item.tipo==='servicio';
+  if(!esServicio&&Number(item.cantidad)<=0){toast('Sin stock disponible','error');return;}
   const existente=carrito.find(x=>x.item.id===id);
   if(existente){
-    if(existente.qty>=Number(item.cantidad)){toast('Stock máximo alcanzado','error');return;}
+    if(!esServicio&&existente.qty>=Number(item.cantidad)){toast('Stock máximo alcanzado','error');return;}
     existente.qty++;
   } else {
     carrito.push({item,qty:1});
@@ -3603,7 +3605,7 @@ function cambiarQtyCarrito(id, delta){
   if(idx===-1)return;
   carrito[idx].qty+=delta;
   if(carrito[idx].qty<=0) carrito.splice(idx,1);
-  else if(carrito[idx].qty>Number(carrito[idx].item.cantidad)){
+  else if(carrito[idx].item.tipo!=='servicio'&&carrito[idx].qty>Number(carrito[idx].item.cantidad)){
     carrito[idx].qty=Number(carrito[idx].item.cantidad);
     toast('Stock máximo alcanzado','error');
   }
@@ -3737,12 +3739,15 @@ async function ejecutarVentaConBoleta(){
     const netoItem=Math.round(subtotal/1.19*100)/100;
     const costo=Number(item.costo||0);
     const ganancia=(Number(item.precio)-costo)*qty;
-    const nuevaCantidad=Number(item.cantidad)-qty;
     totalConIVA+=subtotal;
 
-    // Actualizar stock local
-    const idx=inventario.findIndex(i=>i.id===item.id);
-    if(idx!==-1)inventario[idx].cantidad=nuevaCantidad;
+    // Solo descontar stock para productos físicos
+    if(item.tipo!=='servicio'){
+      const nuevaCantidad=Number(item.cantidad)-qty;
+      const idx=inventario.findIndex(i=>i.id===item.id);
+      if(idx!==-1)inventario[idx].cantidad=nuevaCantidad;
+      await sbRun(()=>sb.from('inventario').update({cantidad:nuevaCantidad}).eq('id',item.id));
+    }
 
     // Preparar venta para BD
     const venta={
@@ -3757,9 +3762,6 @@ async function ejecutarVentaConBoleta(){
     ventas.unshift(venta);
 
     boletaItems.push({nombre:item.nombre, id:item.id, qty, precioUnit:Number(item.precio), neto:netoItem});
-
-    // Actualizar stock en BD
-    await sbRun(()=>sb.from('inventario').update({cantidad:nuevaCantidad}).eq('id',item.id));
   }
 
   // Insertar todas las ventas
@@ -3982,7 +3984,7 @@ async function confirmarScanAccion(){
   }
 
   if(_scanOpcion==='vender'){
-    if(qty<1||qty>Number(item.cantidad)){toast('Cantidad inválida — stock: '+item.cantidad,'error');return;}
+    if(qty<1||(item.tipo!=='servicio'&&qty>Number(item.cantidad))){toast('Cantidad inválida — stock: '+item.cantidad,'error');return;}
     if(!verificarLimiteAntesDe('boleta')){closeModal('modal-scan-confirm');pendingScanItem=null;scanPaused=false;return;}
     // Cerrar modal y abrir modal de cliente para emitir boleta
     closeModal('modal-scan-confirm');
