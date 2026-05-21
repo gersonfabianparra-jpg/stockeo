@@ -1552,6 +1552,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
     <div class="nav-section">Principal</div>
     <div class="nav-item active" onclick="showPage('dashboard');closeSidebar()"><span class="nav-icon">▦</span>Dashboard</div>
     <div class="nav-item" onclick="showPage('inventario');closeSidebar()"><span class="nav-icon">☰</span>Inventario</div>
+    <div class="nav-item" onclick="showPage('servicios');closeSidebar()"><span class="nav-icon">🔧</span>Servicios</div>
     <div class="nav-item" onclick="showPage('ventas');closeSidebar()"><span class="nav-icon">◎</span>Registrar venta</div>
     <div class="nav-item" onclick="showPage('scanner');closeSidebar()"><span class="nav-icon">▣</span>Escanear QR</div>
     <div class="nav-item" onclick="showPage('historial');closeSidebar()"><span class="nav-icon">◷</span>Historial ventas</div>
@@ -1628,6 +1629,23 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
           <table><thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th class="precio-col">Precio</th><th class="precio-col">Costo</th><th>QR</th><th></th></tr></thead><tbody id="inv-table"></tbody></table>
         </div>
         <div class="art-card-list" id="inv-cards" style="padding:0.75rem;"></div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div class="page" id="page-servicios">
+      <div class="filter-bar">
+        <div class="search-wrap"><span class="search-icon">⌕</span><input type="text" id="serv-search" placeholder="Buscar servicio..." oninput="renderServicios()"/></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="serv-count">Servicios</span>
+          <button class="btn btn-gold btn-sm" onclick="openModalServicio()">+ Nuevo servicio</button>
+        </div>
+        <div class="table-wrap inv-table-wrap">
+          <table><thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th class="precio-col">Precio</th><th></th></tr></thead><tbody id="serv-table"></tbody></table>
+        </div>
+        <div class="art-card-list" id="serv-cards" style="padding:0.75rem;"></div>
       </div>
     </div>
 
@@ -3193,17 +3211,17 @@ function defaultCategorias(){return[
 // doLogout definido en bloque auth
 
 function renderAll(){
-  renderDashboard();renderInventario();
+  renderDashboard();renderInventario();renderServicios();
   renderVentaSelect();renderVentaArticulos();
   renderCategorias();updateFilterSelects();renderHistorial();
   // Siempre re-aplicar permisos de rol después de renderizar
   aplicarPermisosRol();
 }
 
-const pageLabels={dashboard:'Dashboard',inventario:'Inventario',ventas:'Registrar venta',scanner:'Escanear QR',historial:'Historial de ventas',clientes:'Clientes frecuentes',categorias:'Categorías',boletas:'Boletas',cotizaciones:'Cotizaciones',qrcodes:'Códigos QR',equipo:'Mi equipo',admin:'Panel Administrador'};
+const pageLabels={dashboard:'Dashboard',inventario:'Inventario',servicios:'Servicios',ventas:'Registrar venta',scanner:'Escanear QR',historial:'Historial de ventas',clientes:'Clientes frecuentes',categorias:'Categorías',boletas:'Boletas',cotizaciones:'Cotizaciones',qrcodes:'Códigos QR',equipo:'Mi equipo',admin:'Panel Administrador'};
 
 // Páginas válidas del sistema
-const VALID_PAGES = ['dashboard','inventario','ventas','scanner','historial','clientes','categorias','boletas','cotizaciones','qrcodes','equipo','admin'];
+const VALID_PAGES = ['dashboard','inventario','servicios','ventas','scanner','historial','clientes','categorias','boletas','cotizaciones','qrcodes','equipo','admin'];
 
 function showPage(id){
   // Bloquear acceso si no tiene permiso
@@ -3241,10 +3259,11 @@ function showPage(id){
   ['dashboard','inventario','ventas','scanner'].forEach(k=>{
     const el=document.getElementById('bn-'+k);if(el)el.classList.toggle('active',k===id);
   });
-  document.getElementById('bn-more').classList.toggle('active',['historial','categorias'].includes(id));
+  document.getElementById('bn-more').classList.toggle('active',['historial','categorias','servicios'].includes(id));
   if(id==='scanner'){setTimeout(()=>{if(!activeStream)startScanner();},300);}
   else stopScanner();
   if(id==='historial')renderHistorial();
+  if(id==='servicios')renderServicios();
   if(id==='clientes'){cargarClientes();}
   if(id==='equipo'){cargarEquipo();}
   if(id==='admin'){if(esAdmin)adminListar();}
@@ -3492,7 +3511,7 @@ function filterTable(){applyFilters();}
 function applyFilters(){
   const s=document.getElementById('search-input')?.value.toLowerCase()||'';
   const c=document.getElementById('filter-cat')?.value||'';
-  filteredInv=inventario.filter(i=>(!s||i.nombre.toLowerCase().includes(s)||i.id.toLowerCase().includes(s))&&(!c||i.cat_id===c));
+  filteredInv=inventario.filter(i=>i.tipo!=='servicio'&&(!s||i.nombre.toLowerCase().includes(s)||i.id.toLowerCase().includes(s))&&(!c||i.cat_id===c));
   document.getElementById('table-count').textContent=`${filteredInv.length} artículo(s)`;
   const body=document.getElementById('inv-table');
   const cards=document.getElementById('inv-cards');
@@ -3512,6 +3531,56 @@ function applyFilters(){
     }).join('');
   }
   applyPriceVisibility();
+}
+
+function renderServicios(){
+  const s=document.getElementById('serv-search')?.value.toLowerCase()||'';
+  const lista=inventario.filter(i=>i.tipo==='servicio'&&(!s||i.nombre.toLowerCase().includes(s)||i.id.toLowerCase().includes(s)));
+  const body=document.getElementById('serv-table');
+  const cards=document.getElementById('serv-cards');
+  const cnt=document.getElementById('serv-count');
+  if(cnt)cnt.textContent=`${lista.length} servicio(s)`;
+  if(!lista.length){
+    if(body)body.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔧</div><p>No hay servicios registrados</p></div></td></tr>';
+    if(cards)cards.innerHTML='<div class="empty-state"><div class="empty-icon">🔧</div><p>No hay servicios registrados</p></div>';
+    return;
+  }
+  if(body)body.innerHTML=lista.map(i=>{
+    const cat=categorias.find(c=>c.id===i.cat_id);
+    return`<tr>
+      <td><span class="id-mono">${i.id}</span></td>
+      <td>${i.nombre}${i.descripcion?`<br><span style="font-size:10px;color:var(--text-muted)">${i.descripcion}</span>`:''}</td>
+      <td>${cat?badgeHTML(cat):'-'}</td>
+      <td class="precio-col">$${Number(i.precio).toLocaleString('es-CL')}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="btn btn-outline btn-sm" onclick="openModal(inventario.find(x=>x.id==='${i.id}'))">Editar</button>
+        <button class="btn btn-danger-outline btn-sm" onclick="deleteArticulo('${i.id}')">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  if(cards)cards.innerHTML=lista.map(i=>{
+    const cat=categorias.find(c=>c.id===i.cat_id);
+    return`<div class="art-card">
+      <div class="art-card-top">
+        <div class="art-card-name">${i.nombre}</div>
+        <span style="font-size:11px;color:var(--text-muted);font-style:italic">Servicio</span>
+      </div>
+      <div class="art-card-row">
+        <span>${cat?badgeHTML(cat):'—'}</span>
+        <span class="precio-col" style="color:var(--gold);font-weight:600">$${Number(i.precio).toLocaleString('es-CL')}</span>
+      </div>
+      ${i.descripcion?`<div style="font-size:11px;color:var(--text-muted);margin-top:4px">${i.descripcion}</div>`:''}
+      <div class="art-card-actions">
+        <button class="btn btn-outline btn-sm" onclick="openModal(inventario.find(x=>x.id==='${i.id}'))">Editar</button>
+        <button class="btn btn-danger-outline btn-sm" onclick="deleteArticulo('${i.id}')">Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModalServicio(){
+  openModal();
+  setTimeout(()=>setTipoArt('servicio'),50);
 }
 
 function renderVentaSelect(){
@@ -3543,13 +3612,16 @@ function renderVentaArticulos(){
 
   if(body)body.innerHTML=disp.map(i=>{
     const cat=categorias.find(c=>c.id===i.cat_id);
-    const sin=Number(i.cantidad)===0;
-    const lc=sin?'zero-stock':Number(i.cantidad)<5?'low-stock':'ok-stock';
+    const esServicio=i.tipo==='servicio';
+    const sin=!esServicio&&Number(i.cantidad)===0;
+    const lc=esServicio?'':''+( Number(i.cantidad)===0?'zero-stock':Number(i.cantidad)<5?'low-stock':'ok-stock');
     const enCarrito=carrito.find(x=>x.item.id===i.id);
+    const stockLabel=esServicio?'<span style="font-size:11px;color:var(--text-muted);font-style:italic">Servicio</span>':
+      `<span class="${lc}">${i.cantidad}</span>`;
     return`<tr style="${sin?'opacity:0.45':''}">
       <td style="font-weight:500">${i.nombre}</td>
       <td>${cat?badgeHTML(cat):'-'}</td>
-      <td class="${lc}">${i.cantidad}</td>
+      <td>${stockLabel}</td>
       <td class="precio-col">$${Number(i.precio).toLocaleString('es-CL')}</td>
       <td>
         <button class="btn btn-sell btn-sm" onclick="agregarAlCarrito('${i.id}')" ${sin?'disabled style="opacity:0.4"':''}>
@@ -3561,13 +3633,16 @@ function renderVentaArticulos(){
 
   if(cards)cards.innerHTML=disp.map(i=>{
     const cat=categorias.find(c=>c.id===i.cat_id);
-    const sin=Number(i.cantidad)===0;
-    const lc=sin?'zero-stock':Number(i.cantidad)<5?'low-stock':'ok-stock';
+    const esServicio=i.tipo==='servicio';
+    const sin=!esServicio&&Number(i.cantidad)===0;
+    const lc=esServicio?'':''+( Number(i.cantidad)===0?'zero-stock':Number(i.cantidad)<5?'low-stock':'ok-stock');
     const enCarrito=carrito.find(x=>x.item.id===i.id);
+    const stockLabel=esServicio?'<span style="font-size:11px;color:var(--text-muted);font-style:italic">Servicio</span>':
+      `<span class="${lc}" style="font-size:13px;font-weight:500">${i.cantidad} uds.</span>`;
     return`<div class="art-card" style="${sin?'opacity:0.5':''}">
       <div class="art-card-top">
         <div class="art-card-name">${i.nombre}</div>
-        <span class="${lc}" style="font-size:13px;font-weight:500">${i.cantidad} uds.</span>
+        ${stockLabel}
       </div>
       <div class="art-card-row">
         <span>${cat?badgeHTML(cat):'—'}</span>
