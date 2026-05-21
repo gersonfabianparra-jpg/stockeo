@@ -3440,12 +3440,13 @@ async function guardarEditCategoria(id){
 }
 
 function renderDashboard(){
-  const totalVal=inventario.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
+  const productos=inventario.filter(i=>i.tipo!=='servicio');
+  const totalVal=productos.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
   const totalVentas=ventas.reduce((s,v)=>s+Number(v.total),0);
   const totalGan=ventas.reduce((s,v)=>s+Number(v.ganancia||0),0);
-  const lowStock=inventario.filter(i=>Number(i.cantidad)<5);
+  const lowStock=productos.filter(i=>Number(i.cantidad)<5);
   document.getElementById('dash-stats').innerHTML=[
-    {label:'Total artículos',value:inventario.length,sub:'en inventario',accent:true},
+    {label:'Total artículos',value:productos.length,sub:'productos en stock',accent:true},
     {label:'Valor stock',value:'$'+Math.round(totalVal).toLocaleString('es-CL'),sub:'USD estimado',accent:true},
     {label:'Total ventas',value:'$'+Math.round(totalVentas).toLocaleString('es-CL'),sub:ventas.length+' transacciones'},
     {label:'Ganancia total',value:'$'+Math.round(totalGan).toLocaleString('es-CL'),sub:'precio − costo'},
@@ -3458,7 +3459,7 @@ function renderDashboard(){
 
 function renderCharts(){
   const catMap={};
-  inventario.forEach(i=>{
+  inventario.filter(i=>i.tipo!=='servicio').forEach(i=>{
     const cat=categorias.find(c=>c.id===i.cat_id);
     const name=cat?cat.nombre:'Otros',color=cat?cat.color:'#888';
     if(!catMap[name])catMap[name]={qty:0,val:0,color};
