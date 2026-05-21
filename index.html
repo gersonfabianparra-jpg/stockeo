@@ -5588,10 +5588,29 @@ async function guardarMiembro(){
       body:JSON.stringify({email,password:pass,email_confirm:true})
     });
     const userData=await res.json();
-    // Si ya existe el usuario no es error, continuamos
-    const userId=userData.id||null;
-    if(!res.ok&&!userData.msg?.includes('already')){
-      msg.style.color='var(--danger)';msg.textContent='Error al crear cuenta: '+(userData.message||userData.msg||'Error desconocido');return;
+    let userId=userData.id||null;
+    if(!res.ok){
+      const errMsg=(userData.message||userData.msg||'').toLowerCase();
+      if(!errMsg.includes('already')&&!errMsg.includes('registered')){
+        msg.style.color='var(--danger)';msg.textContent='Error al crear cuenta: '+(userData.message||userData.msg||'Error desconocido');return;
+      }
+      msg.textContent='Vinculando cuenta existente...';
+      const lr=await fetch(`${SUPABASE_URL}/auth/v1/admin/users?filter=${encodeURIComponent(email)}&page=1&per_page=50`,{
+        headers:{'apikey':SUPABASE_SERVICE_KEY,'Authorization':'Bearer '+SUPABASE_SERVICE_KEY}
+      });
+      if(lr.ok){
+        const ld=await lr.json();
+        const users=Array.isArray(ld)?ld:(ld.users||[]);
+        const found=users.find(u=>u.email===email);
+        if(found){
+          userId=found.id;
+          await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`,{
+            method:'PUT',
+            headers:{'Content-Type':'application/json','apikey':SUPABASE_SERVICE_KEY,'Authorization':'Bearer '+SUPABASE_SERVICE_KEY},
+            body:JSON.stringify({password:pass,email_confirm:true})
+          });
+        }
+      }
     }
 
     msg.textContent='Registrando en el equipo...';
@@ -5716,7 +5735,14 @@ async function toggleMiembro(id, nuevoEstado){
 
 async function eliminarMiembro(id){
   if(!confirm('¿Eliminar este colaborador del equipo?'))return;
+  const{data:m}=await sb.from('usuarios_negocio').select('user_id').eq('id',id).single();
   await sbRun(()=>sb.from('usuarios_negocio').delete().eq('id',id));
+  if(m?.user_id){
+    await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${m.user_id}`,{
+      method:'DELETE',
+      headers:{'apikey':SUPABASE_SERVICE_KEY,'Authorization':'Bearer '+SUPABASE_SERVICE_KEY}
+    }).catch(()=>{});
+  }
   toast('Colaborador eliminado','info');
   cargarEquipo();
 }
@@ -6161,24 +6187,24 @@ function cotSelectArt(sel){
 }
 
 function cotCalcTotal(){
-  let sub=0;
+  let total=0;
   document.querySelectorAll('#cot-items-wrap .cot-item-row').forEach(row=>{
     const qty=parseFloat(row.querySelector('.cot-qty')?.value)||0;
     const precio=parseFloat(row.querySelector('.cot-precio')?.value)||0;
     const s=qty*precio;
-    sub+=s;
+    total+=s;
     const lbl=row.querySelector('.cot-sub-label');
     if(lbl) lbl.textContent='$'+Math.round(s).toLocaleString('es-CL');
   });
-  const iva=Math.round(sub*0.19);
-  const total=sub+iva;
+  const sub=Math.round(total/1.19);
+  const iva=Math.round(total)-sub;
   const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
   const elSub=document.getElementById('cot-subtotal');
   const elIva=document.getElementById('cot-iva');
   const elTot=document.getElementById('cot-total');
   if(elSub) elSub.textContent=fmt(sub);
   if(elIva) elIva.textContent=fmt(iva);
-  if(elTot) elTot.textContent=fmt(total);
+  if(elTot) elTot.textContent=fmt(Math.round(total));
 }
 
 async function guardarCotizacion(cotId){
@@ -6194,9 +6220,10 @@ async function guardarCotizacion(cotId){
     if(desc||precio>0) items.push({artId,desc:desc||'Sin descripción',qty,precio,subtotal:qty*precio});
   });
   if(!items.length){toast('⚠ Agrega al menos un ítem con precio','error');return;}
-  const sub=items.reduce((a,it)=>a+it.subtotal,0);
-  const iva=Math.round(sub*0.19);
-  const total=sub+iva;
+  const totalBruto=items.reduce((a,it)=>a+it.subtotal,0);
+  const sub=Math.round(totalBruto/1.19);
+  const iva=Math.round(totalBruto)-sub;
+  const total=Math.round(totalBruto);
 
   const btn=document.querySelector('#modal-cotizacion .btn-gold');
   if(btn){btn.disabled=true;btn.textContent='Guardando...';}
