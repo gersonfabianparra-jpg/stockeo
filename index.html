@@ -3387,6 +3387,58 @@ async function deleteCategoria(id){
   saveLocal();renderAll();toast('Categoría eliminada','info');
 }
 
+function editarCategoria(id){
+  const c=categorias.find(cat=>cat.id===id);
+  if(!c)return;
+  let modal=document.getElementById('modal-edit-cat');
+  if(modal)modal.remove();
+  modal=document.createElement('div');
+  modal.id='modal-edit-cat';
+  modal.className='modal-overlay open';
+  modal.innerHTML=`
+    <div class="modal" style="max-width:360px;width:100%;">
+      <div class="modal-drag"></div>
+      <div class="modal-header">
+        <span class="modal-title">✎ Editar categoría</span>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-edit-cat').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="form-group-m">
+          <label>Nombre</label>
+          <input type="text" id="ec-nombre" value="${c.nombre}" style="width:100%"/>
+        </div>
+        <div class="form-group-m">
+          <label>Código (hasta 4 letras)</label>
+          <input type="text" id="ec-codigo" value="${c.codigo}" maxlength="4" style="width:100%;text-transform:uppercase;"/>
+        </div>
+        <div class="form-group-m">
+          <label>Color</label>
+          <input type="color" id="ec-color" value="${c.color}" style="height:40px;width:100%;padding:3px;cursor:pointer;border-radius:var(--radius);border:1px solid var(--navy-border);background:var(--navy-light);"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="document.getElementById('modal-edit-cat').remove()">Cancelar</button>
+        <button class="btn btn-gold" onclick="guardarEditCategoria('${id}')">Guardar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+async function guardarEditCategoria(id){
+  const nombre=document.getElementById('ec-nombre').value.trim();
+  const codigo=document.getElementById('ec-codigo').value.trim().toUpperCase().slice(0,4)||nombre.slice(0,3).toUpperCase();
+  const color=document.getElementById('ec-color').value;
+  if(!nombre){toast('Escribe el nombre','error');return;}
+  const idx=categorias.findIndex(c=>c.id===id);
+  if(idx===-1)return;
+  categorias[idx]={...categorias[idx],nombre,codigo,color};
+  await sbRun(()=>sb.from('categorias').update({nombre,codigo,color}).eq('id',id));
+  saveLocal();renderAll();
+  document.getElementById('modal-edit-cat').remove();
+  toast('Categoría actualizada ✓','success');
+}
+
 function renderDashboard(){
   const totalVal=inventario.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
   const totalVentas=ventas.reduce((s,v)=>s+Number(v.total),0);
@@ -4149,7 +4201,7 @@ async function clearAllVentas(){
 
 function renderCategorias(){
   const list=document.getElementById('cat-list');if(!list)return;
-  list.innerHTML=categorias.map(c=>`<div class="cat-card"><div class="cat-info"><span class="cat-color-dot" style="background:${c.color}"><\/span><div><div class="cat-name">${c.nombre}<\/div><div class="cat-code">${c.codigo}<\/div><\/div><\/div><button class="btn btn-danger-outline btn-sm btn-icon" onclick="deleteCategoria('${c.id}')">✕</button><\/div>`).join('');
+  list.innerHTML=categorias.map(c=>`<div class="cat-card"><div class="cat-info"><span class="cat-color-dot" style="background:${c.color}"><\/span><div><div class="cat-name">${c.nombre}<\/div><div class="cat-code">${c.codigo}<\/div><\/div><\/div><div style="display:flex;gap:5px;"><button class="btn btn-outline btn-sm btn-icon" onclick="editarCategoria('${c.id}')" title="Editar">✎<\/button><button class="btn btn-danger-outline btn-sm btn-icon" onclick="deleteCategoria('${c.id}')">✕<\/button><\/div><\/div>`).join('');
 }
 
 function updateFilterSelects(){
