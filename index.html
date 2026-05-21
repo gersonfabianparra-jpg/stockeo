@@ -3450,13 +3450,13 @@ async function guardarEditCategoria(id){
 function renderDashboard(){
   const productos=inventario.filter(i=>i.tipo!=='servicio');
   const totalVal=productos.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
-  const totalVentas=ventas.reduce((s,v)=>s+Number(v.total),0);
+  const totalVentas=ventas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
   const totalGan=ventas.reduce((s,v)=>s+Number(v.ganancia||0),0);
   const lowStock=productos.filter(i=>Number(i.cantidad)<5);
   document.getElementById('dash-stats').innerHTML=[
     {label:'Total artículos',value:productos.length,sub:'productos en stock',accent:true},
-    {label:'Valor stock',value:'$'+Math.round(totalVal).toLocaleString('es-CL'),sub:'USD estimado',accent:true},
-    {label:'Total ventas',value:'$'+Math.round(totalVentas).toLocaleString('es-CL'),sub:ventas.length+' transacciones'},
+    {label:'Valor stock',value:'$'+Math.round(totalVal).toLocaleString('es-CL'),sub:'valor de reposición',accent:true},
+    {label:'Total ventas',value:'$'+Math.round(totalVentas).toLocaleString('es-CL'),sub:ventas.length+' transacciones · c/IVA'},
     {label:'Ganancia total',value:'$'+Math.round(totalGan).toLocaleString('es-CL'),sub:'precio − costo'},
   ].map(s=>`<div class="stat-card${s.accent?' accent':''}"><div class="stat-label">${s.label}<\/div><div class="stat-value precio-col">${s.value}<\/div><div class="stat-sub">${s.sub}<\/div><\/div>`).join('');
   const ls=document.getElementById('low-stock-table');
@@ -3748,7 +3748,7 @@ async function ejecutarVentaConBoleta(){
     const venta={
       id:'v_'+Date.now()+'_'+item.id.substring(0,4),
       art_id:item.id, art_nombre:item.nombre, cat_id:item.cat_id, qty,
-      precio:Number(item.precio), costo, total:netoItem,
+      precio:Number(item.precio), costo, total:subtotal,
       costo_total:costo*qty, ganancia,
       cliente_rut:clienteRut||null, cliente_nombre:clienteNombre||null,
       negocio_id:currentNegocioId||null, fecha:new Date().toISOString()
@@ -4080,19 +4080,16 @@ function renderHistorial(){
   if(desde)filtradas=filtradas.filter(v=>v.fecha>=desde);
   if(hasta)filtradas=filtradas.filter(v=>v.fecha<=hasta+'T23:59:59');
 
-  // Cálculos generales
-  const totalNeto   = filtradas.reduce((s,v)=>s+Number(v.total||0),0);
-  const totalConIVA = Math.round(totalNeto * 1.19);
+  // Cálculos generales — totalConIVA = lo que paga el cliente (precio × qty)
+  const totalConIVA = filtradas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const totalNeto   = Math.round(totalConIVA / 1.19);
   const totalG      = filtradas.reduce((s,v)=>s+Number(v.ganancia||0),0);
   const totalU      = filtradas.reduce((s,v)=>s+Number(v.qty||0),0);
   const totalCosto  = filtradas.reduce((s,v)=>s+Number(v.costo_total||0),0);
 
   // Cálculo SII
-  // IVA Débito = IVA cobrado en ventas (19% del neto de ventas)
-  const ivaDebito  = Math.round(totalNeto * 0.19);
-  // IVA Crédito = IVA pagado en compras (19% del costo total)
+  const ivaDebito  = totalConIVA - totalNeto;
   const ivaCredito = Math.round(totalCosto * 0.19);
-  // IVA a pagar = Débito - Crédito (mínimo 0)
   const ivaPagar   = Math.max(0, ivaDebito - ivaCredito);
 
   const hs=document.getElementById('hist-stats');
@@ -4124,8 +4121,7 @@ function renderHistorial(){
         const d = new Date(v.fecha);
         const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         if(!mesesMap[key]) mesesMap[key] = {ventas:0, iva:0, neto:0};
-        // Usar total si existe, sino precio * qty
-        const bruto = Number(v.total||0) || (Number(v.precio||0) * Number(v.qty||1));
+        const bruto = Number(v.precio||0) * Number(v.qty||1);
         const neto = Math.round(bruto / 1.19);
         mesesMap[key].ventas += bruto;
         mesesMap[key].neto += neto;
