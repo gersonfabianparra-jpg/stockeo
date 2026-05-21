@@ -1,0 +1,16 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "Expires", "value": "0" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/cotizacion/:id", "destination": "/cotizacion-publica.html" },
+    { "source": "/((?!api/|cotizacion-publica|cotizacion/).*)", "destination": "/index.html" }
+  ]
+}

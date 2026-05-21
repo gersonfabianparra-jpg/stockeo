@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cotización — Stockeo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh;padding:20px;}
+.page{background:#fff;max-width:750px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12);}
+.top-bar{height:8px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+.header{padding:32px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:16px;}
+.logo-img{max-height:64px;max-width:160px;object-fit:contain;margin-bottom:8px;}
+.neg-name{font-size:18px;font-weight:700;color:#1a1a2e;}
+.neg-info{font-size:12px;color:#666;line-height:1.7;margin-top:4px;}
+.doc-section{text-align:right;}
+.doc-title{font-size:28px;font-weight:800;color:#c9a84c;letter-spacing:-1px;}
+.doc-num{font-size:13px;color:#666;margin-top:2px;}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-top:8px;}
+.info-strip{background:#fafafa;padding:16px 40px;display:flex;gap:32px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
+.info-item label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;display:block;}
+.info-item span{font-size:13px;font-weight:600;color:#1a1a2e;}
+.cliente-section{padding:20px 40px;border-bottom:1px solid #f0f0f0;}
+.section-label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.cliente-name{font-size:15px;font-weight:700;color:#1a1a2e;}
+.notas{font-size:12px;color:#666;margin-top:6px;font-style:italic;}
+.table-section{padding:20px 40px;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:linear-gradient(135deg,#1a1a2e,#2d3561);}
+th{padding:10px 12px;text-align:left;font-size:11px;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+th:last-child,td:last-child{text-align:right;}
+th:nth-child(2),th:nth-child(3),td:nth-child(2),td:nth-child(3){text-align:center;}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;}
+tr:nth-child(even) td{background:#fafafa;}
+.totals{padding:16px 40px 24px;display:flex;justify-content:flex-end;}
+.totals-box{width:260px;}
+.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#555;}
+.total-row.grand{border-top:2px solid #c9a84c;margin-top:8px;padding-top:10px;font-size:16px;font-weight:800;color:#1a1a2e;}
+.total-row.grand span:last-child{color:#c9a84c;}
+.footer-section{background:#fafafa;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;}
+.footer-note{font-size:11px;color:#999;}
+.footer-brand{font-size:11px;color:#c9a84c;font-weight:600;}
+.bottom-bar{height:4px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+.loading{text-align:center;padding:60px;color:#999;}
+.error-box{text-align:center;padding:60px;color:#dc2626;}
+.btn-print{background:linear-gradient(135deg,#c9a84c,#d9a43a);border:none;color:#fff;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin-top:16px;}
+.powered{text-align:center;padding:16px;font-size:12px;color:#999;}
+.powered a{color:#c9a84c;text-decoration:none;font-weight:600;}
+@media(max-width:600px){
+  .header{padding:20px;}.info-strip{padding:12px 20px;}.cliente-section{padding:16px 20px;}
+  .table-section{padding:16px 20px;overflow-x:auto;}.totals{padding:12px 20px;}
+  .footer-section{padding:12px 20px;}.doc-title{font-size:22px;}
+}
+@media print{body{background:#fff;padding:0;}.page{box-shadow:none;border-radius:0;}.btn-print,.powered{display:none;}}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">⏳ Cargando cotización...</div></div>
+
+<script>
+const SUPABASE_URL = 'https://rgfrupcyaqsjbyqbmsng.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnZnJ1cGN5YXFzamJ5cWJtc25nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MzE3NjUsImV4cCI6MjA5MjIwNzc2NX0.rgfrupcyaqsjbyqbmsng';
+
+async function cargar(){
+  const id = window.location.pathname.split('/').pop();
+  if(!id){ mostrarError('ID de cotización no válido'); return; }
+
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/cotizaciones?id=eq.${encodeURIComponent(id)}&select=*`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  const data = await r.json();
+  if(!data?.length){ mostrarError('Cotización no encontrada'); return; }
+  const c = data[0];
+
+  const nr = await fetch(`${SUPABASE_URL}/rest/v1/negocios?id=eq.${c.negocio_id}&select=nombre,rut,direccion,contacto,logo_url`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  const neg = (await nr.json())[0] || {};
+
+  const items = typeof c.items === 'string' ? JSON.parse(c.items) : (c.items || []);
+  const estadoColor = c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#d97706';
+  const estadoBg = c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
+  const estadoTxt = c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente';
+  const venceDate = new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
+  const fmt = n => '$'+Math.round(n||0).toLocaleString('es-CL');
+
+  document.getElementById('app').innerHTML = `
+    <div class="page">
+      <div class="top-bar"></div>
+      <div class="header">
+        <div>
+          ${neg.logo_url ? `<img src="${neg.logo_url}" class="logo-img"/>` : ''}
+          <div class="neg-name">${neg.nombre||'Mi negocio'}</div>
+          <div class="neg-info">
+            ${neg.rut?`RUT: ${neg.rut}<br/>`:''}
+            ${neg.direccion?`${neg.direccion}<br/>`:''}
+            ${neg.contacto||''}
+          </div>
+        </div>
+        <div class="doc-section">
+          <div class="doc-title">COTIZACIÓN</div>
+          <div class="doc-num">COT-${String(c.numero).padStart(4,'0')}</div>
+          <span class="badge" style="background:${estadoBg};color:${estadoColor};">${estadoTxt}</span>
+        </div>
+      </div>
+      <div class="info-strip">
+        <div class="info-item"><label>Fecha emisión</label><span>${new Date(c.fecha).toLocaleDateString('es-CL')}</span></div>
+        <div class="info-item"><label>Válida hasta</label><span>${venceDate}</span></div>
+        <div class="info-item"><label>Validez</label><span>${c.validez||30} días</span></div>
+      </div>
+      <div class="cliente-section">
+        <div class="section-label">Dirigida a</div>
+        <div class="cliente-name">${c.cliente||'Sin especificar'}</div>
+        ${c.notas?`<div class="notas">${c.notas}</div>`:''}
+      </div>
+      <div class="table-section">
+        <table>
+          <thead><tr>
+            <th>Descripción</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th>
+          </tr></thead>
+          <tbody>
+            ${items.map(it=>`<tr>
+              <td>${it.desc||'Sin descripción'}</td>
+              <td style="text-align:center;">${it.qty||1}</td>
+              <td style="text-align:center;">${fmt(it.precio)}</td>
+              <td style="text-align:right;font-weight:600;">${fmt(it.subtotal)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="totals">
+        <div class="totals-box">
+          <div class="total-row"><span>Neto</span><span>${fmt(c.sub)}</span></div>
+          <div class="total-row"><span>IVA (19%)</span><span>${fmt(c.iva)}</span></div>
+          <div class="total-row grand"><span>TOTAL</span><span>${fmt(c.total)}</span></div>
+        </div>
+      </div>
+      <div class="footer-section">
+        <div class="footer-note">Válida hasta el ${venceDate}.<br/>Para aceptarla, contacte a ${neg.contacto||neg.nombre||'el emisor'}.</div>
+        <div>
+          <button class="btn-print" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+        </div>
+      </div>
+      <div class="bottom-bar"></div>
+    </div>
+    <div class="powered">Generado con <a href="https://stockeo.cl" target="_blank">Stockeo</a> · Sistema de gestión para negocios</div>
+  `;
+  document.title = `COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}`;
+}
+
+function mostrarError(msg){
+  document.getElementById('app').innerHTML = `
+    <div class="page"><div class="top-bar"></div>
+    <div class="error-box">
+      <div style="font-size:3rem;margin-bottom:1rem;">😕</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Cotización no encontrada</div>
+      <div style="font-size:13px;color:#666;">${msg}</div>
+      <div style="margin-top:20px;"><a href="https://stockeo.cl" style="color:#c9a84c;">← Ir a Stockeo</a></div>
+    </div><div class="bottom-bar"></div></div>`;
+}
+
+cargar();
+</script>
+</body>
+</html>
