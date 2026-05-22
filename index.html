@@ -179,19 +179,26 @@ body.app-mode{height:100%;overflow:hidden;}
 .gstable tr:hover td{background:rgba(255,255,255,.025);}
 
 /* ── Cotizaciones Pro ── */
-.cot-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.25rem;}
-.cot-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px;}
-.cot-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);margin-bottom:4px;}
-.cot-stat-val{font-size:22px;font-weight:800;color:#fff;}
-.cot-stat-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:2px;}
-.cot-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:background .2s;}
-.cot-card:hover{background:rgba(255,255,255,.055);}
-.cot-card-accent{width:4px;border-radius:4px;flex-shrink:0;align-self:stretch;}
+.cot-page-header{background:linear-gradient(135deg,#162438 0%,#1a2d48 100%);border:1px solid rgba(201,168,76,.18);border-radius:14px;padding:20px 24px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.cot-page-title{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.cot-page-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;}
+.cot-page-header-line{width:36px;height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585);border-radius:2px;margin-bottom:6px;}
+.cot-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.25rem;}
+.cot-stat{border-radius:12px;padding:16px 20px;position:relative;overflow:hidden;}
+.cot-stat-amber{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.06));border:1px solid rgba(245,158,11,.28);}
+.cot-stat-green{background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(34,197,94,.05));border:1px solid rgba(34,197,94,.25);}
+.cot-stat-gold{background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);}
+.cot-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.45);margin-bottom:6px;}
+.cot-stat-val{font-size:26px;font-weight:900;line-height:1;}
+.cot-stat-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:5px;}
+.cot-card{background:#162438;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;display:flex;gap:0;align-items:stretch;transition:border-color .2s,transform .15s;overflow:hidden;}
+.cot-card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-1px);}
+.cot-card-accent{width:5px;flex-shrink:0;margin:-16px 16px -16px -18px;border-radius:0;}
 .cot-card-body{flex:1;min-width:0;}
 .cot-card-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
-.cot-card-title{font-size:14px;font-weight:700;}
+.cot-card-title{font-size:14px;font-weight:700;color:#fff;}
 .cot-card-meta{font-size:11px;color:rgba(255,255,255,.38);}
-.cot-card-total{font-size:14px;font-weight:700;color:#c9a84c;}
+.cot-card-total{font-size:15px;font-weight:800;color:#c9a84c;}
 .cot-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;}
 .cot-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
 /* Split modal */
@@ -2183,9 +2190,13 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
     <!-- PÁGINA COTIZACIONES -->
     <div class="page" id="page-cotizaciones">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
-        <div style="font-size:15px;font-weight:700;">Cotizaciones <span id="cot-count" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></div>
-        <button class="btn btn-gold btn-sm" onclick="abrirModalCotizacion()">+ Nueva cotización</button>
+      <div class="cot-page-header">
+        <div>
+          <div class="cot-page-header-line"></div>
+          <div class="cot-page-title">Cotizaciones <span id="cot-count" style="font-size:13px;font-weight:400;color:rgba(255,255,255,.35);"></span></div>
+          <div class="cot-page-sub">Crea y gestiona presupuestos para tus clientes</div>
+        </div>
+        <button class="btn btn-gold" onclick="abrirModalCotizacion()" style="font-size:13px;padding:10px 20px;">+ Nueva cotización</button>
       </div>
       <div id="cot-stats-row" class="cot-stats"></div>
       <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
@@ -6786,20 +6797,20 @@ function renderCotizaciones(){
   const acep=cotizaciones.filter(c=>c.estado==='aceptada').length;
   const totalGen=cotizaciones.reduce((a,c)=>a+(c.total||0),0);
   if(statsRow) statsRow.innerHTML=`
-    <div class="cot-stat">
+    <div class="cot-stat cot-stat-amber">
       <div class="cot-stat-lbl">Pendientes</div>
       <div class="cot-stat-val" style="color:#f59e0b;">${pend}</div>
       <div class="cot-stat-sub">esperando respuesta</div>
     </div>
-    <div class="cot-stat">
+    <div class="cot-stat cot-stat-green">
       <div class="cot-stat-lbl">Aceptadas</div>
       <div class="cot-stat-val" style="color:#22c55e;">${acep}</div>
       <div class="cot-stat-sub">de ${cotizaciones.length} total</div>
     </div>
-    <div class="cot-stat">
+    <div class="cot-stat cot-stat-gold">
       <div class="cot-stat-lbl">Total generado</div>
-      <div class="cot-stat-val" style="font-size:18px;color:#c9a84c;">$${totalGen.toLocaleString('es-CL')}</div>
-      <div class="cot-stat-sub">suma de todas las cotizaciones</div>
+      <div class="cot-stat-val" style="font-size:19px;color:#c9a84c;">$${totalGen.toLocaleString('es-CL')}</div>
+      <div class="cot-stat-sub">suma de cotizaciones</div>
     </div>`;
   if(!cotizaciones.length){
     grid.innerHTML=`<div style="text-align:center;padding:3.5rem 1rem;color:var(--text-muted);">
