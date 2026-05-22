@@ -206,15 +206,33 @@ body.app-mode{height:100%;overflow:hidden;}
 .cot-card-items{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
 .cot-item-tag{font-size:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:6px;padding:3px 9px;color:rgba(255,255,255,.5);}
 .cot-card-actions{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.06);padding-top:12px;}
-/* Split modal */
-.cot-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:stretch;}
-.cot-modal-form{width:420px;flex-shrink:0;background:#0d1117;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;overflow:hidden;}
-.cot-modal-preview{flex:1;background:#e8ecf0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:28px 24px;}
-.cot-form-head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+/* Inline panel (same-page, no overlay) */
+.cot-main-content{transition:opacity .28s ease,transform .28s ease;}
+.cot-main-content.cot-hidden{opacity:0;transform:translateY(-6px);pointer-events:none;max-height:0;overflow:hidden;}
+.cot-inline-panel{margin-top:0;}
+@keyframes cotSlideIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.cot-ip-wrap{display:flex;gap:20px;align-items:flex-start;animation:cotSlideIn .32s cubic-bezier(.4,0,.2,1);}
+.cot-modal-wrap{display:none;}
+.cot-modal-form{width:420px;flex-shrink:0;background:#111827;border:1px solid rgba(255,255,255,.09);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;max-height:82vh;}
+.cot-modal-preview{flex:1;min-width:0;background:#e8ecf0;border-radius:14px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 20px;max-height:82vh;}
+.cot-form-head{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
 .cot-form-title{font-size:15px;font-weight:700;color:#fff;}
-.cot-form-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
+.cot-form-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
 .cot-form-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;flex-shrink:0;}
 .cot-form-foot .btn{flex:1;}
+/* Responsivo cotizaciones */
+.cot-page-header{flex-wrap:wrap;}
+@media(max-width:640px){
+  .cot-ip-wrap{flex-direction:column;}
+  .cot-modal-form{width:100%;max-height:none;}
+  .cot-modal-preview{display:none;}
+  .cot-card-amount{font-size:17px;}
+  .cot-card-client{font-size:15px;}
+  .cot-stat-val{font-size:20px;}
+  .cot-page-title{font-size:17px;}
+  .cot-card-actions{gap:4px;}
+  .cot-card-actions .btn{font-size:11px;padding:5px 8px;}
+}
 .cot-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:7px;}
 .cot-finput{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:13px;padding:9px 12px;transition:border-color .2s;}
 .cot-finput:focus{border-color:rgba(201,168,76,.5);outline:none;}
@@ -2203,10 +2221,13 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
           <div class="cot-page-title">Cotizaciones <span id="cot-count" style="font-size:13px;font-weight:400;color:rgba(255,255,255,.35);"></span></div>
           <div class="cot-page-sub">Crea y gestiona presupuestos para tus clientes</div>
         </div>
-        <button class="btn btn-gold" onclick="abrirModalCotizacion()" style="font-size:13px;padding:10px 20px;">+ Nueva cotización</button>
+        <button id="cot-nueva-btn" class="btn btn-gold" onclick="abrirModalCotizacion()" style="font-size:13px;padding:10px 20px;">+ Nueva cotización</button>
       </div>
-      <div id="cot-stats-row" class="cot-stats"></div>
-      <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
+      <div id="cot-main-content" class="cot-main-content">
+        <div id="cot-stats-row" class="cot-stats"></div>
+        <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
+      </div>
+      <div id="cot-inline-panel" class="cot-inline-panel"></div>
     </div>
 
   </div>
@@ -6876,20 +6897,39 @@ function renderCotizaciones(){
   }).join('');
 }
 
+function cerrarFormCotizacion(){
+  const panel=document.getElementById('cot-inline-panel');
+  const main=document.getElementById('cot-main-content');
+  const btn=document.getElementById('cot-nueva-btn');
+  if(panel) panel.innerHTML='';
+  if(main) main.classList.remove('cot-hidden');
+  if(btn){btn.textContent='+ Nueva cotización';btn.onclick=()=>abrirModalCotizacion();}
+  document.getElementById('page-cotizaciones')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 function abrirModalCotizacion(cotId=null){
   const cot = cotId ? cotizaciones.find(c=>c.id===cotId) : null;
-  let modal=document.getElementById('modal-cotizacion');
-  if(modal) modal.remove();
-  modal=document.createElement('div');
-  modal.className='cot-modal-wrap';
-  modal.id='modal-cotizacion';
-  modal.dataset.cotId=cotId||'';
+  const panel=document.getElementById('cot-inline-panel');
+  const main=document.getElementById('cot-main-content');
+  const btn=document.getElementById('cot-nueva-btn');
+  if(!panel) return;
 
-  modal.innerHTML=`
+  // Ocultar lista, mostrar form en página
+  main.classList.add('cot-hidden');
+  if(btn){btn.textContent='← Volver a lista';btn.onclick=cerrarFormCotizacion;}
+
+  const wrap=document.createElement('div');
+  wrap.className='cot-ip-wrap';
+  wrap.id='modal-cotizacion';
+  wrap.dataset.cotId=cotId||'';
+  panel.innerHTML='';
+  panel.appendChild(wrap);
+
+  wrap.innerHTML=`
     <div class="cot-modal-form">
       <div class="cot-form-head">
         <div class="cot-form-title">${cot?'Editar cotización':'Nueva cotización'}</div>
-        <button style="background:none;border:none;color:rgba(255,255,255,.35);font-size:22px;cursor:pointer;line-height:1;padding:0;" onclick="document.getElementById('modal-cotizacion').remove()">✕</button>
+        <button style="background:none;border:none;color:rgba(255,255,255,.35);font-size:22px;cursor:pointer;line-height:1;padding:0;" onclick="cerrarFormCotizacion()">✕</button>
       </div>
       <div class="cot-form-body">
         <div>
@@ -6923,7 +6963,7 @@ function abrirModalCotizacion(cotId=null){
         </div>
       </div>
       <div class="cot-form-foot">
-        <button class="btn btn-outline" onclick="document.getElementById('modal-cotizacion').remove()">Cancelar</button>
+        <button class="btn btn-outline" onclick="cerrarFormCotizacion()">Cancelar</button>
         <button class="btn btn-gold" onclick="guardarCotizacion('${cotId||''}')">Guardar cotización</button>
       </div>
     </div>
@@ -6931,7 +6971,9 @@ function abrirModalCotizacion(cotId=null){
       <div style="font-size:10px;color:rgba(0,0,0,.28);text-transform:uppercase;letter-spacing:.7px;margin-bottom:16px;font-weight:700;">Vista previa en tiempo real</div>
       <div id="cot-preview-doc"></div>
     </div>`;
-  document.body.appendChild(modal);
+
+  // Scroll suave al form
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 
   const initItems = cot?.items?.length ? cot.items : [{artId:'',desc:'',qty:1,precio:0}];
   initItems.forEach(it => cotAddRow(it));
@@ -7133,7 +7175,7 @@ async function guardarCotizacion(cotId){
     cotizaciones.unshift(nueva);
   }
   guardarCotizaciones();
-  document.getElementById('modal-cotizacion').remove();
+  cerrarFormCotizacion();
   renderCotizaciones();
   toast('Cotización guardada ✓','success');
 }
