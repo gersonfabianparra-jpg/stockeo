@@ -249,6 +249,8 @@ body.app-mode{height:100%;overflow:hidden;}
 .cpd-cliente-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:3px;}
 .cpd-cliente-name{font-size:14px;font-weight:700;color:#1a1a2e;}
 .cpd-notas{font-size:11px;color:#888;font-style:italic;margin-top:4px;}
+.cpd-cli-detail{font-size:12px;color:#374151;margin-top:3px;font-weight:500;}
+.cpd-cli-meta{font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.7;}
 .cpd-table{padding:14px 30px;}
 .cpd-table table{width:100%;border-collapse:collapse;}
 .cpd-table thead tr{background:linear-gradient(135deg,#1a1a2e,#2d3561);}
@@ -6883,7 +6885,12 @@ function abrirModalCotizacion(cotId=null){
       <div class="cot-form-body">
         <div>
           <div class="cot-section-title">Datos del cliente</div>
-          <input type="text" id="cot-cliente" class="cot-finput" placeholder="Nombre del cliente" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
+          <input type="text" id="cot-cliente" class="cot-finput" placeholder="Razón social o nombre *" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <input type="text" id="cot-cli-rut" class="cot-finput" placeholder="RUT (ej: 76.123.456-7)" value="${cot?.cliente_rut||''}" oninput="cotUpdatePreview()"/>
+            <input type="tel" id="cot-cli-tel" class="cot-finput" placeholder="Teléfono" value="${cot?.cliente_tel||''}" oninput="cotUpdatePreview()"/>
+          </div>
+          <input type="email" id="cot-cli-email" class="cot-finput" placeholder="Email del cliente" value="${cot?.cliente_email||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
           <textarea id="cot-notas" class="cot-finput" rows="2" placeholder="Notas o condiciones (opcional)" oninput="cotUpdatePreview()" style="resize:vertical;">${cot?.notas||''}</textarea>
         </div>
         <div>
@@ -6987,6 +6994,9 @@ function cotUpdatePreview(){
   if(!doc) return;
   const neg=cfgNegocio||{};
   const cliente=document.getElementById('cot-cliente')?.value||'';
+  const clienteRut=document.getElementById('cot-cli-rut')?.value||'';
+  const clienteTel=document.getElementById('cot-cli-tel')?.value||'';
+  const clienteEmail=document.getElementById('cot-cli-email')?.value||'';
   const notas=document.getElementById('cot-notas')?.value||'';
   const validez=parseInt(document.getElementById('cot-validez')?.value)||30;
   const modal=document.getElementById('modal-cotizacion');
@@ -7030,6 +7040,8 @@ function cotUpdatePreview(){
     <div class="cpd-cliente">
       <div class="cpd-cliente-lbl">Dirigida a</div>
       <div class="cpd-cliente-name">${cliente||'—'}</div>
+      ${clienteRut?`<div class="cpd-cli-detail">RUT ${clienteRut}</div>`:''}
+      ${(clienteEmail||clienteTel)?`<div class="cpd-cli-meta">${[clienteEmail,clienteTel].filter(Boolean).join(' · ')}</div>`:''}
       ${notas?`<div class="cpd-notas">${notas}</div>`:''}
     </div>
     <div class="cpd-table">
@@ -7061,6 +7073,9 @@ function cotUpdatePreview(){
 
 async function guardarCotizacion(cotId){
   const cliente=document.getElementById('cot-cliente').value.trim();
+  const cliente_rut=document.getElementById('cot-cli-rut')?.value.trim()||'';
+  const cliente_tel=document.getElementById('cot-cli-tel')?.value.trim()||'';
+  const cliente_email=document.getElementById('cot-cli-email')?.value.trim()||'';
   const notas=document.getElementById('cot-notas').value.trim();
   const validez=parseInt(document.getElementById('cot-validez').value)||30;
   const items=[];
@@ -7080,22 +7095,30 @@ async function guardarCotizacion(cotId){
   const btn=document.querySelector('#modal-cotizacion .btn-gold');
   if(btn){btn.disabled=true;btn.textContent='Guardando...';}
 
+  const clienteData={cliente,cliente_rut,cliente_tel,cliente_email,notas,validez,items,sub,iva,total};
+
   if(cotId){
     const idx=cotizaciones.findIndex(c=>c.id===cotId);
     if(idx!==-1){
-      cotizaciones[idx]={...cotizaciones[idx],cliente,notas,validez,items,sub,iva,total};
-      // Actualizar en Supabase
-      await sbRun(()=>sb.from('cotizaciones').update({cliente,notas,validez,items,sub,iva,total}).eq('id',cotId));
+      cotizaciones[idx]={...cotizaciones[idx],...clienteData};
+      await sbRun(()=>sb.from('cotizaciones').update(clienteData).eq('id',cotId));
     }
   } else {
-    const maxNum=cotizaciones.length?Math.max(...cotizaciones.map(c=>c.numero||0)):0;
+    // Folio atómico — nunca se repite aunque se borren cotizaciones
+    let numero;
+    try{
+      const{data:folio,error:fe}=await sb.rpc('next_cot_folio',{neg_id:currentNegocioId});
+      if(fe||folio==null) throw fe||new Error('sin folio');
+      numero=folio;
+    }catch(e){
+      numero=(cotizaciones.length?Math.max(...cotizaciones.map(c=>c.numero||0)):0)+1;
+    }
     const nueva={
-      id:'cot-'+Date.now(), numero:maxNum+1,
-      cliente, notas, validez, items, sub:Math.round(sub), iva, total,
+      id:'cot-'+Date.now(), numero,
+      ...clienteData,
       fecha:new Date().toISOString(), estado:'pendiente',
       negocio_id:currentNegocioId
     };
-    // Guardar en Supabase primero
     const ok=await sbWrite(()=>sb.from('cotizaciones').insert(nueva));
     if(!ok) toast('⚠ Guardado local. Sin conexión a internet.','info');
     cotizaciones.unshift(nueva);
@@ -7218,6 +7241,7 @@ function exportarCotizacionPDF(id){
   const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
   const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
   const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const cliMeta=[c.cliente_rut?`RUT ${c.cliente_rut}`:'',c.cliente_email||'',c.cliente_tel||''].filter(Boolean);
 
   const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
   <title>COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}</title>
@@ -7321,6 +7345,7 @@ function exportarCotizacionPDF(id){
       <div class="info-cell">
         <div class="info-cell-label">Dirigida a</div>
         <div class="client-name">${c.cliente||'Sin especificar'}</div>
+        ${cliMeta.length?`<div style="font-size:12px;color:#6b7280;margin-top:5px;line-height:1.8;">${cliMeta.join('<br/>')}</div>`:''}
         ${c.notas?`<div class="client-note">${c.notas}</div>`:''}
       </div>
       <div class="info-cell">

@@ -117,6 +117,7 @@ async function cargar(){
   const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
   const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
   const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const cliMeta=[c.cliente_rut?`RUT ${c.cliente_rut}`:'',c.cliente_email||'',c.cliente_tel||''].filter(Boolean);
 
   document.getElementById('app').innerHTML=`
     <div class="page">
@@ -145,6 +146,7 @@ async function cargar(){
         <div class="info-cell">
           <div class="info-cell-label">Dirigida a</div>
           <div class="client-name">${c.cliente||'Sin especificar'}</div>
+          ${cliMeta.length?`<div style="font-size:12px;color:#6b7280;margin-top:5px;line-height:1.8;">${cliMeta.join('<br/>')}</div>`:''}
           ${c.notas?`<div class="client-note">${c.notas}</div>`:''}
         </div>
         <div class="info-cell">
