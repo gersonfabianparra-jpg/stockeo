@@ -4,152 +4,220 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Cotización — Stockeo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh;padding:20px;}
-.page{background:#fff;max-width:750px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12);}
-.top-bar{height:8px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
-.header{padding:32px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:16px;}
-.logo-img{max-height:64px;max-width:160px;object-fit:contain;margin-bottom:8px;}
-.neg-name{font-size:18px;font-weight:700;color:#1a1a2e;}
-.neg-info{font-size:12px;color:#666;line-height:1.7;margin-top:4px;}
-.doc-section{text-align:right;}
-.doc-title{font-size:28px;font-weight:800;color:#c9a84c;letter-spacing:-1px;}
-.doc-num{font-size:13px;color:#666;margin-top:2px;}
-.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-top:8px;}
-.info-strip{background:#fafafa;padding:16px 40px;display:flex;gap:32px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
-.info-item label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;display:block;}
-.info-item span{font-size:13px;font-weight:600;color:#1a1a2e;}
-.cliente-section{padding:20px 40px;border-bottom:1px solid #f0f0f0;}
-.section-label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
-.cliente-name{font-size:15px;font-weight:700;color:#1a1a2e;}
-.notas{font-size:12px;color:#666;margin-top:6px;font-style:italic;}
-.table-section{padding:20px 40px;}
+body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#eef1f6;min-height:100vh;padding:32px 16px;display:flex;flex-direction:column;align-items:center;}
+.page{background:#fff;width:100%;max-width:760px;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+
+/* Header oscuro */
+.doc-header{background:linear-gradient(135deg,#0f1624 0%,#162438 60%,#1e3250 100%);padding:36px 44px 32px;position:relative;overflow:hidden;}
+.doc-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(201,168,76,.07);}
+.doc-header::after{content:'';position:absolute;bottom:-60px;left:160px;width:160px;height:160px;border-radius:50%;background:rgba(201,168,76,.05);}
+.header-inner{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;flex-wrap:wrap;gap:20px;}
+.neg-logo{max-height:52px;max-width:140px;object-fit:contain;margin-bottom:10px;display:block;}
+.neg-name{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.2px;}
+.neg-info{font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;margin-top:4px;}
+.doc-block{text-align:right;}
+.doc-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.7);font-weight:700;margin-bottom:6px;}
+.doc-title{font-size:34px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;}
+.doc-num{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;font-weight:500;}
+.doc-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;}
+.gold-bar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c,#f0d585,#c9a84c);}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f0f0f0;}
+.info-cell{padding:22px 44px;}
+.info-cell:first-child{border-right:1px solid #f0f0f0;}
+.info-cell-label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700;margin-bottom:10px;}
+.client-name{font-size:18px;font-weight:800;color:#111827;}
+.client-note{font-size:12px;color:#6b7280;margin-top:5px;font-style:italic;line-height:1.5;}
+.date-rows{display:flex;flex-direction:column;gap:8px;}
+.date-row{display:flex;justify-content:space-between;align-items:center;}
+.date-row-lbl{font-size:11px;color:#9ca3af;}
+.date-row-val{font-size:12px;font-weight:700;color:#111827;}
+.validez-pill{display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;color:#0369a1;}
+
+/* Tabla */
+.table-wrap{padding:0 44px;}
+.table-title{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700;padding:20px 0 12px;}
 table{width:100%;border-collapse:collapse;}
-thead tr{background:linear-gradient(135deg,#1a1a2e,#2d3561);}
-th{padding:10px 12px;text-align:left;font-size:11px;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+thead tr{background:#0f1624;}
+th{padding:11px 14px;text-align:left;font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
+th:nth-child(1){width:36px;color:rgba(255,255,255,.3);}
+th:nth-child(3),th:nth-child(4),td:nth-child(3),td:nth-child(4){text-align:center;}
 th:last-child,td:last-child{text-align:right;}
-th:nth-child(2),th:nth-child(3),td:nth-child(2),td:nth-child(3){text-align:center;}
-td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;}
-tr:nth-child(even) td{background:#fafafa;}
-.totals{padding:16px 40px 24px;display:flex;justify-content:flex-end;}
-.totals-box{width:260px;}
-.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#555;}
-.total-row.grand{border-top:2px solid #c9a84c;margin-top:8px;padding-top:10px;font-size:16px;font-weight:800;color:#1a1a2e;}
-.total-row.grand span:last-child{color:#c9a84c;}
-.footer-section{background:#fafafa;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;}
-.footer-note{font-size:11px;color:#999;}
-.footer-brand{font-size:11px;color:#c9a84c;font-weight:600;}
-.bottom-bar{height:4px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
-.loading{text-align:center;padding:60px;color:#999;}
-.error-box{text-align:center;padding:60px;color:#dc2626;}
-.btn-print{background:linear-gradient(135deg,#c9a84c,#d9a43a);border:none;color:#fff;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin-top:16px;}
-.powered{text-align:center;padding:16px;font-size:12px;color:#999;}
-.powered a{color:#c9a84c;text-decoration:none;font-weight:600;}
+td{padding:12px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+td:first-child{color:#d1d5db;font-size:11px;font-weight:600;}
+td:nth-child(2){font-weight:500;color:#111827;}
+td:last-child{font-weight:700;color:#111827;}
+tr:last-child td{border-bottom:2px solid #f3f4f6;}
+
+/* Totales */
+.totals-section{display:flex;justify-content:flex-end;padding:20px 44px 28px;}
+.totals-card{width:280px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;}
+.totals-card-inner{padding:16px 20px;}
+.tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;color:#6b7280;}
+.tot-grand{background:linear-gradient(135deg,#0f1624,#1e3250);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
+.tot-grand-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);font-weight:700;}
+.tot-grand-val{font-size:22px;font-weight:900;color:#c9a84c;letter-spacing:-.5px;}
+
+/* Footer */
+.doc-footer{background:#f8fafc;border-top:1px solid #e5e7eb;padding:16px 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-left{font-size:11px;color:#9ca3af;line-height:1.7;}
+.footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.footer-brand{font-size:11px;font-weight:800;color:#c9a84c;}
+.footer-brand-sub{font-size:10px;color:#9ca3af;}
+
+.btn-print{background:linear-gradient(135deg,#c9a84c,#d9a43a);border:none;color:#fff;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin-top:20px;box-shadow:0 4px 14px rgba(201,168,76,.35);}
+.powered{text-align:center;padding:16px;font-size:12px;color:#9ca3af;}
+.powered a{color:#c9a84c;text-decoration:none;font-weight:700;}
+.loading{text-align:center;padding:80px 20px;color:#9ca3af;}
+.error-page{text-align:center;padding:80px 20px;}
+
 @media(max-width:600px){
-  .header{padding:20px;}.info-strip{padding:12px 20px;}.cliente-section{padding:16px 20px;}
-  .table-section{padding:16px 20px;overflow-x:auto;}.totals{padding:12px 20px;}
-  .footer-section{padding:12px 20px;}.doc-title{font-size:22px;}
+  .doc-header{padding:24px 20px 20px;}
+  .info-grid{grid-template-columns:1fr;}
+  .info-cell:first-child{border-right:none;border-bottom:1px solid #f0f0f0;}
+  .info-cell{padding:16px 20px;}
+  .table-wrap{padding:0 20px;}
+  .table-title{padding:16px 0 10px;}
+  .totals-section{padding:16px 20px 24px;}
+  .doc-footer{padding:14px 20px;}
+  .doc-title{font-size:26px;}
+  th:nth-child(1){display:none;}td:nth-child(1){display:none;}
 }
-@media print{body{background:#fff;padding:0;}.page{box-shadow:none;border-radius:0;}.btn-print,.powered{display:none;}}
+@media print{
+  body{background:#fff;padding:0;}
+  .page{box-shadow:none;border-radius:0;max-width:100%;}
+  .btn-print,.powered{display:none;}
+}
 </style>
 </head>
 <body>
-<div id="app"><div class="loading">⏳ Cargando cotización...</div></div>
+<div id="app"><div class="loading">Cargando cotización...</div></div>
 
 <script>
 async function cargar(){
-  const id = window.location.pathname.split('/').pop();
-  if(!id){ mostrarError('ID de cotización no válido'); return; }
+  const id=window.location.pathname.split('/').pop();
+  if(!id){mostrarError('ID no válido');return;}
+  const r=await fetch(`/api/public-cotizacion?id=${encodeURIComponent(id)}`);
+  if(!r.ok){mostrarError('Cotización no encontrada');return;}
+  const payload=await r.json();
+  if(!payload?.cotizacion){mostrarError('Cotización no encontrada');return;}
+  const c=payload.cotizacion;
+  const neg=payload.negocio||{};
 
-  // Usar el endpoint de API que tiene acceso con service role (bypasa RLS)
-  const r = await fetch(`/api/public-cotizacion?id=${encodeURIComponent(id)}`);
-  if(!r.ok){ mostrarError('Cotización no encontrada'); return; }
-  const payload = await r.json();
-  if(!payload?.cotizacion){ mostrarError('Cotización no encontrada'); return; }
-  const c = payload.cotizacion;
-  const neg = payload.negocio || {};
+  const items=typeof c.items==='string'?JSON.parse(c.items):(c.items||[]);
+  const acColor=c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#b45309';
+  const acBg=c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
+  const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
+  const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
+  const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
 
-  const items = typeof c.items === 'string' ? JSON.parse(c.items) : (c.items || []);
-  const estadoColor = c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#d97706';
-  const estadoBg = c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
-  const estadoTxt = c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente';
-  const venceDate = new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
-  const fmt = n => '$'+Math.round(n||0).toLocaleString('es-CL');
-
-  document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML=`
     <div class="page">
-      <div class="top-bar"></div>
-      <div class="header">
-        <div>
-          ${neg.logo_url ? `<img src="${neg.logo_url}" class="logo-img"/>` : ''}
-          <div class="neg-name">${neg.nombre||'Mi negocio'}</div>
-          <div class="neg-info">
-            ${neg.rut?`RUT: ${neg.rut}<br/>`:''}
-            ${neg.direccion?`${neg.direccion}<br/>`:''}
-            ${neg.contacto||''}
+      <div class="doc-header">
+        <div class="header-inner">
+          <div>
+            ${neg.logo_url?`<img src="${neg.logo_url}" class="neg-logo"/>`:''}
+            <div class="neg-name">${neg.nombre||'Mi negocio'}</div>
+            <div class="neg-info">
+              ${neg.rut?`RUT ${neg.rut}<br/>`:''}
+              ${neg.direccion?`${neg.direccion}<br/>`:''}
+              ${neg.contacto||''}
+            </div>
+          </div>
+          <div class="doc-block">
+            <div class="doc-label">Documento comercial</div>
+            <div class="doc-title">COTIZACIÓN</div>
+            <div class="doc-num">N.° COT-${String(c.numero).padStart(4,'0')}</div>
+            <div class="doc-badge" style="background:${acBg};color:${acColor};">${estadoTxt}</div>
           </div>
         </div>
-        <div class="doc-section">
-          <div class="doc-title">COTIZACIÓN</div>
-          <div class="doc-num">COT-${String(c.numero).padStart(4,'0')}</div>
-          <span class="badge" style="background:${estadoBg};color:${estadoColor};">${estadoTxt}</span>
+      </div>
+      <div class="gold-bar"></div>
+
+      <div class="info-grid">
+        <div class="info-cell">
+          <div class="info-cell-label">Dirigida a</div>
+          <div class="client-name">${c.cliente||'Sin especificar'}</div>
+          ${c.notas?`<div class="client-note">${c.notas}</div>`:''}
+        </div>
+        <div class="info-cell">
+          <div class="info-cell-label">Detalles del documento</div>
+          <div class="date-rows">
+            <div class="date-row"><span class="date-row-lbl">Fecha de emisión</span><span class="date-row-val">${emitDate}</span></div>
+            <div class="date-row"><span class="date-row-lbl">Válida hasta</span><span class="date-row-val">${venceDate}</span></div>
+            <div class="date-row"><span class="date-row-lbl">Vigencia</span><span><span class="validez-pill">${c.validez||30} días</span></span></div>
+          </div>
         </div>
       </div>
-      <div class="info-strip">
-        <div class="info-item"><label>Fecha emisión</label><span>${new Date(c.fecha).toLocaleDateString('es-CL')}</span></div>
-        <div class="info-item"><label>Válida hasta</label><span>${venceDate}</span></div>
-        <div class="info-item"><label>Validez</label><span>${c.validez||30} días</span></div>
-      </div>
-      <div class="cliente-section">
-        <div class="section-label">Dirigida a</div>
-        <div class="cliente-name">${c.cliente||'Sin especificar'}</div>
-        ${c.notas?`<div class="notas">${c.notas}</div>`:''}
-      </div>
-      <div class="table-section">
+
+      <div class="table-wrap">
+        <div class="table-title">Detalle de productos y servicios</div>
         <table>
           <thead><tr>
-            <th>Descripción</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th>
+            <th>#</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio unit.</th>
+            <th>Subtotal</th>
           </tr></thead>
           <tbody>
-            ${items.map(it=>`<tr>
+            ${items.map((it,i)=>`<tr>
+              <td>${i+1}</td>
               <td>${it.desc||'Sin descripción'}</td>
               <td style="text-align:center;">${it.qty||1}</td>
               <td style="text-align:center;">${fmt(it.precio)}</td>
-              <td style="text-align:right;font-weight:600;">${fmt(it.subtotal)}</td>
+              <td>${fmt(it.subtotal)}</td>
             </tr>`).join('')}
           </tbody>
         </table>
       </div>
-      <div class="totals">
-        <div class="totals-box">
-          <div class="total-row"><span>Neto</span><span>${fmt(c.sub)}</span></div>
-          <div class="total-row"><span>IVA (19%)</span><span>${fmt(c.iva)}</span></div>
-          <div class="total-row grand"><span>TOTAL</span><span>${fmt(c.total)}</span></div>
+
+      <div class="totals-section">
+        <div class="totals-card">
+          <div class="totals-card-inner">
+            <div class="tot-row"><span>Subtotal neto</span><span>${fmt(c.sub)}</span></div>
+            <div class="tot-row"><span>IVA (19%)</span><span>${fmt(c.iva)}</span></div>
+          </div>
+          <div class="tot-grand">
+            <span class="tot-grand-lbl">Total a pagar</span>
+            <span class="tot-grand-val">${fmt(c.total)}</span>
+          </div>
         </div>
       </div>
-      <div class="footer-section">
-        <div class="footer-note">Válida hasta el ${venceDate}.<br/>Para aceptarla, contacte a ${neg.contacto||neg.nombre||'el emisor'}.</div>
-        <div>
-          <button class="btn-print" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+
+      <div class="doc-footer">
+        <div class="footer-left">
+          Esta cotización es válida hasta el <strong>${venceDate}</strong>.<br/>
+          Para aceptarla, contacte a <strong>${neg.contacto||neg.nombre||'el emisor'}</strong>.
+        </div>
+        <div class="footer-right">
+          <span class="footer-brand">stockeo.cl</span>
+          <span class="footer-brand-sub">Sistema de gestión</span>
         </div>
       </div>
-      <div class="bottom-bar"></div>
     </div>
-    <div class="powered">Generado con <a href="https://stockeo.cl" target="_blank">Stockeo</a> · Sistema de gestión para negocios</div>
-  `;
-  document.title = `COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}`;
+    <button class="btn-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <div class="powered">Generado con <a href="https://stockeo.cl" target="_blank">Stockeo</a></div>`;
+
+  document.title=`COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}`;
 }
 
 function mostrarError(msg){
-  document.getElementById('app').innerHTML = `
-    <div class="page"><div class="top-bar"></div>
-    <div class="error-box">
-      <div style="font-size:3rem;margin-bottom:1rem;">😕</div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Cotización no encontrada</div>
-      <div style="font-size:13px;color:#666;">${msg}</div>
-      <div style="margin-top:20px;"><a href="https://stockeo.cl" style="color:#c9a84c;">← Ir a Stockeo</a></div>
-    </div><div class="bottom-bar"></div></div>`;
+  document.getElementById('app').innerHTML=`
+    <div class="page" style="padding:60px 40px;text-align:center;">
+      <div class="gold-bar" style="margin:-60px -40px 40px;"></div>
+      <div style="font-size:48px;margin-bottom:16px;">📋</div>
+      <div style="font-size:20px;font-weight:800;color:#111827;margin-bottom:8px;">No encontrada</div>
+      <div style="font-size:14px;color:#9ca3af;">${msg}</div>
+      <a href="https://stockeo.cl" style="display:inline-block;margin-top:24px;color:#c9a84c;font-weight:700;font-size:13px;">← Ir a Stockeo</a>
+    </div>`;
 }
 
 cargar();
