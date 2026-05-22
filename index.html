@@ -236,6 +236,13 @@ body.app-mode{height:100%;overflow:hidden;}
 .cot-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:7px;}
 .cot-finput{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:13px;padding:9px 12px;transition:border-color .2s;}
 .cot-finput:focus{border-color:rgba(201,168,76,.5);outline:none;}
+.cot-rut-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;background:#1a2d48;border:1px solid rgba(201,168,76,.28);border-radius:9px;z-index:999;max-height:220px;overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:cotDdIn .12s ease;}
+@keyframes cotDdIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.cot-rut-item{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);transition:background .13s;}
+.cot-rut-item:last-child{border-bottom:none;}
+.cot-rut-item:hover,.cot-rut-item:active{background:rgba(201,168,76,.13);}
+.cot-rut-item-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cot-rut-item-rut{font-size:11px;color:rgba(255,255,255,.38);flex-shrink:0;}
 .cot-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;margin-bottom:8px;}
 .cot-row-header{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .cot-row-sel{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;padding:7px 10px;}
@@ -6972,8 +6979,9 @@ function abrirModalCotizacion(cotId=null){
         <div>
           <div class="cot-section-title">Datos del cliente</div>
           <div style="position:relative;margin-bottom:8px;">
-            <input type="text" id="cot-cli-rut" class="cot-finput" placeholder="RUT del cliente (ej: 76.123.456-7)" value="${cot?.cliente_rut||''}" oninput="cotBuscarClienteRUT(this.value);cotUpdatePreview();"/>
-            <div id="cot-cli-found" style="display:${cot?.cliente_rut?'none':'none'};margin-top:5px;font-size:11px;font-weight:600;color:#22c55e;padding:5px 10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);border-radius:7px;"></div>
+            <input type="text" id="cot-cli-rut" class="cot-finput" placeholder="RUT del cliente (ej: 76.123.456-7)" value="${cot?.cliente_rut||''}" oninput="cotBuscarClienteRUT(this.value)" onblur="setTimeout(cotCerrarDropdownRUT,160)" autocomplete="off"/>
+            <div id="cot-rut-dropdown" class="cot-rut-dropdown" style="display:none;"></div>
+            <div id="cot-cli-found" style="display:none;margin-top:5px;font-size:11px;font-weight:600;color:#22c55e;padding:5px 10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);border-radius:7px;"></div>
           </div>
           <input type="text" id="cot-cliente" class="cot-finput" placeholder="Razón social o nombre *" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
@@ -7081,23 +7089,59 @@ function cotCalcTotal(){
 }
 
 function cotBuscarClienteRUT(val){
+  const dropdown=document.getElementById('cot-rut-dropdown');
   const chip=document.getElementById('cot-cli-found');
   const rut=(val||'').replace(/[\.\-\s]/g,'').toLowerCase();
-  if(rut.length<6){if(chip)chip.style.display='none';return;}
-  const c=clientes.find(x=>x.rut&&x.rut.replace(/[\.\-\s]/g,'').toLowerCase()===rut);
-  if(!c){if(chip)chip.style.display='none';return;}
+  if(chip) chip.style.display='none';
+  if(rut.length<2){if(dropdown)dropdown.style.display='none';cotUpdatePreview();return;}
+  const matches=clientes.filter(x=>{
+    if(!x.rut)return false;
+    const xr=x.rut.replace(/[\.\-\s]/g,'').toLowerCase();
+    return xr.startsWith(rut)||xr.includes(rut);
+  }).slice(0,7);
+  if(!matches.length){if(dropdown)dropdown.style.display='none';cotUpdatePreview();return;}
+  dropdown.innerHTML=matches.map((c,i)=>{
+    const badge=c.etiqueta==='vip'?' 👑':c.etiqueta==='frecuente'?' ⭐':c.etiqueta==='mayorista'?' 📦':'';
+    return `<div class="cot-rut-item" onmousedown="cotSeleccionarClienteRUT(${i})"><span class="cot-rut-item-name">${c.nombre||'Sin nombre'}${badge}</span><span class="cot-rut-item-rut">${c.rut||''}</span></div>`;
+  }).join('');
+  dropdown._matches=matches;
+  dropdown.style.display='block';
+  const exact=matches.find(x=>x.rut.replace(/[\.\-\s]/g,'').toLowerCase()===rut);
+  if(exact) _cotFillCliente(exact,false);
+  cotUpdatePreview();
+}
+
+function cotSeleccionarClienteRUT(idx){
+  const dropdown=document.getElementById('cot-rut-dropdown');
+  const c=(dropdown._matches||[])[idx];
+  if(!c)return;
+  const el=document.getElementById('cot-cli-rut');
+  if(el) el.value=c.rut||'';
+  _cotFillCliente(c,true);
+  dropdown.style.display='none';
+  cotUpdatePreview();
+}
+
+function cotCerrarDropdownRUT(){
+  const d=document.getElementById('cot-rut-dropdown');
+  if(d)d.style.display='none';
+}
+
+function _cotFillCliente(c,showChip){
   const elNombre=document.getElementById('cot-cliente');
   const elTel=document.getElementById('cot-cli-tel');
   const elEmail=document.getElementById('cot-cli-email');
   if(elNombre) elNombre.value=c.nombre||'';
   if(elTel)    elTel.value=c.telefono||'';
   if(elEmail)  elEmail.value=c.email||'';
-  if(chip){
-    const badge=c.etiqueta==='vip'?' 👑':c.etiqueta==='frecuente'?' ⭐':c.etiqueta==='mayorista'?' 📦':'';
-    chip.textContent=`✓ ${c.nombre}${badge} — datos completados automáticamente`;
-    chip.style.display='block';
+  if(showChip){
+    const chip=document.getElementById('cot-cli-found');
+    if(chip){
+      const badge=c.etiqueta==='vip'?' 👑':c.etiqueta==='frecuente'?' ⭐':c.etiqueta==='mayorista'?' 📦':'';
+      chip.textContent=`✓ ${c.nombre}${badge} — datos completados automáticamente`;
+      chip.style.display='block';
+    }
   }
-  cotUpdatePreview();
 }
 
 function cotUpdatePreview(){
