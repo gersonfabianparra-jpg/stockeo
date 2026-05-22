@@ -126,7 +126,7 @@ body.app-mode{height:100%;overflow:hidden;}
 .gcard-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:1px;}
 .gcard-body{padding:1rem 1.4rem;}
 /* Metric cards */
-.gm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:.8rem;}
+.gm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:.8rem;}
 .gm-card{background:rgba(255,255,255,.032);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.065);border-radius:18px;padding:1.35rem 1.5rem;position:relative;overflow:hidden;transition:all .2s;cursor:default;}
 .gm-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;}
 .gm-card::after{content:'';position:absolute;top:-60px;right:-40px;width:140px;height:140px;border-radius:50%;pointer-events:none;opacity:.25;}
@@ -143,6 +143,9 @@ body.app-mode{height:100%;overflow:hidden;}
 .gm-blue{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(96,165,250,.07);}
 .gm-blue::before{background:linear-gradient(90deg,transparent,rgba(96,165,250,.8),transparent);}
 .gm-blue::after{background:radial-gradient(circle,rgba(96,165,250,.5),transparent 70%);}
+.gm-indigo{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(129,140,248,.07);}
+.gm-indigo::before{background:linear-gradient(90deg,transparent,rgba(129,140,248,.85),transparent);}
+.gm-indigo::after{background:radial-gradient(circle,rgba(129,140,248,.5),transparent 70%);}
 .gm-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:rgba(255,255,255,.35);margin-bottom:.6rem;font-weight:700;}
 .gm-value{font-size:2.05rem;font-weight:800;line-height:1;margin-bottom:.45rem;letter-spacing:-1px;}
 .gm-sub{font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
@@ -394,7 +397,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   .fin-grid{grid-template-columns:1fr 1fr !important;}
   .fin-bottom-grid{grid-template-columns:1fr !important;}
   .chart-wrap{height:180px;}
-  .gm-grid{grid-template-columns:1fr 1fr;}
+  .gm-grid{grid-template-columns:1fr 1fr;}.gm-value{font-size:1.65rem;}
   .gm-layout{grid-template-columns:1fr;}
   .gm-value{font-size:1.65rem;}
   .dash-ap-metrics{grid-template-columns:1fr 1fr;}
@@ -3673,6 +3676,14 @@ function renderDashboard(){
         ${lowStock.length
           ?`<span class="gm-badge wn">${lowStock.filter(i=>Number(i.cantidad)===0).length} agotados</span><span>${lowStock.filter(i=>Number(i.cantidad)>0).length} bajo mínimo</span>`
           :'<span class="gm-badge inf">Todo en orden ✓</span>'}
+      </div>
+    </div>
+    <div class="gm-card gm-indigo">
+      <div class="gm-label">Ventas brutas — ${meses[now.getMonth()]}</div>
+      <div class="gm-value precio-col" style="color:#a5b4fc">${fmtM(totalMes)}</div>
+      <div class="gm-sub">
+        <span>${ventasMes.length} venta${ventasMes.length!==1?'s':''}</span>
+        ${totalMesAnt>0?`<span class="gm-badge ${totalMes>=totalMesAnt?'up':'dn'}">${totalMes>=totalMesAnt?'↑':'↓'}${Math.abs(Math.round((totalMes-totalMesAnt)/totalMesAnt*100))}% vs mes ant.</span>`:''}
       </div>
     </div>`;
 
