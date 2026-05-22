@@ -2893,7 +2893,7 @@ async function onLogin(user){
       planActivo=neg.plan_activo!==false;
       planVence=neg.plan_vence||null;
       currentRol='dueño';
-      if(neg.logo_url) aplicarLogo(neg.logo_url);
+      if(neg.logo_url){ aplicarLogo(neg.logo_url); cfgNegocio.logo_url=neg.logo_url; }
     } else {
       // 2. Buscar si es miembro del equipo de otro negocio
       const{data:miembro}=await sb.from('usuarios_negocio')
@@ -2907,7 +2907,7 @@ async function onLogin(user){
         planActivo=neg2.plan_activo!==false;
         planVence=neg2.plan_vence||null;
         currentRol=miembro.rol||'vendedor';
-        if(neg2.logo_url) aplicarLogo(neg2.logo_url);
+        if(neg2.logo_url){ aplicarLogo(neg2.logo_url); cfgNegocio.logo_url=neg2.logo_url; }
       } else {
         // Crear negocio nuevo
         const{data:nuevo}=await sb.from('negocios').insert({
@@ -5332,6 +5332,7 @@ async function subirLogo(input){
 
     // Aplicar en pantalla
     aplicarLogo(logoUrl);
+    cfgNegocio.logo_url=logoUrl;
     toast('✓ Logo actualizado','success');
   }catch(e){
     toast('Error: '+e.message,'error');
@@ -7210,7 +7211,7 @@ function exportarCotizacionPDF(id){
   const c=cotizaciones.find(ct=>ct.id===id);
   if(!c) return;
   const neg=cfgNegocio||{};
-  const logo=_logoBase64||'';
+  const logo=_logoBase64||neg.logo_url||'';
   const acColor=c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#b45309';
   const acBg=c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
   const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
