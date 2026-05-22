@@ -329,6 +329,8 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   .content{padding:1rem;padding-bottom:calc(var(--bottom-nav-h) + 1rem);}
   .charts-grid{grid-template-columns:1fr;}
   .dash-hero-grid{grid-template-columns:1fr;}
+  .fin-grid{grid-template-columns:1fr 1fr !important;}
+  .fin-bottom-grid{grid-template-columns:1fr !important;}
   .chart-wrap{height:180px;}
   .form-row{grid-template-columns:1fr;}
   .inv-table-wrap{display:none;}
@@ -1605,6 +1607,9 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
     <div class="page active" id="page-dashboard">
       <!-- KPI: 6 tarjetas clave -->
       <div class="stats-grid" id="dash-stats"></div>
+
+      <!-- Desglose financiero -->
+      <div class="card" id="dash-financiero" style="margin-bottom:1.25rem;"></div>
 
       <!-- Tendencia mensual + Resumen rápido -->
       <div class="dash-hero-grid">
@@ -3606,6 +3611,109 @@ function renderDashboard(){
       <td class="precio-col">$${Number(i.precio).toLocaleString('es-CL')}</td>
     </tr>`).join('');
   }
+  // ── Desglose financiero del mes ──────────────────────────────
+  const df=document.getElementById('dash-financiero');
+  if(df){
+    // Cálculos mes actual
+    const ingMes=totalMes; // precio×qty con IVA
+    const ivaMes=Math.round(ingMes*0.19/1.19);
+    const netoMes=ingMes-ivaMes;
+    const costoMes=Math.round(ventasMes.reduce((s,v)=>s+Number(v.costo_total||0),0));
+    const ganRealMes=netoMes-costoMes; // lo que queda tras pagar IVA y costos
+    const margenMes=netoMes>0?+(ganRealMes/netoMes*100).toFixed(1):0;
+    const pctCosto=netoMes>0?Math.min(100,Math.round(costoMes/netoMes*100)):0;
+    const pctGan=100-pctCosto;
+    const sinCostos=costoMes===0&&ventasMes.length>0;
+
+    // Cálculos mes anterior (para comparar)
+    const ingAnt=totalMesAnt;
+    const ivaAnt=Math.round(ingAnt*0.19/1.19);
+    const netoAnt=ingAnt-ivaAnt;
+    const costoAnt=Math.round(ventasMesAnt.reduce((s,v)=>s+Number(v.costo_total||0),0));
+    const ganRealAnt=netoAnt-costoAnt;
+
+    // Cálculos histórico total
+    const ingTotal=ventas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+    const ivaTotal=Math.round(ingTotal*0.19/1.19);
+    const netoTotal=ingTotal-ivaTotal;
+    const costoTotal=Math.round(ventas.reduce((s,v)=>s+Number(v.costo_total||0),0));
+    const ganRealTotal=netoTotal-costoTotal;
+    const margenTotal=netoTotal>0?+(ganRealTotal/netoTotal*100).toFixed(1):0;
+
+    const fmtM=v=>'$'+Math.round(v).toLocaleString('es-CL');
+    const diffAnt=ganRealAnt!==0?Math.round((ganRealMes-ganRealAnt)/Math.abs(ganRealAnt)*100):null;
+    const diffHtml=diffAnt!==null?`<span style="font-size:11px;font-weight:700;color:${diffAnt>=0?'#22c55e':'#ef4444'};margin-left:6px;">${diffAnt>=0?'↑':'↓'}${Math.abs(diffAnt)}% vs mes ant.</span>`:'';
+
+    df.innerHTML=`
+      <div class="card-header" style="cursor:pointer;user-select:none;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+        <span class="card-title">📊 Desglose financiero — ${meses[now.getMonth()]} ${now.getFullYear()}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${diffHtml}
+          <span style="font-size:11px;color:var(--text-muted);">▼</span>
+        </div>
+      </div>
+      <div class="card-body" style="padding:1rem;">
+        <!-- Flujo del dinero: 4 columnas -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;" class="fin-grid">
+          <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px 12px;border-top:3px solid #60a5fa;">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;">💰 Ingresos brutos</div>
+            <div style="font-size:18px;font-weight:700;color:#60a5fa;" class="precio-col">${fmtM(ingMes)}</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">${ventasMes.length} ventas · con IVA</div>
+          </div>
+          <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px 12px;border-top:3px solid #f59e0b;">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;">🏛 IVA (19%)</div>
+            <div style="font-size:18px;font-weight:700;color:#f59e0b;" class="precio-col">${fmtM(ivaMes)}</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Neto: ${fmtM(netoMes)}</div>
+          </div>
+          <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px 12px;border-top:3px solid #ef4444;">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;">🏭 Costo total</div>
+            <div style="font-size:18px;font-weight:700;color:#ef4444;" class="precio-col">${fmtM(costoMes)}</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">${sinCostos?'⚠ Sin costos cargados':'costo × unidades'}</div>
+          </div>
+          <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px 12px;border-top:3px solid ${ganRealMes>=0?'#22c55e':'#ef4444'};">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;">📈 Ganancia real</div>
+            <div style="font-size:18px;font-weight:700;color:${ganRealMes>=0?'#22c55e':'#ef4444'};" class="precio-col">${fmtM(ganRealMes)}</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Margen: ${margenMes}%</div>
+          </div>
+        </div>
+
+        <!-- Barra visual proporcional -->
+        <div style="margin-bottom:0.85rem;">
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Distribución del neto (${fmtM(netoMes)})</div>
+          <div style="height:10px;background:var(--navy-border);border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:${pctCosto}%;background:#ef4444;transition:width .4s;"></div>
+            <div style="width:${pctGan}%;background:${pctGan>0?'#22c55e':'transparent'};transition:width .4s;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text-muted);">
+            <span style="color:#ef4444;">⬛ Costo ${pctCosto}%</span>
+            <span style="color:${pctGan>0?'#22c55e':'var(--text-muted)'};">⬛ Ganancia ${pctGan}%</span>
+          </div>
+        </div>
+
+        <!-- Fórmula explicativa + resumen histórico -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" class="fin-bottom-grid">
+          <div style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);border-radius:var(--radius);padding:10px 12px;font-size:12px;line-height:1.8;">
+            <div style="font-weight:600;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);">Cómo se calcula</div>
+            <div>${fmtM(ingMes)} ingresos c/IVA</div>
+            <div style="color:#f59e0b;">− ${fmtM(ivaMes)} IVA al SII</div>
+            <div style="border-top:1px dashed var(--navy-border);padding-top:4px;margin-top:2px;">${fmtM(netoMes)} neto declarable</div>
+            <div style="color:#ef4444;">− ${fmtM(costoMes)} costo compra</div>
+            <div style="border-top:1px solid var(--navy-border);padding-top:4px;margin-top:2px;font-weight:700;color:${ganRealMes>=0?'#22c55e':'#ef4444'};">= ${fmtM(ganRealMes)} ganancia real</div>
+          </div>
+          <div style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius);padding:10px 12px;font-size:12px;">
+            <div style="font-weight:600;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);">Acumulado total</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--text-muted);">Ingresos</span><span class="precio-col" style="color:#60a5fa;font-weight:600;">${fmtM(ingTotal)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--text-muted);">IVA total</span><span class="precio-col" style="color:#f59e0b;">${fmtM(ivaTotal)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--text-muted);">Costo total</span><span class="precio-col" style="color:#ef4444;">${fmtM(costoTotal)}</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid var(--navy-border);padding-top:6px;margin-top:4px;"><span style="font-weight:700;">Ganancia real</span><span class="precio-col" style="color:${ganRealTotal>=0?'#22c55e':'#ef4444'};font-weight:700;">${fmtM(ganRealTotal)}</span></div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Margen total: ${margenTotal}%</div>
+          </div>
+        </div>
+        ${sinCostos?`<div style="margin-top:8px;font-size:11px;color:var(--warn);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--radius);padding:6px 10px;">⚠ No tienes costos cargados en tus artículos. Agrega el costo unitario en Inventario para ver la ganancia real.</div>`:''}
+      </div>`;
+  }
+  // ─────────────────────────────────────────────────────────────
+
   renderCharts();applyPriceVisibility();
 }
 
