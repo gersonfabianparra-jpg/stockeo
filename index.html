@@ -112,39 +112,68 @@ body.app-mode{height:100%;overflow:hidden;}
 .stat-sub{font-size:10px;color:var(--text-muted);margin-top:5px;}
 .dash-hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
 .dash-quick-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:var(--radius);border-left:3px solid currentColor;margin-bottom:7px;}
-/* ── Analytics Pro Dashboard ── */
-.dash-ap-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem;}
-.dash-ap-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1.3rem 1.5rem;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
-.dash-ap-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
-.dash-ap-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.dash-ap-card.c-gold::after{background:linear-gradient(90deg,var(--gold),#f0d585,var(--gold));}
-.dash-ap-card.c-green::after{background:linear-gradient(90deg,#22c55e,#4ade80);}
-.dash-ap-card.c-red::after{background:linear-gradient(90deg,#ef4444,#f87171);}
-.dash-ap-card.c-blue::after{background:linear-gradient(90deg,#60a5fa,#93c5fd);}
-.dap-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:.55rem;font-weight:600;}
-.dap-value{font-size:2rem;font-weight:800;line-height:1;margin-bottom:.4rem;color:var(--text-primary);}
-.dap-sub{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.dap-badge{display:inline-flex;align-items:center;gap:2px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
-.dap-badge.up{background:rgba(34,197,94,.15);color:#22c55e;}
-.dap-badge.down{background:rgba(239,68,68,.15);color:#ef4444;}
-.dap-badge.warn{background:rgba(245,158,11,.15);color:#f59e0b;}
-.dash-ap-layout{display:grid;grid-template-columns:1fr 310px;gap:1rem;margin-bottom:1rem;}
-.dash-ap-side{display:flex;flex-direction:column;gap:1rem;}
-.period-toggle{display:flex;gap:3px;background:var(--navy-light);padding:3px;border-radius:8px;}
-.period-btn{padding:5px 13px;border:none;background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .18s;letter-spacing:.3px;}
-.period-btn.active{background:var(--navy-mid);color:var(--text-primary);box-shadow:0 1px 4px rgba(0,0,0,.35);}
-.alert-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:var(--radius);margin-bottom:5px;}
-.alert-item:last-child{margin-bottom:0;}
-.alert-item.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;}
-.alert-item.warn{background:rgba(245,158,11,.08);border-left:3px solid #f59e0b;}
-.fin-flow{display:flex;flex-direction:column;gap:2px;font-size:12px;}
-.fin-flow-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;}
-.fin-flow-row.fin-total{border-top:1px solid var(--navy-border);padding-top:8px;margin-top:3px;font-weight:700;font-size:13px;}
-.dash-ap-table{width:100%;border-collapse:collapse;}
-.dash-ap-table th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);padding:9px 14px;border-bottom:1px solid var(--navy-border);font-weight:600;text-align:left;}
-.dash-ap-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid rgba(42,64,96,.35);color:var(--text-primary);vertical-align:middle;}
-.dash-ap-table tr:last-child td{border-bottom:none;}
-.dash-ap-table tr:hover td{background:var(--navy-light);}
+/* ── Glassmorphism Dashboard ── */
+#page-dashboard{position:relative;isolation:isolate;}
+.dash-orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);}
+.dash-orb-1{width:520px;height:520px;background:radial-gradient(circle,rgba(201,168,76,.14),transparent 70%);top:-160px;right:-80px;}
+.dash-orb-2{width:420px;height:420px;background:radial-gradient(circle,rgba(96,165,250,.09),transparent 70%);bottom:100px;left:-100px;}
+.dash-orb-3{width:260px;height:260px;background:radial-gradient(circle,rgba(139,92,246,.07),transparent 70%);top:45%;right:15%;}
+#page-dashboard>*:not(.dash-orb){position:relative;z-index:1;}
+/* Glass card base */
+.gcard{background:rgba(255,255,255,.032);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.065);border-radius:18px;box-shadow:0 4px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .15s;}
+.gcard:hover{border-color:rgba(255,255,255,.11);box-shadow:0 8px 36px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.09);}
+.gcard-header{padding:.9rem 1.4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);}
+.gcard-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:1px;}
+.gcard-body{padding:1rem 1.4rem;}
+/* Metric cards */
+.gm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:.8rem;}
+.gm-card{background:rgba(255,255,255,.032);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.065);border-radius:18px;padding:1.35rem 1.5rem;position:relative;overflow:hidden;transition:all .2s;cursor:default;}
+.gm-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;}
+.gm-card::after{content:'';position:absolute;top:-60px;right:-40px;width:140px;height:140px;border-radius:50%;pointer-events:none;opacity:.25;}
+.gm-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.11);}
+.gm-gold{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(201,168,76,.1);}
+.gm-gold::before{background:linear-gradient(90deg,transparent,rgba(201,168,76,.9),transparent);}
+.gm-gold::after{background:radial-gradient(circle,rgba(201,168,76,.6),transparent 70%);}
+.gm-green{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(34,197,94,.07);}
+.gm-green::before{background:linear-gradient(90deg,transparent,rgba(34,197,94,.8),transparent);}
+.gm-green::after{background:radial-gradient(circle,rgba(34,197,94,.5),transparent 70%);}
+.gm-red{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(239,68,68,.08);}
+.gm-red::before{background:linear-gradient(90deg,transparent,rgba(239,68,68,.9),transparent);}
+.gm-red::after{background:radial-gradient(circle,rgba(239,68,68,.5),transparent 70%);}
+.gm-blue{box-shadow:0 4px 28px rgba(0,0,0,.4),0 0 50px rgba(96,165,250,.07);}
+.gm-blue::before{background:linear-gradient(90deg,transparent,rgba(96,165,250,.8),transparent);}
+.gm-blue::after{background:radial-gradient(circle,rgba(96,165,250,.5),transparent 70%);}
+.gm-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:rgba(255,255,255,.35);margin-bottom:.6rem;font-weight:700;}
+.gm-value{font-size:2.05rem;font-weight:800;line-height:1;margin-bottom:.45rem;letter-spacing:-1px;}
+.gm-sub{font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.gm-badge{display:inline-flex;align-items:center;gap:2px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.gm-badge.up{background:rgba(74,222,128,.15);color:#4ade80;}
+.gm-badge.dn{background:rgba(248,113,113,.15);color:#f87171;}
+.gm-badge.wn{background:rgba(251,191,36,.15);color:#fbbf24;}
+.gm-badge.inf{background:rgba(147,197,253,.15);color:#93c5fd;}
+/* Main layout */
+.gm-layout{display:grid;grid-template-columns:1fr 280px;gap:.8rem;margin-bottom:.8rem;}
+.gm-aside{display:flex;flex-direction:column;gap:.8rem;}
+/* Period toggle */
+.gperiod{display:flex;gap:2px;background:rgba(255,255,255,.05);padding:3px;border-radius:9px;}
+.gperiod-btn{padding:5px 14px;border:none;background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;transition:all .16s;letter-spacing:.3px;}
+.gperiod-btn.active{background:rgba(255,255,255,.1);color:rgba(255,255,255,.92);box-shadow:0 1px 6px rgba(0,0,0,.4);}
+/* Alert items */
+.galert{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:10px;margin-bottom:5px;transition:background .15s;}
+.galert:last-child{margin-bottom:0;}
+.galert.ga-red{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.14);}
+.galert.ga-amb{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.12);}
+/* Financial flow */
+.gfin{display:flex;flex-direction:column;gap:0;font-size:12px;}
+.gfin-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.gfin-row:last-child{border-bottom:none;}
+.gfin-row.gfin-tot{border-top:1px solid rgba(255,255,255,.08);border-bottom:none;padding-top:9px;margin-top:3px;font-weight:700;font-size:13px;}
+/* Sales table */
+.gstable{width:100%;border-collapse:collapse;}
+.gstable th{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.28);padding:9px 16px;border-bottom:1px solid rgba(255,255,255,.05);font-weight:700;text-align:left;}
+.gstable td{padding:11px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.78);vertical-align:middle;}
+.gstable tr:last-child td{border-bottom:none;}
+.gstable tr:hover td{background:rgba(255,255,255,.025);}
 
 .card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;}
 .card-header{padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--navy-border);flex-wrap:wrap;gap:8px;}
@@ -365,9 +394,11 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   .fin-grid{grid-template-columns:1fr 1fr !important;}
   .fin-bottom-grid{grid-template-columns:1fr !important;}
   .chart-wrap{height:180px;}
+  .gm-grid{grid-template-columns:1fr 1fr;}
+  .gm-layout{grid-template-columns:1fr;}
+  .gm-value{font-size:1.65rem;}
   .dash-ap-metrics{grid-template-columns:1fr 1fr;}
   .dash-ap-layout{grid-template-columns:1fr;}
-  .dash-ap-card .dap-value{font-size:1.6rem;}
   .form-row{grid-template-columns:1fr;}
   .inv-table-wrap{display:none;}
   .art-card-list{display:flex;}
@@ -1641,33 +1672,37 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
+      <!-- Orbs ambientales -->
+      <div class="dash-orb dash-orb-1"></div>
+      <div class="dash-orb dash-orb-2"></div>
+      <div class="dash-orb dash-orb-3"></div>
       <!-- 3 métricas hero -->
-      <div class="dash-ap-metrics" id="dash-metrics"></div>
-      <!-- Gráfico tendencia + Panel lateral -->
-      <div class="dash-ap-layout">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-header">
-            <span class="card-title">Tendencia de ingresos</span>
-            <div class="period-toggle">
-              <button class="period-btn" data-p="7d" onclick="setDashPeriod('7d')">7 días</button>
-              <button class="period-btn active" data-p="30d" onclick="setDashPeriod('30d')">30 días</button>
-              <button class="period-btn" data-p="6m" onclick="setDashPeriod('6m')">6 meses</button>
+      <div class="gm-grid" id="dash-metrics"></div>
+      <!-- Gráfico + Panel lateral -->
+      <div class="gm-layout">
+        <div class="gcard" style="margin-bottom:0">
+          <div class="gcard-header">
+            <span class="gcard-title">Desglose mensual de ingresos</span>
+            <div class="gperiod">
+              <button class="gperiod-btn" data-p="3m" onclick="setDashPeriod('3m')">3M</button>
+              <button class="gperiod-btn active" data-p="6m" onclick="setDashPeriod('6m')">6M</button>
+              <button class="gperiod-btn" data-p="12m" onclick="setDashPeriod('12m')">12M</button>
             </div>
           </div>
-          <div class="card-body"><div style="position:relative;height:215px"><canvas id="chart-trend"></canvas></div></div>
+          <div class="gcard-body"><div style="position:relative;height:220px"><canvas id="chart-trend"></canvas></div></div>
         </div>
-        <div class="dash-ap-side">
-          <div class="card" style="margin-bottom:0" id="dash-alerts-card"></div>
-          <div class="card" style="margin-bottom:0" id="dash-fin-card"></div>
+        <div class="gm-aside">
+          <div class="gcard" style="margin-bottom:0;flex:1" id="dash-alerts-card"></div>
+          <div class="gcard" style="margin-bottom:0" id="dash-fin-card"></div>
         </div>
       </div>
       <!-- Últimas ventas -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Últimas ventas</span>
-          <span id="dash-sales-count" style="font-size:11px;color:var(--text-muted)"></span>
+      <div class="gcard">
+        <div class="gcard-header">
+          <span class="gcard-title">Últimas ventas</span>
+          <span id="dash-sales-count" style="font-size:11px;color:rgba(255,255,255,.28)"></span>
         </div>
-        <div class="table-wrap"><table class="dash-ap-table" id="dash-sales-table"></table></div>
+        <div class="table-wrap"><table class="gstable" id="dash-sales-table"></table></div>
       </div>
     </div>
 
@@ -2363,8 +2398,8 @@ let preciosOcultos=false,ventaPendiente=null,iaGenerated=[];
 let scanLog=[],scanSessionCount=0,pendingScanItem=null,scanPaused=false;
 let zxingReader=null,activeStream=null,cameras=[],activeCameraIdx=0;
 let chartCat=null,chartVal=null,chartVA=null,chartVI=null,chartMes=null,chartTrend=null;
-let dashPeriod='30d';
-function setDashPeriod(p){dashPeriod=p;document.querySelectorAll('.period-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===p));renderChartTrend();}
+let dashPeriod='6m';
+function setDashPeriod(p){dashPeriod=p;document.querySelectorAll('.gperiod-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===p));renderChartTrend();}
 let nextSeq=1;
 
 window.addEventListener('DOMContentLoaded',async()=>{
@@ -3614,86 +3649,90 @@ function renderDashboard(){
   // ── 1. Métricas hero ──
   const dm=document.getElementById('dash-metrics');
   if(dm) dm.innerHTML=`
-    <div class="dash-ap-card c-gold">
-      <div class="dap-label">Ventas hoy</div>
-      <div class="dap-value precio-col">${fmtM(totalHoy)}</div>
-      <div class="dap-sub">
+    <div class="gm-card gm-gold">
+      <div class="gm-label">Ventas hoy</div>
+      <div class="gm-value precio-col" style="color:#f0d585">${fmtM(totalHoy)}</div>
+      <div class="gm-sub">
         <span>${ventasHoy.length} venta${ventasHoy.length!==1?'s':''}</span>
-        ${diffHoy!==null?`<span class="dap-badge ${diffHoy>=0?'up':'down'}">${diffHoy>=0?'↑':'↓'}${Math.abs(diffHoy)}% vs ayer</span>`:''}
+        ${diffHoy!==null?`<span class="gm-badge ${diffHoy>=0?'up':'dn'}">${diffHoy>=0?'↑':'↓'}${Math.abs(diffHoy)}%</span>`:''}
+        <span style="opacity:.6">Ayer ${fmtM(totalAyer)}</span>
       </div>
     </div>
-    <div class="dash-ap-card c-green">
-      <div class="dap-label">Ganancia real — ${meses[now.getMonth()]}</div>
-      <div class="dap-value precio-col" style="color:#22c55e">${fmtM(ganMes)}</div>
-      <div class="dap-sub">
+    <div class="gm-card gm-green">
+      <div class="gm-label">Ganancia real — ${meses[now.getMonth()]}</div>
+      <div class="gm-value precio-col" style="color:#4ade80">${fmtM(ganMes)}</div>
+      <div class="gm-sub">
         <span>Margen ${margenMes}%</span>
-        ${diffGan!==null?`<span class="dap-badge ${diffGan>=0?'up':'down'}">${diffGan>=0?'↑':'↓'}${Math.abs(diffGan)}% vs mes ant.</span>`:''}
+        ${diffGan!==null?`<span class="gm-badge ${diffGan>=0?'up':'dn'}">${diffGan>=0?'↑':'↓'}${Math.abs(diffGan)}% vs mes ant.</span>`:''}
       </div>
     </div>
-    <div class="dash-ap-card ${lowStock.length?'c-red':'c-blue'}">
-      <div class="dap-label">Stock crítico</div>
-      <div class="dap-value" style="color:${lowStock.length?'#ef4444':'#60a5fa'}">${lowStock.length}</div>
-      <div class="dap-sub">
+    <div class="gm-card ${lowStock.length?'gm-red':'gm-blue'}">
+      <div class="gm-label">Stock crítico</div>
+      <div class="gm-value" style="color:${lowStock.length?'#f87171':'#93c5fd'}">${lowStock.length}</div>
+      <div class="gm-sub">
         ${lowStock.length
-          ?`<span class="dap-badge warn">${lowStock.filter(i=>Number(i.cantidad)===0).length} agotados</span><span>${lowStock.filter(i=>Number(i.cantidad)>0).length} bajo mínimo</span>`
-          :'<span>Todo en orden ✓</span>'}
+          ?`<span class="gm-badge wn">${lowStock.filter(i=>Number(i.cantidad)===0).length} agotados</span><span>${lowStock.filter(i=>Number(i.cantidad)>0).length} bajo mínimo</span>`
+          :'<span class="gm-badge inf">Todo en orden ✓</span>'}
       </div>
     </div>`;
 
-  // ── 2. Panel de alertas ──
+  // ── 2. Alertas de stock ──
   const ac=document.getElementById('dash-alerts-card');
   if(ac){
-    const sorted=[...lowStock].sort((a,b)=>Number(a.cantidad)-Number(b.cantidad)).slice(0,6);
+    const sorted=[...lowStock].sort((a,b)=>Number(a.cantidad)-Number(b.cantidad)).slice(0,7);
     ac.innerHTML=`
-      <div class="card-header"><span class="card-title">Stock bajo</span>${lowStock.length?`<span class="dap-badge warn">${lowStock.length}</span>`:''}</div>
-      <div class="card-body" style="padding:.85rem">
+      <div class="gcard-header">
+        <span class="gcard-title">Stock bajo</span>
+        ${lowStock.length?`<span class="gm-badge wn">${lowStock.length}</span>`:''}
+      </div>
+      <div class="gcard-body" style="padding-top:.7rem">
         ${sorted.length?sorted.map(i=>`
-          <div class="alert-item ${Number(i.cantidad)===0?'danger':'warn'}">
+          <div class="galert ${Number(i.cantidad)===0?'ga-red':'ga-amb'}">
             <div>
-              <div style="font-size:12px;font-weight:500;color:var(--text-primary)">${i.nombre}</div>
-              <div style="font-size:10px;color:var(--text-muted)">${i.categoria||'Sin categoría'}</div>
+              <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.82)">${i.nombre}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:1px">${i.categoria||'Sin cat.'}</div>
             </div>
-            <span style="font-size:15px;font-weight:700;color:${Number(i.cantidad)===0?'#ef4444':'#f59e0b'}">${i.cantidad} u.</span>
+            <span style="font-size:16px;font-weight:800;color:${Number(i.cantidad)===0?'#f87171':'#fbbf24'};min-width:36px;text-align:right">${i.cantidad}</span>
           </div>`).join('')
-        :'<div style="text-align:center;padding:.85rem;color:var(--text-muted);font-size:12px;">✓ Todo el stock en orden</div>'}
+        :'<div style="padding:1.2rem 0;text-align:center;color:rgba(255,255,255,.3);font-size:12px">✓ Sin alertas</div>'}
       </div>`;
   }
 
-  // ── 3. Financiero mini ──
+  // ── 3. Financiero del mes ──
   const fc=document.getElementById('dash-fin-card');
   if(fc){
     const pctCosto=netoMes>0?Math.min(100,Math.round(costoMes/netoMes*100)):0;
     const sinCostos=costoMes===0&&ventasMes.length>0;
     fc.innerHTML=`
-      <div class="card-header"><span class="card-title">Financiero ${meses[now.getMonth()]}</span></div>
-      <div class="card-body" style="padding:.85rem">
-        <div class="fin-flow">
-          <div class="fin-flow-row"><span style="color:var(--text-muted)">Ingresos brutos</span><span class="precio-col" style="color:#60a5fa;font-weight:600">${fmtM(totalMes)}</span></div>
-          <div class="fin-flow-row"><span style="color:#f59e0b">− IVA 19%</span><span class="precio-col" style="color:#f59e0b">−${fmtM(ivaMes)}</span></div>
-          <div class="fin-flow-row" style="border-top:1px dashed var(--navy-border);padding-top:7px;margin-top:2px"><span style="color:var(--text-secondary)">Neto</span><span class="precio-col">${fmtM(netoMes)}</span></div>
-          <div class="fin-flow-row"><span style="color:#ef4444">− Costos</span><span class="precio-col" style="color:#ef4444">−${fmtM(costoMes)}</span></div>
-          <div class="fin-flow-row fin-total"><span>Ganancia real</span><span class="precio-col" style="color:${ganMes>=0?'#22c55e':'#ef4444'}">${fmtM(ganMes)}</span></div>
+      <div class="gcard-header"><span class="gcard-title">Financiero ${meses[now.getMonth()]}</span></div>
+      <div class="gcard-body" style="padding-top:.75rem">
+        <div class="gfin">
+          <div class="gfin-row"><span style="color:rgba(255,255,255,.4)">Ingresos brutos</span><span class="precio-col" style="color:#93c5fd;font-weight:600">${fmtM(totalMes)}</span></div>
+          <div class="gfin-row"><span style="color:#fbbf24">− IVA 19%</span><span class="precio-col" style="color:#fbbf24">−${fmtM(ivaMes)}</span></div>
+          <div class="gfin-row"><span style="color:rgba(255,255,255,.5)">Neto</span><span class="precio-col" style="color:rgba(255,255,255,.7)">${fmtM(netoMes)}</span></div>
+          <div class="gfin-row"><span style="color:#f87171">− Costos</span><span class="precio-col" style="color:#f87171">−${fmtM(costoMes)}</span></div>
+          <div class="gfin-row gfin-tot"><span>Ganancia real</span><span class="precio-col" style="color:${ganMes>=0?'#4ade80':'#f87171'}">${fmtM(ganMes)}</span></div>
         </div>
-        <div style="margin-top:8px;height:5px;background:var(--navy-border);border-radius:3px;overflow:hidden;display:flex">
-          <div style="width:${pctCosto}%;background:#ef4444"></div>
-          <div style="flex:1;background:#22c55e"></div>
+        <div style="margin-top:10px;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;display:flex">
+          <div style="width:${pctCosto}%;background:rgba(239,68,68,.7);transition:width .4s"></div>
+          <div style="flex:1;background:rgba(74,222,128,.6)"></div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px">
-          <span style="color:#ef4444">Costo ${pctCosto}%</span>
-          <span style="color:#22c55e">Ganancia ${100-pctCosto}%</span>
+          <span style="color:rgba(248,113,113,.7)">Costo ${pctCosto}%</span>
+          <span style="color:rgba(74,222,128,.7)">Ganancia ${100-pctCosto}%</span>
         </div>
-        ${sinCostos?`<div style="margin-top:8px;font-size:10px;color:#f59e0b;background:rgba(245,158,11,.08);border-radius:var(--radius);padding:5px 8px">⚠ Sin costos cargados en artículos</div>`:''}
+        ${sinCostos?`<div style="margin-top:8px;font-size:10px;color:#fbbf24;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.12);border-radius:8px;padding:5px 9px">⚠ Sin costos cargados</div>`:''}
       </div>`;
   }
 
-  // ── 4. Tabla de últimas ventas ──
+  // ── 4. Tabla ventas ──
   const st=document.getElementById('dash-sales-table');
   const sc=document.getElementById('dash-sales-count');
   if(st){
     const recientes=ventas.slice(0,12);
     if(sc) sc.textContent=ventas.length+' en total';
     if(!recientes.length){
-      st.innerHTML='<tbody><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Sin ventas registradas</td></tr></tbody>';
+      st.innerHTML='<tbody><tr><td colspan="5" style="text-align:center;padding:2rem;color:rgba(255,255,255,.25)">Sin ventas registradas</td></tr></tbody>';
     } else {
       st.innerHTML=`<thead><tr>
         <th>Artículo</th><th>Cliente</th>
@@ -3704,11 +3743,11 @@ function renderDashboard(){
         const total=Number(v.precio||0)*Number(v.qty||1);
         const f=new Date(v.fecha).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
         return`<tr>
-          <td><div style="font-weight:500">${v.art_nombre||v.art_id||'—'}</div>${v.tipo==='servicio'?'<div style="font-size:10px;color:var(--gold)">Servicio</div>':''}</td>
-          <td style="color:var(--text-muted);font-size:12px">${v.cliente||'—'}</td>
-          <td style="text-align:center;color:var(--text-muted)">×${v.qty||1}</td>
-          <td style="text-align:right;font-weight:700;color:var(--gold)" class="precio-col">${fmtM(total)}</td>
-          <td style="text-align:right;font-size:11px;color:var(--text-muted)">${f}</td>
+          <td><span style="font-weight:600">${v.art_nombre||v.art_id||'—'}</span>${v.tipo==='servicio'?'<span style="font-size:10px;color:#f0d585;margin-left:6px;opacity:.7">serv.</span>':''}</td>
+          <td style="color:rgba(255,255,255,.4);font-size:12px">${v.cliente||'—'}</td>
+          <td style="text-align:center;color:rgba(255,255,255,.4)">×${v.qty||1}</td>
+          <td style="text-align:right;font-weight:700;color:#f0d585" class="precio-col">${fmtM(total)}</td>
+          <td style="text-align:right;font-size:11px;color:rgba(255,255,255,.3)">${f}</td>
         </tr>`;
       }).join('')}</tbody>`;
     }
@@ -3722,59 +3761,47 @@ function renderChartTrend(){
   const el=document.getElementById('chart-trend');
   if(!el) return;
   const now=new Date();
-  const labels=[],data=[],ganData=[];
-  if(dashPeriod==='7d'){
-    for(let i=6;i>=0;i--){
-      const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);
-      const ds=d.toISOString().slice(0,10);
-      const dv=ventas.filter(v=>(v.fecha||'').slice(0,10)===ds);
-      labels.push(d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'}));
-      data.push(Math.round(dv.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0)));
-      ganData.push(Math.round(dv.reduce((s,v)=>s+Number(v.ganancia||0),0)));
-    }
-  } else if(dashPeriod==='30d'){
-    for(let i=29;i>=0;i--){
-      const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);
-      const ds=d.toISOString().slice(0,10);
-      const dv=ventas.filter(v=>(v.fecha||'').slice(0,10)===ds);
-      labels.push(i%6===0?d.toLocaleDateString('es-CL',{day:'numeric',month:'short'}):'');
-      data.push(Math.round(dv.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0)));
-      ganData.push(Math.round(dv.reduce((s,v)=>s+Number(v.ganancia||0),0)));
-    }
-  } else {
-    const nm=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-    for(let i=5;i>=0;i--){
-      const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-      const key=d.toISOString().slice(0,7);
-      const mv=ventas.filter(v=>(v.fecha||'').slice(0,7)===key);
-      labels.push(nm[d.getMonth()]);
-      data.push(Math.round(mv.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0)));
-      ganData.push(Math.round(mv.reduce((s,v)=>s+Number(v.ganancia||0),0)));
-    }
+  const months=dashPeriod==='3m'?3:dashPeriod==='12m'?12:6;
+  const nm=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const labels=[],costoD=[],ivaD=[],ganD=[];
+  for(let i=months-1;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const key=d.toISOString().slice(0,7);
+    const mv=ventas.filter(v=>(v.fecha||'').slice(0,7)===key);
+    const ing=mv.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+    const iva=Math.round(ing*0.19/1.19);
+    const neto=ing-iva;
+    const costo=Math.round(mv.reduce((s,v)=>s+Number(v.costo_total||0),0));
+    const gan=Math.max(0,neto-costo);
+    labels.push(nm[d.getMonth()]);
+    costoD.push(costo);
+    ivaD.push(iva);
+    ganD.push(gan);
   }
   if(chartTrend) chartTrend.destroy();
-  const ctx=el.getContext('2d');
-  const gIng=ctx.createLinearGradient(0,0,0,215);
-  gIng.addColorStop(0,'rgba(201,168,76,.3)');gIng.addColorStop(1,'rgba(201,168,76,.02)');
-  const gGan=ctx.createLinearGradient(0,0,0,215);
-  gGan.addColorStop(0,'rgba(34,197,94,.2)');gGan.addColorStop(1,'rgba(34,197,94,.02)');
   chartTrend=new Chart(el,{
-    type:'line',
+    type:'bar',
     data:{labels,datasets:[
-      {label:'Ingresos',data,borderColor:'#c9a84c',backgroundColor:gIng,borderWidth:2,pointRadius:dashPeriod==='30d'?0:3,pointHoverRadius:5,fill:true,tension:.4},
-      {label:'Ganancia',data:ganData,borderColor:'#22c55e',backgroundColor:gGan,borderWidth:1.5,pointRadius:0,pointHoverRadius:4,fill:true,tension:.4}
+      {label:'Costo',data:costoD,backgroundColor:'rgba(248,113,113,.65)',borderColor:'rgba(248,113,113,.9)',borderWidth:0,stack:'s',borderRadius:{topLeft:0,topRight:0,bottomLeft:5,bottomRight:5},borderSkipped:false},
+      {label:'IVA (SII)',data:ivaD,backgroundColor:'rgba(251,191,36,.55)',borderColor:'rgba(251,191,36,.8)',borderWidth:0,stack:'s',borderRadius:0,borderSkipped:false},
+      {label:'Ganancia',data:ganD,backgroundColor:'rgba(74,222,128,.65)',borderColor:'rgba(74,222,128,.9)',borderWidth:0,stack:'s',borderRadius:{topLeft:5,topRight:5,bottomLeft:0,bottomRight:0},borderSkipped:false}
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'top',labels:{color:'#8aaac8',font:{size:10,family:'DM Sans'},boxWidth:10,padding:14}},
-        tooltip:{backgroundColor:'rgba(10,18,30,.92)',titleColor:'#8aaac8',bodyColor:'#e2e8f0',padding:10,
-          callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw.toLocaleString('es-CL')}}
+        legend:{position:'top',labels:{color:'rgba(255,255,255,.45)',font:{size:10},boxWidth:10,padding:16,usePointStyle:true,pointStyleWidth:8}},
+        tooltip:{
+          backgroundColor:'rgba(4,10,22,.92)',titleColor:'rgba(255,255,255,.65)',bodyColor:'rgba(255,255,255,.85)',
+          borderColor:'rgba(255,255,255,.08)',borderWidth:1,padding:12,
+          callbacks:{
+            label:c=>' '+c.dataset.label+': $'+Math.round(c.raw).toLocaleString('es-CL'),
+            footer:items=>'  Total: $'+Math.round(items.reduce((s,i)=>s+i.raw,0)).toLocaleString('es-CL')
+          }
+        }
       },
       scales:{
-        x:{ticks:{color:'#4d6b8a',font:{size:9},maxRotation:0},grid:{color:'rgba(42,64,96,.25)',drawBorder:false}},
-        y:{ticks:{color:'#4d6b8a',font:{size:9},callback:v=>v>=1000000?'$'+(v/1000000).toFixed(1)+'M':v>=1000?'$'+Math.round(v/1000)+'k':'$'+v},grid:{color:'rgba(42,64,96,.25)',drawBorder:false}}
+        x:{stacked:true,ticks:{color:'rgba(255,255,255,.3)',font:{size:10}},grid:{display:false},border:{display:false}},
+        y:{stacked:true,ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1000?'$'+Math.round(v/1000)+'k':'$'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false}}
       }
     }
   });
