@@ -2346,6 +2346,22 @@ window.addEventListener('DOMContentLoaded',async()=>{
     auth:{persistSession:true,storageKey:'ls_auth',storage:window.localStorage,autoRefreshToken:true}
   });
 
+  // Seguridad: si la carga tarda más de 9 segundos, ocultar splash y mostrar landing
+  const _splashGuard=setTimeout(()=>{
+    const splash=document.getElementById('splash-screen');
+    if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
+    if(document.getElementById('app')?.style.display!=='flex'){
+      const ls=document.getElementById('login-screen');
+      if(ls&&!ls.classList.contains('show')){
+        ls.className='show';
+        const lp=document.getElementById('landing-page');
+        if(lp) lp.style.display='';
+        const ap=document.getElementById('auth-panel');
+        if(ap) ap.style.display='none';
+      }
+    }
+  },9000);
+
   // Detectar retorno de Mercado Pago
   const urlParams = new URLSearchParams(window.location.search);
   const pagoStatus = urlParams.get('pago');
@@ -2472,6 +2488,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
     // Reiniciar banner
     if(window._iniciarBanner) setTimeout(window._iniciarBanner, 100);
   }
+  clearTimeout(_splashGuard);
   // Ocultar splash screen
   const splash=document.getElementById('splash-screen');
   if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
@@ -2658,6 +2675,29 @@ async function loginGoogle(){
   if(error) toast('Error Google: '+error.message,'error');
 }
 
+function mostrarCargandoApp(){
+  let ov=document.getElementById('_carga-overlay');
+  if(ov) return;
+  ov=document.createElement('div');
+  ov.id='_carga-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;';
+  ov.innerHTML='<div style="width:52px;height:52px;border-radius:50%;border:3px solid #2a2a3e;border-top-color:#c9a84c;animation:spin 0.8s linear infinite;"></div><div style="color:#c9a84c;font-size:13px;font-weight:600;letter-spacing:.5px;">Cargando...</div>';
+  if(!document.getElementById('_spin-style')){
+    const s=document.createElement('style');s.id='_spin-style';
+    s.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+  document.body.appendChild(ov);
+}
+
+function _ocultarOverlayCarga(){
+  const ov=document.getElementById('_carga-overlay');
+  if(!ov) return;
+  ov.style.transition='opacity .3s';
+  ov.style.opacity='0';
+  setTimeout(()=>ov.remove(),350);
+}
+
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim();
   const pass=document.getElementById('l-pass').value;
@@ -2671,7 +2711,7 @@ async function doLogin(){
     btn.disabled=false;btn.textContent='Iniciar sesión';
     return;
   }
-  if(data?.user) await onLogin(data.user);
+  if(data?.user){ mostrarCargandoApp(); await onLogin(data.user); }
 }
 
 async function onLogin(user){
@@ -2717,7 +2757,7 @@ async function onLogin(user){
     }
   }catch(e){console.warn('[negocio]',e.message);}
 
-  // Mostrar app — ocultar todo lo del login
+  // Ocultar pantallas de login/landing inmediatamente
   const loginScreen=document.getElementById('login-screen');
   loginScreen.classList.remove('show');
   loginScreen.style.display='none';
@@ -2725,35 +2765,37 @@ async function onLogin(user){
   if(authPanel) authPanel.style.display='none';
   const landingPage=document.getElementById('landing-page');
   if(landingPage) landingPage.style.display='none';
-  document.getElementById('app').style.display='flex';
-  document.body.classList.add('app-mode');
-  // Ocultar splash si aún existe
-  const splash=document.getElementById('splash-screen');
-  if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
-  // Mostrar bottom nav
-  const bn=document.querySelector('.bottom-nav');
-  if(bn) bn.style.removeProperty('display');
+
+  // Preparar datos de usuario en el DOM antes de mostrar la app
   document.getElementById('user-avatar').textContent=user.email.substring(0,2).toUpperCase();
   document.getElementById('user-name').textContent=user.email;
-
-  // Mostrar nombre del negocio
   const negSidebar=document.getElementById('neg-nombre-sidebar');
   if(negSidebar) negSidebar.textContent=negNombre||(esAdmin?'Administrador':'Mi negocio');
   const negLogoNombre=document.getElementById('neg-nombre-logo');
   if(negLogoNombre) negLogoNombre.textContent=negNombre||'';
   const ph=document.getElementById('neg-logo-placeholder');
   if(ph) ph.textContent=(negNombre||'LS').substring(0,2).toUpperCase();
-
   const navAdmin=document.getElementById('nav-admin');
   const bnAdmin=document.getElementById('bn-admin-item');
   if(navAdmin) navAdmin.style.display=esAdmin?'':'none';
   if(bnAdmin)  bnAdmin.style.display=esAdmin?'':'none';
 
+  // Cargar datos ANTES de mostrar la app para evitar flash vacío
   await loadData();
   cargarConfigNegocio();
   renderAll();
   aplicarPermisosRol();
   actualizarConexion();
+
+  // Mostrar app solo cuando los datos ya están listos
+  document.getElementById('app').style.display='flex';
+  document.body.classList.add('app-mode');
+  const bn=document.querySelector('.bottom-nav');
+  if(bn) bn.style.removeProperty('display');
+  // Ocultar splash y overlay de carga si existen
+  const splash=document.getElementById('splash-screen');
+  if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
+  _ocultarOverlayCarga();
   iniciarRealtime();
   if(!esAdmin) verificarPlan();
   // Restaurar página desde URL o sessionStorage
