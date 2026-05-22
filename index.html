@@ -2895,7 +2895,7 @@ async function onLogin(user){
       planActivo=neg.plan_activo!==false;
       planVence=neg.plan_vence||null;
       currentRol='dueño';
-      if(neg.logo_url){ aplicarLogo(neg.logo_url); cfgNegocio.logo_url=neg.logo_url; }
+      if(neg.logo_url){ aplicarLogo(neg.logo_url); _guardarLogoUrl(neg.logo_url); }
     } else {
       // 2. Buscar si es miembro del equipo de otro negocio
       const{data:miembro}=await sb.from('usuarios_negocio')
@@ -2909,7 +2909,7 @@ async function onLogin(user){
         planActivo=neg2.plan_activo!==false;
         planVence=neg2.plan_vence||null;
         currentRol=miembro.rol||'vendedor';
-        if(neg2.logo_url){ aplicarLogo(neg2.logo_url); cfgNegocio.logo_url=neg2.logo_url; }
+        if(neg2.logo_url){ aplicarLogo(neg2.logo_url); _guardarLogoUrl(neg2.logo_url); }
       } else {
         // Crear negocio nuevo
         const{data:nuevo}=await sb.from('negocios').insert({
@@ -4828,6 +4828,15 @@ let _boletaActual=null;
 
 function numBoleta(n){return 'B-'+String(n).padStart(6,'0');}
 
+function _guardarLogoUrl(url){
+  cfgNegocio.logo_url=url;
+  try{
+    const s=JSON.parse(localStorage.getItem('ls_cfg_negocio')||'{}');
+    s.logo_url=url;
+    localStorage.setItem('ls_cfg_negocio',JSON.stringify(s));
+  }catch(e){}
+}
+
 function cargarConfigNegocio(){
   const c=localStorage.getItem('ls_cfg_negocio');
   if(c) cfgNegocio={...cfgNegocio,...JSON.parse(c)};
@@ -4851,6 +4860,7 @@ function poblarInputsNegocio(){
 
 function syncCfgNegocio(){
   cfgNegocio={
+    ...cfgNegocio,
     nombre:document.getElementById('cfg-nombre')?.value.trim()||'Stockeo',
     rut:document.getElementById('cfg-rut')?.value.trim()||'',
     direccion:document.getElementById('cfg-direccion')?.value.trim()||'',
@@ -5332,9 +5342,8 @@ async function subirLogo(input){
     // Guardar en negocios
     await sbRun(()=>sb.from('negocios').update({logo_url:logoUrl}).eq('id',currentNegocioId));
 
-    // Aplicar en pantalla
     aplicarLogo(logoUrl);
-    cfgNegocio.logo_url=logoUrl;
+    _guardarLogoUrl(logoUrl);
     toast('✓ Logo actualizado','success');
   }catch(e){
     toast('Error: '+e.message,'error');
