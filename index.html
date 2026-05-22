@@ -191,16 +191,21 @@ body.app-mode{height:100%;overflow:hidden;}
 .cot-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.45);margin-bottom:6px;}
 .cot-stat-val{font-size:26px;font-weight:900;line-height:1;}
 .cot-stat-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:5px;}
-.cot-card{background:#162438;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;display:flex;gap:0;align-items:stretch;transition:border-color .2s,transform .15s;overflow:hidden;}
-.cot-card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-1px);}
-.cot-card-accent{width:5px;flex-shrink:0;margin:-16px 16px -16px -18px;border-radius:0;}
-.cot-card-body{flex:1;min-width:0;}
-.cot-card-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
-.cot-card-title{font-size:14px;font-weight:700;color:#fff;}
-.cot-card-meta{font-size:11px;color:rgba(255,255,255,.38);}
-.cot-card-total{font-size:15px;font-weight:800;color:#c9a84c;}
-.cot-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;}
-.cot-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.cot-card{background:#162438;border:1px solid rgba(255,255,255,.09);border-radius:14px;overflow:hidden;transition:transform .18s,border-color .2s,box-shadow .2s;}
+.cot-card:hover{transform:translateY(-2px);border-color:rgba(201,168,76,.32);box-shadow:0 8px 32px rgba(0,0,0,.35);}
+.cot-card-strip{height:4px;width:100%;}
+.cot-card-inner{padding:18px 20px;}
+.cot-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.cot-card-left{flex:1;min-width:0;}
+.cot-card-num{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:4px;}
+.cot-card-client{font-size:17px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cot-card-right{text-align:right;flex-shrink:0;}
+.cot-card-amount{font-size:22px;font-weight:900;color:#c9a84c;line-height:1;margin-bottom:6px;}
+.cot-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
+.cot-card-meta{font-size:11px;color:rgba(255,255,255,.32);margin-bottom:10px;}
+.cot-card-items{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.cot-item-tag{font-size:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:6px;padding:3px 9px;color:rgba(255,255,255,.5);}
+.cot-card-actions{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.06);padding-top:12px;}
 /* Split modal */
 .cot-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:stretch;}
 .cot-modal-form{width:420px;flex-shrink:0;background:#0d1117;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;overflow:hidden;}
@@ -6822,32 +6827,37 @@ function renderCotizaciones(){
   }
   grid.innerHTML=cotizaciones.map(c=>{
     const accent=c.estado==='aceptada'?'#22c55e':c.estado==='rechazada'?'#ef4444':'#f59e0b';
-    const bbg=c.estado==='aceptada'?'rgba(34,197,94,.15)':c.estado==='rechazada'?'rgba(239,68,68,.15)':'rgba(245,158,11,.12)';
+    const bbg=c.estado==='aceptada'?'rgba(34,197,94,.15)':c.estado==='rechazada'?'rgba(239,68,68,.15)':'rgba(245,158,11,.13)';
     const btxt=c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente';
+    const diasVence=c.estado==='pendiente'&&c.validez?Math.ceil((new Date(c.fecha).getTime()+c.validez*86400000-Date.now())/86400000):null;
+    const venceStr=diasVence!==null?(diasVence>0?`· vence en ${diasVence}d`:' · <span style="color:#ef4444;">vencida</span>'):'';
+    const tags=(c.items||[]).slice(0,3).map(it=>`<span class="cot-item-tag">${(it.desc||'').substring(0,22)}</span>`).join('');
+    const masItems=(c.items||[]).length>3?`<span class="cot-item-tag" style="color:rgba(255,255,255,.3);">+${c.items.length-3} más</span>`:'';
     return `<div class="cot-card">
-      <div class="cot-card-accent" style="background:${accent};"></div>
-      <div class="cot-card-body">
-        <div class="cot-card-top">
-          <div>
-            <div class="cot-card-title">COT-${String(c.numero).padStart(4,'0')} · ${c.cliente||'Sin cliente'}</div>
-            <div class="cot-card-meta">${new Date(c.fecha).toLocaleDateString('es-CL')} · ${c.items.length} ítem${c.items.length!==1?'s':''}</div>
+      <div class="cot-card-strip" style="background:${accent};"></div>
+      <div class="cot-card-inner">
+        <div class="cot-card-head">
+          <div class="cot-card-left">
+            <div class="cot-card-num">COT-${String(c.numero).padStart(4,'0')}</div>
+            <div class="cot-card-client">${c.cliente||'Sin cliente'}</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            <div class="cot-card-total">$${(c.total||0).toLocaleString('es-CL')}</div>
+          <div class="cot-card-right">
+            <div class="cot-card-amount">$${(c.total||0).toLocaleString('es-CL')}</div>
             <span class="cot-badge" style="background:${bbg};color:${accent};">${btxt}</span>
           </div>
         </div>
-        ${c.notas?`<div style="font-size:11px;color:rgba(255,255,255,.32);margin-bottom:8px;font-style:italic;">${c.notas.substring(0,80)}${c.notas.length>80?'…':''}</div>`:''}
+        <div class="cot-card-meta">${new Date(c.fecha).toLocaleDateString('es-CL')} · ${c.items.length} ítem${c.items.length!==1?'s':''} ${venceStr}</div>
+        <div class="cot-card-items">${tags}${masItems}</div>
         <div class="cot-card-actions">
-          <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Ver detalle</button>
           <button class="btn btn-sm" style="background:rgba(99,179,237,.12);color:#63b3ed;border:1px solid rgba(99,179,237,.25);" onclick="window.open('https://stockeo.cl/cotizacion/${c.id}','_blank')">🌐 Ver link</button>
+          <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Detalle</button>
           <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ PDF</button>
           <button class="btn btn-sm" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
           ${c.estado==='pendiente'?`
-            <button class="btn btn-sm" style="background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>
+            <button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.22);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>
             <button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>
           `:''}
-          <button class="btn btn-sm" style="background:rgba(239,68,68,.06);color:rgba(239,68,68,.65);" onclick="eliminarCotizacion('${c.id}')">🗑</button>
+          <button class="btn btn-sm" style="background:rgba(239,68,68,.06);color:rgba(239,68,68,.6);" onclick="eliminarCotizacion('${c.id}')">🗑</button>
         </div>
       </div>
     </div>`;
