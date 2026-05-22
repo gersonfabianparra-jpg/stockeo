@@ -6840,6 +6840,7 @@ function renderCotizaciones(){
         ${c.notas?`<div style="font-size:11px;color:rgba(255,255,255,.32);margin-bottom:8px;font-style:italic;">${c.notas.substring(0,80)}${c.notas.length>80?'…':''}</div>`:''}
         <div class="cot-card-actions">
           <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Ver detalle</button>
+          <button class="btn btn-sm" style="background:rgba(99,179,237,.12);color:#63b3ed;border:1px solid rgba(99,179,237,.25);" onclick="window.open('https://stockeo.cl/cotizacion/${c.id}','_blank')">🌐 Ver link</button>
           <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ PDF</button>
           <button class="btn btn-sm" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
           ${c.estado==='pendiente'?`
