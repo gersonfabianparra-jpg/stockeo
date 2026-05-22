@@ -4638,10 +4638,30 @@ function renderBoletas(){
         <td style="padding:4px 6px;font-size:12px;text-align:center;border-bottom:1px solid var(--navy-border);color:var(--gold);font-weight:600">${i.qty}</td>
         <td style="padding:4px 6px;font-size:12px;text-align:right;border-bottom:1px solid var(--navy-border);color:var(--text-secondary)">$${Number(i.precioUnit||0).toFixed(0)}</td>
       </tr>`).join('');
+    const negNom=b.negocio?.nombre||cfgNegocio.nombre||'';
+    const negRut=b.negocio?.rut||cfgNegocio.rut||'';
+    const cliNom=b.cliente?.nombre||'';
+    const cliRut=b.cliente?.rut||'';
+    const cliTel=b.cliente?.telefono||'';
+    const cliEmail=b.cliente?.email||'';
+    const tieneCliente=cliNom||cliRut||cliTel||cliEmail;
     return`<div class="boleta-card" id="bcard-${b.id}">
+      <!-- Negocio -->
+      <div style="border-bottom:1px solid var(--navy-border);padding-bottom:8px;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text-primary);">${negNom||'—'}</div>
+        ${negRut?`<div style="font-size:10px;color:var(--text-muted);">RUT: ${negRut}</div>`:''}
+      </div>
       <div class="boleta-card-top"><span class="boleta-num">${numBoleta(b.numero)}</span><span class="boleta-fecha">${f}</span></div>
-      <div style="font-size:10px;color:var(--text-muted);font-family:monospace;margin-bottom:6px">${b.id}</div>
-      ${b.cliente?.nombre?`<div style="font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:6px">👤 ${b.cliente.nombre}</div>`:''}
+      <!-- Cliente -->
+      <div style="background:var(--navy-light);border-radius:var(--radius);padding:6px 8px;margin-bottom:8px;border-left:2px solid var(--gold);">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:3px;">Cliente</div>
+        ${tieneCliente?`
+          <div style="font-size:12px;font-weight:600;color:var(--text-primary);">${cliNom||'Sin nombre'}</div>
+          ${cliRut?`<div style="font-size:11px;color:var(--text-muted);">RUT: ${cliRut}</div>`:''}
+          ${cliTel?`<div style="font-size:11px;color:var(--text-muted);">📞 ${cliTel}</div>`:''}
+          ${cliEmail?`<div style="font-size:11px;color:var(--text-muted);">✉ ${cliEmail}</div>`:''}
+        `:`<div style="font-size:11px;color:var(--text-muted);font-style:italic;">Consumidor final</div>`}
+      </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:8px">
         <thead>
           <tr style="border-bottom:1px solid var(--navy-border)">
@@ -4783,48 +4803,70 @@ function htmlBoleta(b){
     ? `<img src="${_logoBase64}" style="max-height:70px;max-width:180px;object-fit:contain;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"/>`
     : '';
 
+  const neg=b.negocio||{};
+  const cli=b.cliente||{};
+  const tieneCliente=cli.nombre||cli.rut||cli.telefono||cli.email;
+
   return`<div style="max-width:420px;margin:0 auto;font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#111;line-height:1.6;">
+
+    <!-- ENCABEZADO NEGOCIO -->
     <div style="text-align:center;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:2px solid #111;">
       ${logoHTML}
-      <div style="font-size:22px;font-weight:700;">${b.negocio?.nombre||'Stockeo'}</div>
-      ${b.negocio?.rut?`<div style="font-size:12px;color:#555">RUT: ${b.negocio.rut}</div>`:''}
-      ${b.negocio?.direccion?`<div style="font-size:12px;color:#555">${b.negocio.direccion}</div>`:''}
-      ${b.negocio?.contacto?`<div style="font-size:12px;color:#555">${b.negocio.contacto}</div>`:''}
+      <div style="font-size:22px;font-weight:700;">${neg.nombre||'Mi negocio'}</div>
+      ${neg.rut?`<div style="font-size:12px;color:#555;">RUT: ${neg.rut}</div>`:''}
+      ${neg.direccion?`<div style="font-size:12px;color:#555;">${neg.direccion}</div>`:''}
+      ${neg.contacto?`<div style="font-size:12px;color:#555;">${neg.contacto}</div>`:''}
     </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
+
+    <!-- NÚMERO Y FECHA -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;padding:8px 10px;background:#f8f8f8;border-radius:6px;">
       <div>
-        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px">Boleta Nº</div>
-        <div style="font-size:18px;font-weight:700;color:#c9a84c">${numBoleta(b.numero)}</div>
-        <div style="font-size:10px;color:#aaa;font-family:monospace">ID: ${b.id}</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;">Boleta Nº</div>
+        <div style="font-size:20px;font-weight:700;color:#c9a84c;">${numBoleta(b.numero)}</div>
+        <div style="font-size:10px;color:#aaa;font-family:monospace;">ID: ${b.id}</div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px">Fecha</div>
-        <div style="font-size:13px;font-weight:500">${f}</div>
+      <div style="text-align:right;">
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;">Fecha</div>
+        <div style="font-size:13px;font-weight:600;">${f}</div>
       </div>
     </div>
-    ${(b.cliente?.nombre||b.cliente?.rut)?`
-    <div style="background:#f8f8f8;border-radius:6px;padding:10px 12px;margin-bottom:1rem;font-size:12px;">
-      <div style="font-weight:600;margin-bottom:3px">Cliente</div>
-      ${b.cliente.nombre?`<div>${b.cliente.nombre}</div>`:''}
-      ${b.cliente.rut?`<div style="color:#555">RUT: ${b.cliente.rut}</div>`:''}
-      ${b.cliente.telefono?`<div style="color:#555">Tel: ${b.cliente.telefono}</div>`:''}
-      ${b.cliente.email?`<div style="color:#555">${b.cliente.email}</div>`:''}
-    </div>`:''}
+
+    <!-- DATOS DEL CLIENTE (siempre visible) -->
+    <div style="background:#f8f8f8;border-radius:6px;padding:10px 12px;margin-bottom:1rem;font-size:12px;border-left:3px solid #c9a84c;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px;font-weight:600;">Cliente</div>
+      ${tieneCliente?`
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;">
+          ${cli.nombre?`<div><span style="color:#888">Nombre:</span> <strong>${cli.nombre}</strong></div>`:''}
+          ${cli.rut?`<div><span style="color:#888">RUT:</span> ${cli.rut}</div>`:''}
+          ${cli.telefono?`<div><span style="color:#888">Tel:</span> ${cli.telefono}</div>`:''}
+          ${cli.email?`<div><span style="color:#888">Email:</span> ${cli.email}</div>`:''}
+        </div>
+      `:`<div style="color:#aaa;font-style:italic;">Consumidor final</div>`}
+    </div>
+
+    <!-- DETALLE DE PRODUCTOS -->
     <table style="width:100%;border-collapse:collapse;margin-bottom:1rem;">
-      <thead><tr style="border-bottom:2px solid #111">
-        <th style="text-align:left;padding:4px 0;font-size:11px;text-transform:uppercase;color:#888">Producto</th>
-        <th style="text-align:center;padding:4px 6px;font-size:11px;color:#888">Cant.</th>
-        <th style="text-align:right;padding:4px 0;font-size:11px;color:#888">P.Unit c/IVA</th>
-        <th style="text-align:right;padding:4px 0;font-size:11px;color:#888">Subtotal</th>
+      <thead><tr style="border-bottom:2px solid #111;">
+        <th style="text-align:left;padding:4px 0;font-size:11px;text-transform:uppercase;color:#888;">Producto</th>
+        <th style="text-align:center;padding:4px 6px;font-size:11px;color:#888;">Cant.</th>
+        <th style="text-align:right;padding:4px 0;font-size:11px;color:#888;">P.Unit c/IVA</th>
+        <th style="text-align:right;padding:4px 0;font-size:11px;color:#888;">Subtotal</th>
       </tr></thead>
       <tbody>${filas}</tbody>
     </table>
-    <div style="border-top:1px solid #ddd;padding-top:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px"><span style="color:#555">Neto</span><span>$${Number(b.neto).toFixed(0)}</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px"><span style="color:#555">IVA (19%)</span><span>$${Number(b.iva).toFixed(0)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #111;padding-top:8px"><span>Total</span><span>$${Number(b.total).toFixed(0)}</span></div>
+
+    <!-- TOTALES -->
+    <div style="border-top:1px solid #ddd;padding-top:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span style="color:#555;">Neto</span><span>$${Number(b.neto).toFixed(0)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;"><span style="color:#555;">IVA (19%)</span><span>$${Number(b.iva).toFixed(0)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;border-top:2px solid #111;padding-top:8px;"><span>Total</span><span style="color:#c9a84c;">$${Number(b.total).toFixed(0)}</span></div>
     </div>
-    <div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #ccc;font-size:11px;color:#888">¡Gracias por su compra! · Documento no tributario</div>
+
+    <!-- PIE DE PÁGINA -->
+    <div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #ccc;font-size:11px;color:#888;">
+      ¡Gracias por su compra! · Documento no tributario<br>
+      <span style="font-size:10px;">${neg.nombre||''} ${neg.rut?'· RUT '+neg.rut:''}</span>
+    </div>
   </div>`;
 }
 
