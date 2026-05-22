@@ -178,6 +178,82 @@ body.app-mode{height:100%;overflow:hidden;}
 .gstable tr:last-child td{border-bottom:none;}
 .gstable tr:hover td{background:rgba(255,255,255,.025);}
 
+/* ── Cotizaciones Pro ── */
+.cot-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.25rem;}
+.cot-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px;}
+.cot-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);margin-bottom:4px;}
+.cot-stat-val{font-size:22px;font-weight:800;color:#fff;}
+.cot-stat-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:2px;}
+.cot-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:background .2s;}
+.cot-card:hover{background:rgba(255,255,255,.055);}
+.cot-card-accent{width:4px;border-radius:4px;flex-shrink:0;align-self:stretch;}
+.cot-card-body{flex:1;min-width:0;}
+.cot-card-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+.cot-card-title{font-size:14px;font-weight:700;}
+.cot-card-meta{font-size:11px;color:rgba(255,255,255,.38);}
+.cot-card-total{font-size:14px;font-weight:700;color:#c9a84c;}
+.cot-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;}
+.cot-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+/* Split modal */
+.cot-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:stretch;}
+.cot-modal-form{width:420px;flex-shrink:0;background:#0d1117;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;overflow:hidden;}
+.cot-modal-preview{flex:1;background:#e8ecf0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:28px 24px;}
+.cot-form-head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.cot-form-title{font-size:15px;font-weight:700;color:#fff;}
+.cot-form-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
+.cot-form-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;flex-shrink:0;}
+.cot-form-foot .btn{flex:1;}
+.cot-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:7px;}
+.cot-finput{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:13px;padding:9px 12px;transition:border-color .2s;}
+.cot-finput:focus{border-color:rgba(201,168,76,.5);outline:none;}
+.cot-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;margin-bottom:8px;}
+.cot-row-header{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.cot-row-sel{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;padding:7px 10px;}
+.cot-row-del{background:none;border:none;color:rgba(239,68,68,.6);cursor:pointer;font-size:18px;padding:0 2px;line-height:1;flex-shrink:0;}
+.cot-row-del:hover{color:#ef4444;}
+.cot-row-fields{display:grid;grid-template-columns:1fr 1fr 72px;gap:6px;}
+.cot-row-desc{grid-column:1/-1;}
+.cot-row-fields input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;padding:7px 10px;width:100%;}
+.cot-row-sub{display:flex;align-items:center;justify-content:flex-end;font-size:11px;color:#c9a84c;font-weight:700;}
+.cot-totals-box{background:rgba(255,255,255,.05);border-radius:10px;padding:13px 16px;}
+.cot-totals-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.45);padding:3px 0;}
+.cot-totals-grand{display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#fff;padding-top:9px;margin-top:7px;border-top:1px solid rgba(255,255,255,.12);}
+.cot-totals-grand span:last-child{color:#c9a84c;}
+.cot-add-row{width:100%;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.45);padding:9px;font-size:12px;cursor:pointer;transition:.2s;}
+.cot-add-row:hover{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(255,255,255,.25);}
+/* Live preview doc */
+.cpd{background:#fff;width:660px;max-width:100%;border-radius:10px;overflow:hidden;box-shadow:0 10px 48px rgba(0,0,0,.3);}
+.cpd-topbar{height:6px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+.cpd-head{padding:24px 30px 18px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0f0f0;}
+.cpd-neg-name{font-size:16px;font-weight:800;color:#1a1a2e;}
+.cpd-neg-info{font-size:11px;color:#888;line-height:1.7;margin-top:3px;}
+.cpd-title{font-size:26px;font-weight:900;color:#c9a84c;letter-spacing:-1px;text-align:right;}
+.cpd-num{font-size:12px;color:#888;text-align:right;margin-top:2px;}
+.cpd-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-top:6px;}
+.cpd-strip{background:#fafafa;padding:12px 30px;display:flex;gap:24px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
+.cpd-strip-item label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;display:block;}
+.cpd-strip-item span{font-size:12px;font-weight:700;color:#1a1a2e;}
+.cpd-cliente{padding:14px 30px;border-bottom:1px solid #f0f0f0;}
+.cpd-cliente-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:3px;}
+.cpd-cliente-name{font-size:14px;font-weight:700;color:#1a1a2e;}
+.cpd-notas{font-size:11px;color:#888;font-style:italic;margin-top:4px;}
+.cpd-table{padding:14px 30px;}
+.cpd-table table{width:100%;border-collapse:collapse;}
+.cpd-table thead tr{background:linear-gradient(135deg,#1a1a2e,#2d3561);}
+.cpd-table th{padding:8px 10px;font-size:10px;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:left;}
+.cpd-table th:last-child,.cpd-table td:last-child{text-align:right;}
+.cpd-table th:nth-child(2),.cpd-table th:nth-child(3),.cpd-table td:nth-child(2),.cpd-table td:nth-child(3){text-align:center;}
+.cpd-table td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f5f5f5;color:#333;}
+.cpd-table tr:nth-child(even) td{background:#fafafa;}
+.cpd-totals{padding:10px 30px 18px;display:flex;justify-content:flex-end;}
+.cpd-totals-inner{width:220px;}
+.cpd-tot-row{display:flex;justify-content:space-between;font-size:12px;color:#666;padding:3px 0;}
+.cpd-tot-grand{display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#1a1a2e;border-top:2px solid #c9a84c;padding-top:8px;margin-top:6px;}
+.cpd-tot-grand span:last-child{color:#c9a84c;}
+.cpd-foot{background:#fafafa;padding:12px 30px;border-top:1px solid #f0f0f0;font-size:10px;color:#aaa;line-height:1.6;}
+.cpd-botbar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+@media(max-width:768px){.cot-modal-preview{display:none;}.cot-modal-form{width:100%;}}
+
 .card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;}
 .card-header{padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--navy-border);flex-wrap:wrap;gap:8px;}
 .card-title{font-size:13px;font-weight:500;color:var(--text-primary);}
@@ -2107,10 +2183,11 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
     <!-- PÁGINA COTIZACIONES -->
     <div class="page" id="page-cotizaciones">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem;">
-        <div style="font-size:13px;font-weight:600;">📋 Cotizaciones <span id="cot-count" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;">
+        <div style="font-size:15px;font-weight:700;">Cotizaciones <span id="cot-count" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></div>
         <button class="btn btn-gold btn-sm" onclick="abrirModalCotizacion()">+ Nueva cotización</button>
       </div>
+      <div id="cot-stats-row" class="cot-stats"></div>
       <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
     </div>
 
@@ -6702,46 +6779,67 @@ function guardarCotizaciones(){
 function renderCotizaciones(){
   const grid=document.getElementById('cot-grid');
   const count=document.getElementById('cot-count');
+  const statsRow=document.getElementById('cot-stats-row');
   if(!grid) return;
   if(count) count.textContent=`(${cotizaciones.length})`;
+  const pend=cotizaciones.filter(c=>c.estado==='pendiente').length;
+  const acep=cotizaciones.filter(c=>c.estado==='aceptada').length;
+  const totalGen=cotizaciones.reduce((a,c)=>a+(c.total||0),0);
+  if(statsRow) statsRow.innerHTML=`
+    <div class="cot-stat">
+      <div class="cot-stat-lbl">Pendientes</div>
+      <div class="cot-stat-val" style="color:#f59e0b;">${pend}</div>
+      <div class="cot-stat-sub">esperando respuesta</div>
+    </div>
+    <div class="cot-stat">
+      <div class="cot-stat-lbl">Aceptadas</div>
+      <div class="cot-stat-val" style="color:#22c55e;">${acep}</div>
+      <div class="cot-stat-sub">de ${cotizaciones.length} total</div>
+    </div>
+    <div class="cot-stat">
+      <div class="cot-stat-lbl">Total generado</div>
+      <div class="cot-stat-val" style="font-size:18px;color:#c9a84c;">$${totalGen.toLocaleString('es-CL')}</div>
+      <div class="cot-stat-sub">suma de todas las cotizaciones</div>
+    </div>`;
   if(!cotizaciones.length){
-    grid.innerHTML=`<div style="text-align:center;padding:3rem 1rem;color:var(--text-muted);">
-      <div style="font-size:2rem;margin-bottom:.5rem;">📋</div>
-      <div>No hay cotizaciones aún</div>
-      <div style="font-size:12px;margin-top:.25rem;">Crea una cotización para enviar a tus clientes</div>
+    grid.innerHTML=`<div style="text-align:center;padding:3.5rem 1rem;color:var(--text-muted);">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">📋</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:.35rem;">Aún no tienes cotizaciones</div>
+      <div style="font-size:12px;">Crea tu primera cotización profesional para enviar a tus clientes</div>
     </div>`;
     return;
   }
-  grid.innerHTML=cotizaciones.map(c=>`
-    <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1rem;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;">
-        <div>
-          <div style="font-size:13px;font-weight:700;">COT-${String(c.numero).padStart(4,'0')} · ${c.cliente||'Sin cliente'}</div>
-          <div style="font-size:11px;color:var(--text-muted);">${new Date(c.fecha).toLocaleDateString('es-CL')}</div>
+  grid.innerHTML=cotizaciones.map(c=>{
+    const accent=c.estado==='aceptada'?'#22c55e':c.estado==='rechazada'?'#ef4444':'#f59e0b';
+    const bbg=c.estado==='aceptada'?'rgba(34,197,94,.15)':c.estado==='rechazada'?'rgba(239,68,68,.15)':'rgba(245,158,11,.12)';
+    const btxt=c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente';
+    return `<div class="cot-card">
+      <div class="cot-card-accent" style="background:${accent};"></div>
+      <div class="cot-card-body">
+        <div class="cot-card-top">
+          <div>
+            <div class="cot-card-title">COT-${String(c.numero).padStart(4,'0')} · ${c.cliente||'Sin cliente'}</div>
+            <div class="cot-card-meta">${new Date(c.fecha).toLocaleDateString('es-CL')} · ${c.items.length} ítem${c.items.length!==1?'s':''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <div class="cot-card-total">$${(c.total||0).toLocaleString('es-CL')}</div>
+            <span class="cot-badge" style="background:${bbg};color:${accent};">${btxt}</span>
+          </div>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <span style="font-size:10px;padding:2px 8px;border-radius:100px;font-weight:700;
-            background:${c.estado==='aceptada'?'rgba(34,197,94,.15)':c.estado==='rechazada'?'rgba(239,68,68,.15)':'rgba(245,158,11,.12)'};
-            color:${c.estado==='aceptada'?'var(--success)':c.estado==='rechazada'?'var(--danger)':'var(--warn)'};">
-            ${c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente'}
-          </span>
+        ${c.notas?`<div style="font-size:11px;color:rgba(255,255,255,.32);margin-bottom:8px;font-style:italic;">${c.notas.substring(0,80)}${c.notas.length>80?'…':''}</div>`:''}
+        <div class="cot-card-actions">
+          <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Ver detalle</button>
+          <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ PDF</button>
+          <button class="btn btn-sm" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
+          ${c.estado==='pendiente'?`
+            <button class="btn btn-sm" style="background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>
+            <button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>
+          `:''}
+          <button class="btn btn-sm" style="background:rgba(239,68,68,.06);color:rgba(239,68,68,.65);" onclick="eliminarCotizacion('${c.id}')">🗑</button>
         </div>
       </div>
-      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:.75rem;">
-        ${c.items.length} item${c.items.length!==1?'s':''} · Total: <strong style="color:var(--gold)">$${c.total.toLocaleString('es-CL')}</strong>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Ver detalle</button>
-        <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ Descargar PDF</button>
-        <button class="btn btn-sm" style="background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
-        ${c.estado==='pendiente'?`
-          <button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.2);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>
-          <button class="btn btn-sm" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>
-        `:''}
-        <button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:var(--danger);" onclick="eliminarCotizacion('${c.id}')">🗑</button>
-      </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function abrirModalCotizacion(cotId=null){
@@ -6749,21 +6847,25 @@ function abrirModalCotizacion(cotId=null){
   let modal=document.getElementById('modal-cotizacion');
   if(modal) modal.remove();
   modal=document.createElement('div');
-  modal.className='modal-overlay open';
+  modal.className='cot-modal-wrap';
   modal.id='modal-cotizacion';
+  modal.dataset.cotId=cotId||'';
 
   modal.innerHTML=`
-    <div class="modal" style="max-height:92vh;overflow-y:auto;">
-      <div class="modal-drag"></div>
-      <div class="modal-header">
-        <span class="modal-title">📋 ${cot?'Editar':'Nueva'} Cotización</span>
-        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-cotizacion').remove()">✕</button>
+    <div class="cot-modal-form">
+      <div class="cot-form-head">
+        <div class="cot-form-title">${cot?'Editar cotización':'Nueva cotización'}</div>
+        <button style="background:none;border:none;color:rgba(255,255,255,.35);font-size:22px;cursor:pointer;line-height:1;padding:0;" onclick="document.getElementById('modal-cotizacion').remove()">✕</button>
       </div>
-      <div class="modal-body" style="display:flex;flex-direction:column;gap:10px;">
-        <div class="form-group-m"><label>Cliente</label><input type="text" id="cot-cliente" placeholder="Nombre del cliente" value="${cot?.cliente||''}"/></div>
-        <div class="form-group-m"><label>Notas / Descripción</label><textarea id="cot-notas" rows="2" style="resize:vertical;width:100%;" placeholder="Descripción o condiciones...">${cot?.notas||''}</textarea></div>
-        <div class="form-group-m"><label>Validez</label>
-          <select id="cot-validez">
+      <div class="cot-form-body">
+        <div>
+          <div class="cot-section-title">Datos del cliente</div>
+          <input type="text" id="cot-cliente" class="cot-finput" placeholder="Nombre del cliente" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
+          <textarea id="cot-notas" class="cot-finput" rows="2" placeholder="Notas o condiciones (opcional)" oninput="cotUpdatePreview()" style="resize:vertical;">${cot?.notas||''}</textarea>
+        </div>
+        <div>
+          <div class="cot-section-title">Validez</div>
+          <select id="cot-validez" class="cot-finput" onchange="cotUpdatePreview()">
             <option value="7" ${cot?.validez===7?'selected':''}>7 días</option>
             <option value="15" ${cot?.validez===15?'selected':''}>15 días</option>
             <option value="30" ${(!cot||cot?.validez===30)?'selected':''}>30 días</option>
@@ -6771,48 +6873,48 @@ function abrirModalCotizacion(cotId=null){
           </select>
         </div>
         <div>
-          <div style="font-size:12px;font-weight:600;margin-bottom:8px;">Ítems de la cotización</div>
+          <div class="cot-section-title">Ítems</div>
           <div id="cot-items-wrap"></div>
-          <button class="btn btn-outline btn-sm" onclick="cotAddRow()" style="margin-top:6px;width:100%;">+ Agregar ítem</button>
+          <button class="cot-add-row" onclick="cotAddRow()">+ Agregar ítem</button>
         </div>
-        <div style="background:var(--navy-light);border-radius:var(--radius);padding:.75rem;text-align:right;">
-          <div style="font-size:12px;color:var(--text-muted);">Neto: <span id="cot-subtotal">$0</span></div>
-          <div style="font-size:12px;color:var(--text-muted);">IVA 19%: <span id="cot-iva">$0</span></div>
-          <div style="font-size:15px;font-weight:700;color:var(--gold);">Total: <span id="cot-total">$0</span></div>
+        <div class="cot-totals-box">
+          <div class="cot-totals-row"><span>Neto</span><span id="cot-subtotal">$0</span></div>
+          <div class="cot-totals-row"><span>IVA 19%</span><span id="cot-iva">$0</span></div>
+          <div class="cot-totals-grand"><span>Total</span><span id="cot-total">$0</span></div>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="cot-form-foot">
         <button class="btn btn-outline" onclick="document.getElementById('modal-cotizacion').remove()">Cancelar</button>
         <button class="btn btn-gold" onclick="guardarCotizacion('${cotId||''}')">Guardar cotización</button>
       </div>
+    </div>
+    <div class="cot-modal-preview">
+      <div style="font-size:10px;color:rgba(0,0,0,.28);text-transform:uppercase;letter-spacing:.7px;margin-bottom:16px;font-weight:700;">Vista previa en tiempo real</div>
+      <div id="cot-preview-doc"></div>
     </div>`;
   document.body.appendChild(modal);
 
-  // Agregar ítems iniciales
   const initItems = cot?.items?.length ? cot.items : [{artId:'',desc:'',qty:1,precio:0}];
   initItems.forEach(it => cotAddRow(it));
+  cotUpdatePreview();
 }
 
 function _cotRowHTML(it={}){
-  const uid = 'cr-'+Math.random().toString(36).slice(2,8);
   const optsInv = inventario.map(a=>`<option value="${a.id}" ${it.artId===a.id?'selected':''}>${a.nombre} ($${(a.precio||0).toLocaleString('es-CL')})</option>`).join('');
-  return `<div class="cot-item-row" style="display:flex;flex-direction:column;gap:4px;padding:8px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px;">
-    <div style="display:flex;gap:6px;align-items:center;">
-      <select class="cot-sel" style="flex:1;font-size:12px;padding:6px;border-radius:6px;" onchange="cotSelectArt(this)">
-        <option value="">-- Seleccionar del inventario --</option>
+  return `<div class="cot-row">
+    <div class="cot-row-header">
+      <select class="cot-row-sel cot-sel" onchange="cotSelectArt(this)">
+        <option value="">— Del inventario —</option>
         ${optsInv}
         <option value="custom" ${it.artId==='custom'||(!it.artId&&it.desc)?'selected':''}>✏ Personalizado</option>
       </select>
-      <button onclick="this.closest('.cot-item-row').remove();cotCalcTotal();" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;flex-shrink:0;">✕</button>
+      <button class="cot-row-del" onclick="this.closest('.cot-row').remove();cotCalcTotal();cotUpdatePreview();">✕</button>
     </div>
-    <input type="text" class="cot-desc" placeholder="Descripción del ítem" value="${it.desc||''}" style="font-size:12px;padding:6px;border-radius:6px;" oninput="cotCalcTotal()"/>
-    <div style="display:flex;gap:6px;">
-      <div style="flex:1;"><label style="font-size:10px;color:var(--text-muted);">Cantidad</label>
-        <input type="number" class="cot-qty" value="${it.qty||1}" min="1" style="width:100%;font-size:12px;padding:6px;border-radius:6px;" oninput="cotCalcTotal()"/></div>
-      <div style="flex:2;"><label style="font-size:10px;color:var(--text-muted);">Precio unit. ($)</label>
-        <input type="number" class="cot-precio" value="${it.precio||''}" min="0" placeholder="0" style="width:100%;font-size:12px;padding:6px;border-radius:6px;" oninput="cotCalcTotal()"/></div>
-      <div style="flex:1;"><label style="font-size:10px;color:var(--text-muted);">Subtotal</label>
-        <div class="cot-sub-label" style="font-size:12px;padding:7px 0;color:var(--gold);font-weight:600;">$0</div></div>
+    <div class="cot-row-fields">
+      <input type="text" class="cot-desc cot-row-desc" placeholder="Descripción del ítem" value="${it.desc||''}" oninput="cotCalcTotal();cotUpdatePreview();"/>
+      <input type="number" class="cot-qty" value="${it.qty||1}" min="1" placeholder="Cant." oninput="cotCalcTotal();cotUpdatePreview();"/>
+      <input type="number" class="cot-precio" value="${it.precio||''}" min="0" placeholder="Precio $" oninput="cotCalcTotal();cotUpdatePreview();"/>
+      <div class="cot-row-sub cot-sub-label">$0</div>
     </div>
   </div>`;
 }
@@ -6822,21 +6924,23 @@ function cotAddRow(it={}){
   if(!wrap) return;
   wrap.insertAdjacentHTML('beforeend', _cotRowHTML(it));
   cotCalcTotal();
+  cotUpdatePreview();
 }
 
 function cotSelectArt(sel){
-  const row=sel.closest('.cot-item-row');
+  const row=sel.closest('.cot-row');
   const art=inventario.find(a=>a.id===sel.value);
   if(art){
     row.querySelector('.cot-desc').value=art.nombre;
     row.querySelector('.cot-precio').value=art.precio||0;
   }
   cotCalcTotal();
+  cotUpdatePreview();
 }
 
 function cotCalcTotal(){
   let total=0;
-  document.querySelectorAll('#cot-items-wrap .cot-item-row').forEach(row=>{
+  document.querySelectorAll('#cot-items-wrap .cot-row').forEach(row=>{
     const qty=parseFloat(row.querySelector('.cot-qty')?.value)||0;
     const precio=parseFloat(row.querySelector('.cot-precio')?.value)||0;
     const s=qty*precio;
@@ -6855,12 +6959,89 @@ function cotCalcTotal(){
   if(elTot) elTot.textContent=fmt(Math.round(total));
 }
 
+function cotUpdatePreview(){
+  const doc=document.getElementById('cot-preview-doc');
+  if(!doc) return;
+  const neg=cfgNegocio||{};
+  const cliente=document.getElementById('cot-cliente')?.value||'';
+  const notas=document.getElementById('cot-notas')?.value||'';
+  const validez=parseInt(document.getElementById('cot-validez')?.value)||30;
+  const modal=document.getElementById('modal-cotizacion');
+  const cotId=modal?.dataset.cotId||'';
+  const cot=cotId?cotizaciones.find(c=>c.id===cotId):null;
+  const maxNum=cotizaciones.length?Math.max(...cotizaciones.map(c=>c.numero||0)):0;
+  const numero=cot?cot.numero:maxNum+1;
+  const items=[];
+  document.querySelectorAll('#cot-items-wrap .cot-row').forEach(row=>{
+    const desc=row.querySelector('.cot-desc')?.value.trim()||'';
+    const qty=parseFloat(row.querySelector('.cot-qty')?.value)||0;
+    const precio=parseFloat(row.querySelector('.cot-precio')?.value)||0;
+    if(desc||precio>0) items.push({desc:desc||'Sin descripción',qty:qty||1,precio,subtotal:(qty||1)*precio});
+  });
+  const total=items.reduce((a,it)=>a+it.subtotal,0);
+  const sub=Math.round(total/1.19);
+  const iva=Math.round(total)-sub;
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
+  const fecha=new Date();
+  const vence=new Date(fecha.getTime()+validez*24*60*60*1000);
+  const fmtD=d=>d.toLocaleDateString('es-CL');
+  doc.innerHTML=`<div class="cpd">
+    <div class="cpd-topbar"></div>
+    <div class="cpd-head">
+      <div>
+        ${neg.logo_url?`<img src="${neg.logo_url}" style="max-height:48px;max-width:120px;object-fit:contain;margin-bottom:6px;display:block;"/>`:``}
+        <div class="cpd-neg-name">${neg.nombre||'Mi negocio'}</div>
+        <div class="cpd-neg-info">${neg.rut?`RUT: ${neg.rut}<br/>`:''}${neg.direccion?`${neg.direccion}<br/>`:''}${neg.contacto||''}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="cpd-title">COTIZACIÓN</div>
+        <div class="cpd-num">COT-${String(numero).padStart(4,'0')}</div>
+        <span class="cpd-badge" style="background:#fef3c7;color:#d97706;">⏳ Pendiente</span>
+      </div>
+    </div>
+    <div class="cpd-strip">
+      <div class="cpd-strip-item"><label>Fecha emisión</label><span>${fmtD(fecha)}</span></div>
+      <div class="cpd-strip-item"><label>Válida hasta</label><span>${fmtD(vence)}</span></div>
+      <div class="cpd-strip-item"><label>Validez</label><span>${validez} días</span></div>
+    </div>
+    <div class="cpd-cliente">
+      <div class="cpd-cliente-lbl">Dirigida a</div>
+      <div class="cpd-cliente-name">${cliente||'—'}</div>
+      ${notas?`<div class="cpd-notas">${notas}</div>`:''}
+    </div>
+    <div class="cpd-table">
+      <table>
+        <thead><tr>
+          <th>Descripción</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th>
+        </tr></thead>
+        <tbody>
+          ${items.length?items.map(it=>`<tr>
+            <td>${it.desc}</td>
+            <td style="text-align:center;">${it.qty}</td>
+            <td style="text-align:center;">${fmt(it.precio)}</td>
+            <td style="text-align:right;font-weight:600;">${fmt(it.subtotal)}</td>
+          </tr>`).join(''):`<tr><td colspan="4" style="text-align:center;color:#bbb;padding:20px;font-size:12px;">Sin ítems aún</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+    <div class="cpd-totals">
+      <div class="cpd-totals-inner">
+        <div class="cpd-tot-row"><span>Neto</span><span>${fmt(sub)}</span></div>
+        <div class="cpd-tot-row"><span>IVA 19%</span><span>${fmt(iva)}</span></div>
+        <div class="cpd-tot-grand"><span>Total</span><span>${fmt(total)}</span></div>
+      </div>
+    </div>
+    <div class="cpd-foot">Válida hasta el ${fmtD(vence)}. Para aceptarla, contacte a ${neg.contacto||neg.nombre||'el emisor'}.</div>
+    <div class="cpd-botbar"></div>
+  </div>`;
+}
+
 async function guardarCotizacion(cotId){
   const cliente=document.getElementById('cot-cliente').value.trim();
   const notas=document.getElementById('cot-notas').value.trim();
   const validez=parseInt(document.getElementById('cot-validez').value)||30;
   const items=[];
-  document.querySelectorAll('#cot-items-wrap .cot-item-row').forEach(row=>{
+  document.querySelectorAll('#cot-items-wrap .cot-row').forEach(row=>{
     const desc=row.querySelector('.cot-desc')?.value.trim();
     const qty=parseFloat(row.querySelector('.cot-qty')?.value)||1;
     const precio=parseFloat(row.querySelector('.cot-precio')?.value)||0;
