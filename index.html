@@ -7484,16 +7484,21 @@ function verCotizacion(id){
 
 function exportarCotizacionPDF(id){
   const c=cotizaciones.find(ct=>ct.id===id);
-  if(!c) return;
-  // Priorizar snapshot guardado en la cotización; fallback al config actual
+  if(!c){toast('Cotización no encontrada','error');return;}
   const neg={
     nombre:   c.negocio_nombre    || cfgNegocio.nombre    || '',
     rut:      c.negocio_rut       || cfgNegocio.rut       || '',
     direccion:c.negocio_direccion || cfgNegocio.direccion || '',
     contacto: c.negocio_contacto  || cfgNegocio.contacto  || ''
   };
-  const logo=c.negocio_logo_url||_logoBase64||cfgNegocio.logo_url||'';
+  const logo=c.negocio_logo_url||cfgNegocio.logo_url||'';
   const cliMeta=[c.cliente_rut?`RUT ${c.cliente_rut}`:'',c.cliente_email||'',c.cliente_tel||''].filter(Boolean);
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
+  const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*864e5).toLocaleDateString('es-CL');
+  const acColor=c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#b45309';
+  const acBg=c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
+  const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
 
   const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
   <title>COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}</title>
@@ -7658,12 +7663,20 @@ function exportarCotizacionPDF(id){
       </div>
     </div>
   </div>
+  <script>window.onload=function(){window.print();}</script>
   </body></html>`;
-  const win=window.open('','_blank');
-  if(!win){toast('Permite ventanas emergentes para generar el PDF','error');return;}
-  win.document.write(html);
-  win.document.close();
-  setTimeout(()=>win.print(),800);
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(!win){
+    // Popup bloqueado → descarga directa el archivo
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`COT-${String(c.numero).padStart(4,'0')}.html`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast('Archivo descargado — ábrelo en el navegador y usa Imprimir → Guardar como PDF','info');
+  }
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 
 /* ══ FAQ LANDING ══ */
