@@ -5407,6 +5407,9 @@ async function cargarClientes(){
   const{data}=await sb.from('clientes').select('*').eq('negocio_id',currentNegocioId).order('nombre');
   clientes=data||[];
   renderClientes();
+  // Si hay un form de cotización abierto y el usuario ya escribió algo, refrescar dropdown
+  const rutEl=document.getElementById('cot-cli-rut');
+  if(rutEl?.value) cotBuscarClienteRUT(rutEl.value);
 }
 
 // Config de etiquetas CRM
@@ -6957,6 +6960,7 @@ function abrirModalCotizacion(cotId=null){
   const main=document.getElementById('cot-main-content');
   const btn=document.getElementById('cot-nueva-btn');
   if(!panel) return;
+  if(!clientes.length) cargarClientes();
 
   // Ocultar lista, mostrar form en página
   main.classList.add('cot-hidden');
