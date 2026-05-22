@@ -1,6 +1,6 @@
 const SUPABASE_URL = 'https://rgfrupcyaqsjbyqbmsng.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnZnJ1cGN5YXFzamJ5cWJtc25nIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjYzMTc2NSwiZXhwIjoyMDkyMjA3NzY1fQ.oVqstMYdpMZajy0GDz9zjsNf98Rv6rLq5n3shIKZPJE';
-const MP_TOKEN = 'APP_USR-2880738120535215-042223-df8ca141899c84d0e2a9bf090c30113d-222695931';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const MP_TOKEN = process.env.MP_TOKEN;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

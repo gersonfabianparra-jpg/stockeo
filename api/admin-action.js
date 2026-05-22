@@ -1,6 +1,6 @@
 // Vercel Function segura para operaciones que requieren service role
 const SUPABASE_URL = 'https://rgfrupcyaqsjbyqbmsng.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnZnJ1cGN5YXFzamJ5cWJtc25nIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjYzMTc2NSwiZXhwIjoyMDkyMjA3NzY1fQ.oVqstMYdpMZajy0GDz9zjsNf98Rv6rLq5n3shIKZPJE';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAIL = 'gersonfabianparra@gmail.com';
 
 const sbHeaders = {
