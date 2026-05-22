@@ -1977,15 +1977,21 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
       <!-- Config negocio para boletas -->
       <div class="boleta-cfg">
         <div style="font-size:13px;font-weight:600;margin-bottom:0.75rem;">Datos del negocio en boleta</div>
-        <div class="form-row" style="margin-bottom:0.5rem;">
-          <div class="form-group-m"><label>Nombre negocio</label><input type="text" id="cfg-nombre" placeholder="Mi negocio"/></div>
-          <div class="form-group-m"><label>RUT</label><input type="text" id="cfg-rut" placeholder="76.123.456-7"/></div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1;min-width:220px;">
+            <div class="form-row" style="margin-bottom:0.5rem;">
+              <div class="form-group-m"><label>Nombre negocio</label><input type="text" id="cfg-nombre" placeholder="Mi negocio" oninput="syncCfgNegocio()"/></div>
+              <div class="form-group-m"><label>RUT</label><input type="text" id="cfg-rut" placeholder="76.123.456-7" oninput="syncCfgNegocio()"/></div>
+            </div>
+            <div class="form-row" style="margin-bottom:0.75rem;">
+              <div class="form-group-m"><label>Dirección</label><input type="text" id="cfg-direccion" placeholder="Av. Ejemplo 123" oninput="syncCfgNegocio()"/></div>
+              <div class="form-group-m"><label>Teléfono / Email</label><input type="text" id="cfg-contacto" placeholder="contacto@negocio.cl" oninput="syncCfgNegocio()"/></div>
+            </div>
+            <button class="btn btn-gold btn-sm" onclick="guardarConfigNegocio()">Guardar datos</button>
+          </div>
+          <!-- Preview en tiempo real -->
+          <div id="boleta-neg-preview" style="flex:0 0 auto;min-width:180px;background:#fff;color:#111;border-radius:8px;border:1px solid var(--navy-border);padding:14px 16px;font-family:'DM Sans',Arial,sans-serif;font-size:12px;line-height:1.6;text-align:center;"></div>
         </div>
-        <div class="form-row" style="margin-bottom:0.75rem;">
-          <div class="form-group-m"><label>Dirección</label><input type="text" id="cfg-direccion" placeholder="Av. Ejemplo 123"/></div>
-          <div class="form-group-m"><label>Teléfono / Email</label><input type="text" id="cfg-contacto" placeholder="contacto@negocio.cl"/></div>
-        </div>
-        <button class="btn btn-gold btn-sm" onclick="guardarConfigNegocio()">Guardar datos</button>
       </div>
       <!-- Historial -->
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem;">
@@ -4407,16 +4413,38 @@ function poblarInputsNegocio(){
   document.getElementById('cfg-rut').value=cfgNegocio.rut||'';
   document.getElementById('cfg-direccion').value=cfgNegocio.direccion||'';
   document.getElementById('cfg-contacto').value=cfgNegocio.contacto||'';
+  renderBoletaNegPreview();
+}
+
+function syncCfgNegocio(){
+  cfgNegocio={
+    nombre:document.getElementById('cfg-nombre')?.value.trim()||'Stockeo',
+    rut:document.getElementById('cfg-rut')?.value.trim()||'',
+    direccion:document.getElementById('cfg-direccion')?.value.trim()||'',
+    contacto:document.getElementById('cfg-contacto')?.value.trim()||''
+  };
+  localStorage.setItem('ls_cfg_negocio',JSON.stringify(cfgNegocio));
+  renderBoletaNegPreview();
+}
+
+function renderBoletaNegPreview(){
+  const el=document.getElementById('boleta-neg-preview');if(!el)return;
+  const n=cfgNegocio;
+  const logoHTML=_logoBase64?`<img src="${_logoBase64}" style="max-height:50px;max-width:130px;object-fit:contain;margin-bottom:6px;display:block;margin:0 auto 6px;"/>`:'';
+  el.innerHTML=`
+    <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Vista previa boleta</div>
+    <div style="border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:8px;">
+      ${logoHTML}
+      <div style="font-size:15px;font-weight:700;">${n.nombre||'Mi negocio'}</div>
+      ${n.rut?`<div style="font-size:11px;color:#555;">RUT: ${n.rut}</div>`:''}
+      ${n.direccion?`<div style="font-size:11px;color:#555;">${n.direccion}</div>`:''}
+      ${n.contacto?`<div style="font-size:11px;color:#555;">${n.contacto}</div>`:''}
+    </div>
+    <div style="font-size:10px;color:#aaa;">Así aparecerá en cada boleta</div>`;
 }
 
 function guardarConfigNegocio(){
-  cfgNegocio={
-    nombre:document.getElementById('cfg-nombre').value.trim()||'Stockeo',
-    rut:document.getElementById('cfg-rut').value.trim(),
-    direccion:document.getElementById('cfg-direccion').value.trim(),
-    contacto:document.getElementById('cfg-contacto').value.trim()
-  };
-  localStorage.setItem('ls_cfg_negocio',JSON.stringify(cfgNegocio));
+  syncCfgNegocio();
   toast('Datos del negocio guardados ✓','success');
 }
 
