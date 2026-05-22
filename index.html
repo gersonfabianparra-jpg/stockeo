@@ -100,12 +100,18 @@ body.app-mode{height:100%;overflow:hidden;}
 .btn-sm{padding:5px 11px;font-size:12px;}
 .btn-icon{padding:7px;border-radius:8px;}
 
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.25rem;}
-.stat-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1rem 1.25rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.25rem;}
+.stat-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1rem 1.25rem;transition:border-color .2s;}
+.stat-card:hover{border-color:rgba(201,168,76,.35);}
 .stat-card.accent{border-left:3px solid var(--gold);}
-.stat-label{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
-.stat-value{font-size:26px;font-weight:300;color:var(--text-primary);line-height:1;}
+.stat-card.ok{border-left:3px solid var(--success);}
+.stat-card.danger{border-left:3px solid var(--danger);}
+.stat-icon{font-size:18px;margin-bottom:6px;}
+.stat-label{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.stat-value{font-size:24px;font-weight:700;color:var(--text-primary);line-height:1.1;}
 .stat-sub{font-size:10px;color:var(--text-muted);margin-top:5px;}
+.dash-hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.dash-quick-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:var(--radius);border-left:3px solid currentColor;margin-bottom:7px;}
 
 .card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;}
 .card-header{padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--navy-border);flex-wrap:wrap;gap:8px;}
@@ -322,6 +328,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   #toast-container{bottom:calc(var(--bottom-nav-h) + 0.5rem);}
   .content{padding:1rem;padding-bottom:calc(var(--bottom-nav-h) + 1rem);}
   .charts-grid{grid-template-columns:1fr;}
+  .dash-hero-grid{grid-template-columns:1fr;}
   .chart-wrap{height:180px;}
   .form-row{grid-template-columns:1fr;}
   .inv-table-wrap{display:none;}
@@ -1596,18 +1603,40 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
+      <!-- KPI: 6 tarjetas clave -->
       <div class="stats-grid" id="dash-stats"></div>
+
+      <!-- Tendencia mensual + Resumen rápido -->
+      <div class="dash-hero-grid">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header">
+            <span class="card-title">📈 Tendencia de ventas</span>
+            <span style="font-size:11px;color:var(--text-muted)">últimos 6 meses</span>
+          </div>
+          <div class="card-body"><div style="position:relative;height:195px;"><canvas id="chart-ventas-mes"></canvas></div></div>
+        </div>
+        <div class="card" id="dash-quick-panel" style="margin-bottom:0;">
+          <!-- llenado por JS -->
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem;"></div>
+
+      <!-- Gráficos por categoría -->
       <div class="charts-grid">
         <div class="card"><div class="card-header"><span class="card-title">Stock por categoría</span></div><div class="card-body"><div class="chart-wrap"><canvas id="chart-cat"></canvas></div></div></div>
         <div class="card"><div class="card-header"><span class="card-title">Valor por categoría</span></div><div class="card-body"><div class="chart-wrap"><canvas id="chart-val"></canvas></div></div></div>
       </div>
+
+      <!-- Últimas ventas + Stock bajo -->
       <div class="charts-grid">
-        <div class="card"><div class="card-header"><span class="card-title">Últimas ventas</span></div><div class="card-body"><div class="chart-wrap"><canvas id="chart-ventas-art"></canvas></div></div></div>
-        <div class="card"><div class="card-header"><span class="card-title">Ganancia por venta</span></div><div class="card-body"><div class="chart-wrap"><canvas id="chart-ventas-ing"></canvas></div></div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">⚠ Stock bajo (menos de 5 unidades)</span></div>
-        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Artículo</th><th>Categoría</th><th>Cant.</th><th class="precio-col">Precio</th></tr></thead><tbody id="low-stock-table"></tbody></table></div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚡ Últimas ventas</span></div>
+          <div id="dash-ultimas-ventas" style="padding:0.5rem 0.75rem;max-height:260px;overflow-y:auto;"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚠ Stock bajo</span><span style="font-size:11px;color:var(--text-muted)">menos de 5 unidades</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Artículo</th><th>Stock</th><th class="precio-col">Precio</th></tr></thead><tbody id="low-stock-table"></tbody></table></div>
+        </div>
       </div>
     </div>
 
@@ -2303,7 +2332,7 @@ let inventario=[],categorias=[],ventas=[],filteredInv=[];
 let preciosOcultos=false,ventaPendiente=null,iaGenerated=[];
 let scanLog=[],scanSessionCount=0,pendingScanItem=null,scanPaused=false;
 let zxingReader=null,activeStream=null,cameras=[],activeCameraIdx=0;
-let chartCat=null,chartVal=null,chartVA=null,chartVI=null;
+let chartCat=null,chartVal=null,chartVA=null,chartVI=null,chartMes=null;
 let nextSeq=1;
 
 window.addEventListener('DOMContentLoaded',async()=>{
@@ -3477,19 +3506,106 @@ async function guardarEditCategoria(id){
 
 function renderDashboard(){
   const productos=inventario.filter(i=>i.tipo!=='servicio');
-  const totalVal=productos.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
-  const totalVentas=ventas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
-  const totalGan=ventas.reduce((s,v)=>s+Number(v.ganancia||0),0);
+  const servicios=inventario.filter(i=>i.tipo==='servicio');
   const lowStock=productos.filter(i=>Number(i.cantidad)<5);
+  const totalVal=productos.reduce((s,i)=>s+Number(i.precio)*Number(i.cantidad),0);
+
+  // Rangos de tiempo
+  const now=new Date();
+  const hoyStr=now.toISOString().slice(0,10);
+  const mesActual=hoyStr.slice(0,7);
+  const mesAnterior=new Date(now.getFullYear(),now.getMonth()-1,1).toISOString().slice(0,7);
+  const inicioSemana=new Date(now);inicioSemana.setDate(now.getDate()-now.getDay());
+  const inicioSemStr=inicioSemana.toISOString().slice(0,10);
+
+  const ventasHoy=ventas.filter(v=>(v.fecha||'').slice(0,10)===hoyStr);
+  const ventasSem=ventas.filter(v=>(v.fecha||'').slice(0,10)>=inicioSemStr);
+  const ventasMes=ventas.filter(v=>(v.fecha||'').slice(0,7)===mesActual);
+  const ventasMesAnt=ventas.filter(v=>(v.fecha||'').slice(0,7)===mesAnterior);
+
+  const totalHoy=ventasHoy.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const totalSem=ventasSem.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const totalMes=ventasMes.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const totalMesAnt=ventasMesAnt.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const ganMes=ventasMes.reduce((s,v)=>s+Number(v.ganancia||0),0);
+
+  // Tendencia vs mes anterior
+  const tendencia=totalMesAnt>0?Math.round((totalMes-totalMesAnt)/totalMesAnt*100):null;
+  const tendHTML=tendencia!==null?`<span style="font-size:10px;font-weight:700;color:${tendencia>=0?'var(--success)':'var(--danger)'};">${tendencia>=0?'↑':'↓'}${Math.abs(tendencia)}% vs mes ant.</span>`:'';
+
+  // KPI Cards
+  const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   document.getElementById('dash-stats').innerHTML=[
-    {label:'Total artículos',value:productos.length,sub:'productos en stock',accent:true},
-    {label:'Valor stock',value:'$'+Math.round(totalVal).toLocaleString('es-CL'),sub:'valor de reposición',accent:true},
-    {label:'Total ventas',value:'$'+Math.round(totalVentas).toLocaleString('es-CL'),sub:ventas.length+' transacciones · c/IVA'},
-    {label:'Ganancia total',value:'$'+Math.round(totalGan).toLocaleString('es-CL'),sub:'precio − costo'},
-  ].map(s=>`<div class="stat-card${s.accent?' accent':''}"><div class="stat-label">${s.label}<\/div><div class="stat-value precio-col">${s.value}<\/div><div class="stat-sub">${s.sub}<\/div><\/div>`).join('');
+    {icon:'💰',label:'Ventas hoy',value:'$'+Math.round(totalHoy).toLocaleString('es-CL'),sub:ventasHoy.length+' transacción'+(ventasHoy.length!==1?'es':''),accent:true,borderColor:'var(--gold)'},
+    {icon:'📅',label:'Ventas '+meses[now.getMonth()],value:'$'+Math.round(totalMes).toLocaleString('es-CL'),sub:ventasMes.length+' ventas'+( tendencia!==null?' · '+(tendencia>=0?'↑':'↓')+Math.abs(tendencia)+'%':''),accent:true,borderColor:'var(--gold)'},
+    {icon:'📈',label:'Ganancia del mes',value:'$'+Math.round(ganMes).toLocaleString('es-CL'),sub:'precio − costo unitario',ok:true,borderColor:'var(--success)'},
+    {icon:'📦',label:'Artículos en stock',value:productos.length,sub:lowStock.length?lowStock.length+' con stock bajo':'Stock OK',danger:lowStock.length>0,ok:!lowStock.length,borderColor:lowStock.length?'var(--danger)':'var(--success)'},
+    {icon:'💎',label:'Valor inventario',value:'$'+Math.round(totalVal).toLocaleString('es-CL'),sub:'precio × cantidad',borderColor:'var(--navy-border)'},
+    {icon:'🔧',label:'Servicios',value:servicios.length,sub:'sin límite de stock',borderColor:'var(--navy-border)'},
+  ].map(s=>`<div class="stat-card" style="border-left:3px solid ${s.borderColor};">
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-label">${s.label}</div>
+    <div class="stat-value precio-col" style="font-size:22px;font-weight:700;">${s.value}</div>
+    <div class="stat-sub">${s.sub}</div>
+  </div>`).join('');
+
+  // Panel rápido
+  const qp=document.getElementById('dash-quick-panel');
+  if(qp)qp.innerHTML=`
+    <div class="card-header"><span class="card-title">Resumen rápido</span></div>
+    <div class="card-body" style="padding:0.85rem;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${[
+          {label:'Hoy',value:totalHoy,count:ventasHoy.length,color:'var(--gold)'},
+          {label:'Esta semana',value:totalSem,count:ventasSem.length,color:'var(--success)'},
+          {label:'Este mes',value:totalMes,count:ventasMes.length,color:'#60a5fa'},
+        ].map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--navy-light);border-radius:var(--radius);border-left:3px solid ${r.color};">
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">${r.label}</div>
+            <div style="font-size:17px;font-weight:700;color:${r.color}" class="precio-col">$${Math.round(r.value).toLocaleString('es-CL')}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:20px;font-weight:700;color:${r.color}">${r.count}</div>
+            <div style="font-size:10px;color:var(--text-muted)">ventas</div>
+          </div>
+        </div>`).join('')}
+        <div style="border-top:1px solid var(--navy-border);padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Ganancia del mes</div>
+            <div style="font-size:17px;font-weight:700;color:var(--success)" class="precio-col">$${Math.round(ganMes).toLocaleString('es-CL')}</div>
+          </div>
+          ${tendHTML}
+        </div>
+      </div>
+    </div>`;
+
+  // Últimas ventas
+  const ru=document.getElementById('dash-ultimas-ventas');
+  if(ru){
+    const recientes=ventas.slice(0,7);
+    ru.innerHTML=recientes.length?recientes.map(v=>{
+      const total=Number(v.precio||0)*Number(v.qty||1);
+      const f=new Date(v.fecha).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit'});
+      return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px solid var(--navy-border);">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text-primary)">${v.art_nombre||v.art_id}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${f} · ×${v.qty}</div>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:var(--gold)" class="precio-col">$${Math.round(total).toLocaleString('es-CL')}</div>
+      </div>`;
+    }).join(''):'<div style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:13px;">Sin ventas registradas</div>';
+  }
+
+  // Stock bajo
   const ls=document.getElementById('low-stock-table');
-  if(!lowStock.length){ls.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">✓<\/div><p>Sin artículos con stock bajo<\/p><\/div><\/td><\/tr>';}
-  else ls.innerHTML=lowStock.map(i=>{const cat=categorias.find(c=>c.id===i.cat_id);return`<tr><td><span class="id-mono">${i.id}<\/span><\/td><td>${i.nombre}<\/td><td>${cat?badgeHTML(cat):'-'}<\/td><td class="${Number(i.cantidad)===0?'zero-stock':'low-stock'}">${i.cantidad}<\/td><td class="precio-col">$${Number(i.precio).toFixed(2)}<\/td><\/tr>`;}).join('');
+  if(ls){
+    if(!lowStock.length){ls.innerHTML='<tr><td colspan="3"><div class="empty-state"><div class="empty-icon">✓</div><p>Todo en orden</p></div></td></tr>';}
+    else ls.innerHTML=lowStock.map(i=>`<tr>
+      <td>${i.nombre}</td>
+      <td class="${Number(i.cantidad)===0?'zero-stock':'low-stock'}">${i.cantidad}</td>
+      <td class="precio-col">$${Number(i.precio).toLocaleString('es-CL')}</td>
+    </tr>`).join('');
+  }
   renderCharts();applyPriceVisibility();
 }
 
@@ -3504,14 +3620,27 @@ function renderCharts(){
   const labels=Object.keys(catMap),qtys=labels.map(l=>catMap[l].qty),vals=labels.map(l=>Math.round(catMap[l].val)),colors=labels.map(l=>catMap[l].color);
   const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8aaac8',font:{family:'DM Sans',size:10},boxWidth:10,padding:8}}}};
   if(chartCat)chartCat.destroy();if(chartVal)chartVal.destroy();
-  chartCat=new Chart(document.getElementById('chart-cat'),{type:'doughnut',data:{labels,datasets:[{data:qtys,backgroundColor:colors.map(c=>hex2rgba(c,0.75)),borderColor:colors,borderWidth:1.5}]},options:{...opts,cutout:'62%'}});
-  chartVal=new Chart(document.getElementById('chart-val'),{type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:colors.map(c=>hex2rgba(c,0.6)),borderColor:colors,borderWidth:1.5,borderRadius:5}]},options:{...opts,scales:{x:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}},y:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}}},plugins:{...opts.plugins,legend:{display:false}}}});
-  const lastV=ventas.slice(0,8).reverse();
-  const vl=lastV.map(v=>v.art_nombre?v.art_nombre.split(' ')[0]:v.art_id);
-  if(chartVA)chartVA.destroy();if(chartVI)chartVI.destroy();
-  if(!lastV.length)return;
-  chartVA=new Chart(document.getElementById('chart-ventas-art'),{type:'bar',data:{labels:vl,datasets:[{label:'Total',data:lastV.map(v=>Number(v.total)),backgroundColor:'rgba(201,168,76,0.5)',borderColor:'#c9a84c',borderWidth:1.5,borderRadius:4}]},options:{...opts,scales:{x:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}},y:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}}},plugins:{...opts.plugins,legend:{display:false}}}});
-  chartVI=new Chart(document.getElementById('chart-ventas-ing'),{type:'bar',data:{labels:vl,datasets:[{label:'Ganancia',data:lastV.map(v=>Number(v.ganancia||0)),backgroundColor:'rgba(78,205,164,0.5)',borderColor:'#4ecda4',borderWidth:1.5,borderRadius:4}]},options:{...opts,scales:{x:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}},y:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}}},plugins:{...opts.plugins,legend:{display:false}}}});
+  const elCat=document.getElementById('chart-cat'),elVal=document.getElementById('chart-val');
+  if(elCat)chartCat=new Chart(elCat,{type:'doughnut',data:{labels,datasets:[{data:qtys,backgroundColor:colors.map(c=>hex2rgba(c,0.75)),borderColor:colors,borderWidth:1.5}]},options:{...opts,cutout:'62%'}});
+  if(elVal)chartVal=new Chart(elVal,{type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:colors.map(c=>hex2rgba(c,0.6)),borderColor:colors,borderWidth:1.5,borderRadius:5}]},options:{...opts,scales:{x:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}},y:{ticks:{color:'#4d6b8a',font:{size:9}},grid:{color:'rgba(42,64,96,0.4)'}}},plugins:{...opts.plugins,legend:{display:false}}}});
+
+  // Gráfico tendencia mensual (últimos 6 meses)
+  const now=new Date();
+  const mesLabels=[],ventasMesData=[],ganMesData=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const key=d.toISOString().slice(0,7);
+    mesLabels.push(d.toLocaleString('es-CL',{month:'short'}));
+    const vs=ventas.filter(v=>(v.fecha||'').slice(0,7)===key);
+    ventasMesData.push(Math.round(vs.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0)));
+    ganMesData.push(Math.round(vs.reduce((s,v)=>s+Number(v.ganancia||0),0)));
+  }
+  if(chartMes)chartMes.destroy();
+  const elMes=document.getElementById('chart-ventas-mes');
+  if(elMes)chartMes=new Chart(elMes,{type:'bar',data:{labels:mesLabels,datasets:[
+    {label:'Ventas c/IVA',data:ventasMesData,backgroundColor:'rgba(201,168,76,0.55)',borderColor:'#c9a84c',borderWidth:1.5,borderRadius:5},
+    {label:'Ganancia',data:ganMesData,backgroundColor:'rgba(78,205,164,0.45)',borderColor:'#4ecda4',borderWidth:1.5,borderRadius:5}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8aaac8',font:{family:'DM Sans',size:10},boxWidth:10,padding:8}}},scales:{x:{ticks:{color:'#4d6b8a',font:{size:10}},grid:{color:'rgba(42,64,96,0.35)'}},y:{ticks:{color:'#4d6b8a',font:{size:9},callback:v=>'$'+Number(v).toLocaleString('es-CL')},grid:{color:'rgba(42,64,96,0.35)'}}}}});
 }
 
 function renderInventario(){filteredInv=[...inventario];applyFilters();}
@@ -5008,6 +5137,7 @@ async function renderClientes(){
         </div>
         <div style="display:flex;gap:5px;">
           ${wa}
+          <button class="btn btn-outline btn-sm" onclick="verDetalleCliente('${c.id}')">👁 Ver</button>
           <button class="btn btn-outline btn-sm" onclick="verHistorialCliente('${c.rut}','${c.nombre.replace(/'/g,"\\'")}')">📋 Historial</button>
           <button class="btn btn-outline btn-sm" onclick="editarCliente('${c.id}','${c.nombre.replace(/'/g,"\\'")}','${c.rut||''}','${c.telefono||''}','${c.email||''}','${c.etiqueta||'nuevo'}','${(c.notas||'').replace(/'/g,"\\'").replace(/\n/g,' ')}')">✎ Editar</button>
           <button class="btn btn-danger-outline btn-sm btn-icon" onclick="eliminarCliente('${c.id}')">✕</button>
@@ -5029,6 +5159,86 @@ function abrirNuevoCliente(){
 
 function editarCliente(id,nombre,rut,telefono,email,etiqueta,notas){
   _abrirModalCliente({id,nombre,rut,telefono,email,etiqueta,notas});
+}
+
+function verDetalleCliente(id){
+  const c=clientes.find(x=>x.id===id);if(!c)return;
+  const et=ETIQUETAS[c.etiqueta||'nuevo']||ETIQUETAS.nuevo;
+  const compras=ventas.filter(v=>v.cliente_rut===c.rut);
+  const totalGastado=compras.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
+  const promedio=compras.length?Math.round(totalGastado/compras.length):0;
+  const ultimaFecha=compras[0]?.fecha||null;
+  const dias=ultimaFecha?Math.floor((Date.now()-new Date(ultimaFecha).getTime())/86400000):null;
+  const diasStr=dias===null?'Sin compras':dias===0?'Hoy':dias===1?'Ayer':`hace ${dias} días`;
+  const diasColor=dias===null?'var(--text-muted)':dias>30?'var(--danger)':dias>14?'var(--warn)':'var(--success)';
+
+  const comprasHTML=compras.length?`
+    <div style="margin-top:1.25rem;">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Historial de compras (${compras.length})</div>
+      <div style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;">
+        ${compras.slice(0,20).map(v=>{
+          const total=Number(v.precio||0)*Number(v.qty||1);
+          const f=new Date(v.fecha).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+          return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--navy-light);border-radius:var(--radius);">
+            <div>
+              <div style="font-size:13px;font-weight:500;">${v.art_nombre||v.art_id}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${f} · ×${v.qty}</div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:var(--gold);">$${Math.round(total).toLocaleString('es-CL')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:'<div style="margin-top:1rem;text-align:center;color:var(--text-muted);font-size:13px;padding:1rem;">Sin compras registradas</div>';
+
+  let modal=document.getElementById('modal-det-cliente');
+  if(modal)modal.remove();
+  modal=document.createElement('div');
+  modal.id='modal-det-cliente';
+  modal.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(10,18,30,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:1rem;overflow-y:auto;';
+  modal.innerHTML=`
+    <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:480px;margin:auto;">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
+        <div>
+          <div style="font-size:17px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">${c.nombre}</div>
+          ${etiquetaBadge(c.etiqueta||'nuevo')}
+        </div>
+        <button onclick="document.getElementById('modal-det-cliente').remove()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;line-height:1;">✕</button>
+      </div>
+      <!-- Métricas clave -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
+        <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--gold);">${compras.length}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">Compras</div>
+        </div>
+        <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--success);">$${Math.round(totalGastado).toLocaleString('es-CL')}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">Total</div>
+        </div>
+        <div style="background:var(--navy-light);border-radius:var(--radius);padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--text-secondary);">$${promedio.toLocaleString('es-CL')}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">Promedio</div>
+        </div>
+      </div>
+      <!-- Datos de contacto -->
+      <div style="background:var(--navy-light);border-radius:var(--radius-lg);padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        ${c.rut?`<div><div style="font-size:10px;color:var(--text-muted);">RUT</div><div style="font-size:13px;font-weight:600;">${c.rut}</div></div>`:''}
+        ${c.telefono?`<div><div style="font-size:10px;color:var(--text-muted);">Teléfono</div><div style="font-size:13px;font-weight:600;">${c.telefono}</div></div>`:''}
+        ${c.email?`<div><div style="font-size:10px;color:var(--text-muted);">Email</div><div style="font-size:13px;font-weight:600;word-break:break-all;">${c.email}</div></div>`:''}
+        <div><div style="font-size:10px;color:var(--text-muted);">Última compra</div><div style="font-size:13px;font-weight:600;color:${diasColor};">${diasStr}</div></div>
+      </div>
+      ${c.notas?`<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:8px 12px;background:var(--navy-light);border-radius:var(--radius);border-left:3px solid var(--gold);margin-bottom:8px;">📝 ${c.notas}</div>`:''}
+      <!-- Compras -->
+      ${comprasHTML}
+      <!-- Acciones -->
+      <div style="display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap;">
+        ${c.telefono?`<button class="btn btn-outline btn-sm" onclick="contactarWhatsApp('${c.telefono}','${c.nombre.replace(/'/g,"\\'")}')">💬 WhatsApp</button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="editarCliente('${c.id}','${c.nombre.replace(/'/g,"\\'")}','${c.rut||''}','${c.telefono||''}','${c.email||''}','${c.etiqueta||'nuevo'}','${(c.notas||'').replace(/'/g,"\\'").replace(/\n/g,' ')}');document.getElementById('modal-det-cliente').remove()">✎ Editar</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="document.getElementById('modal-det-cliente').remove()">Cerrar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
 
 function _abrirModalCliente(c=null){
