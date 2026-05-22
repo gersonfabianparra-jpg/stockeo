@@ -3317,7 +3317,9 @@ function setTipoArt(tipo){
 
 function openModal(item=null){
   if(!item && !verificarLimiteAntesDe('articulo'))return;
-  document.getElementById('modal-art-title').textContent=item?'Editar artículo/servicio':'Nuevo artículo';
+  const tipo = item?.tipo || 'producto';
+  const tipoLabel = tipo==='servicio'?'servicio':'artículo';
+  document.getElementById('modal-art-title').textContent=item?`Editar ${tipoLabel}`:'Nuevo artículo';
   document.getElementById('edit-art-id').value=item?item.id:'';
   document.getElementById('art-nombre').value=item?item.nombre:'';
   document.getElementById('art-cantidad').value=item?item.cantidad:1;
@@ -3325,8 +3327,9 @@ function openModal(item=null){
   document.getElementById('art-costo').value=item?(item.costo||''):'';
   document.getElementById('art-desc').value=item?(item.descripcion||''):'';
   document.getElementById('art-cat').innerHTML=categorias.map(c=>`<option value="${c.id}"${item&&item.cat_id===c.id?' selected':''}>${c.nombre}</option>`).join('');
-  // Restaurar tipo
-  const tipo = item?.tipo || 'producto';
+  // Al editar: ocultar botones de tipo (no se puede cambiar tipo después de crear)
+  const wrapTipo=document.getElementById('tipo-producto')?.closest('.form-group-m');
+  if(wrapTipo) wrapTipo.style.display=item?'none':'';
   setTipoArt(tipo);
   openOverlay('modal-articulo');
 }
@@ -3580,7 +3583,10 @@ function renderServicios(){
 
 function openModalServicio(){
   openModal();
-  setTimeout(()=>setTipoArt('servicio'),50);
+  setTimeout(()=>{
+    setTipoArt('servicio');
+    document.getElementById('modal-art-title').textContent='Nuevo servicio';
+  },50);
 }
 
 function renderVentaSelect(){
