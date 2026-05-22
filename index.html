@@ -251,39 +251,53 @@ body.app-mode{height:100%;overflow:hidden;}
 .cot-totals-grand span:last-child{color:#c9a84c;}
 .cot-add-row{width:100%;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.45);padding:9px;font-size:12px;cursor:pointer;transition:.2s;}
 .cot-add-row:hover{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(255,255,255,.25);}
-/* Live preview doc */
-.cpd{background:#fff;width:660px;max-width:100%;border-radius:10px;overflow:hidden;box-shadow:0 10px 48px rgba(0,0,0,.3);}
-.cpd-topbar{height:6px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
-.cpd-head{padding:24px 30px 18px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0f0f0;}
-.cpd-neg-name{font-size:16px;font-weight:800;color:#1a1a2e;}
-.cpd-neg-info{font-size:11px;color:#888;line-height:1.7;margin-top:3px;}
-.cpd-title{font-size:26px;font-weight:900;color:#c9a84c;letter-spacing:-1px;text-align:right;}
-.cpd-num{font-size:12px;color:#888;text-align:right;margin-top:2px;}
-.cpd-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-top:6px;}
-.cpd-strip{background:#fafafa;padding:12px 30px;display:flex;gap:24px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
-.cpd-strip-item label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;display:block;}
-.cpd-strip-item span{font-size:12px;font-weight:700;color:#1a1a2e;}
-.cpd-cliente{padding:14px 30px;border-bottom:1px solid #f0f0f0;}
-.cpd-cliente-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:3px;}
-.cpd-cliente-name{font-size:14px;font-weight:700;color:#1a1a2e;}
-.cpd-notas{font-size:11px;color:#888;font-style:italic;margin-top:4px;}
-.cpd-cli-detail{font-size:12px;color:#374151;margin-top:3px;font-weight:500;}
-.cpd-cli-meta{font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.7;}
-.cpd-table{padding:14px 30px;}
-.cpd-table table{width:100%;border-collapse:collapse;}
-.cpd-table thead tr{background:linear-gradient(135deg,#1a1a2e,#2d3561);}
-.cpd-table th{padding:8px 10px;font-size:10px;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:left;}
-.cpd-table th:last-child,.cpd-table td:last-child{text-align:right;}
-.cpd-table th:nth-child(2),.cpd-table th:nth-child(3),.cpd-table td:nth-child(2),.cpd-table td:nth-child(3){text-align:center;}
-.cpd-table td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f5f5f5;color:#333;}
-.cpd-table tr:nth-child(even) td{background:#fafafa;}
-.cpd-totals{padding:10px 30px 18px;display:flex;justify-content:flex-end;}
-.cpd-totals-inner{width:220px;}
-.cpd-tot-row{display:flex;justify-content:space-between;font-size:12px;color:#666;padding:3px 0;}
-.cpd-tot-grand{display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#1a1a2e;border-top:2px solid #c9a84c;padding-top:8px;margin-top:6px;}
-.cpd-tot-grand span:last-child{color:#c9a84c;}
-.cpd-foot{background:#fafafa;padding:12px 30px;border-top:1px solid #f0f0f0;font-size:10px;color:#aaa;line-height:1.6;}
-.cpd-botbar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+/* Live preview doc — diseño premium (igual al PDF) */
+.cpv-doc{background:#fff;width:100%;max-width:660px;border-radius:10px;overflow:hidden;box-shadow:0 10px 48px rgba(0,0,0,.3);}
+.cpv-header{background:linear-gradient(135deg,#0f1624 0%,#162438 60%,#1e3250 100%);padding:24px 28px 20px;position:relative;overflow:hidden;}
+.cpv-header::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(201,168,76,.07);}
+.cpv-hinner{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;gap:12px;}
+.cpv-neg-logo{max-height:38px;max-width:100px;object-fit:contain;margin-bottom:7px;display:block;}
+.cpv-neg-name{font-size:13px;font-weight:800;color:#fff;}
+.cpv-neg-info{font-size:9px;color:rgba(255,255,255,.45);line-height:1.8;margin-top:2px;}
+.cpv-doc-block{text-align:right;flex-shrink:0;}
+.cpv-doc-label{font-size:7px;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.7);font-weight:700;margin-bottom:4px;}
+.cpv-doc-title{font-size:24px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.cpv-doc-folio-lbl{font-size:6px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(201,168,76,.55);font-weight:700;margin-top:8px;}
+.cpv-doc-folio-num{font-size:13px;font-weight:900;color:#fff;letter-spacing:2px;margin-top:2px;}
+.cpv-doc-badge{display:inline-block;margin-top:6px;padding:2px 9px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.8px;}
+.cpv-gold-bar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c);}
+.cpv-info-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f0f0f0;}
+.cpv-info-cell{padding:12px 22px;}
+.cpv-info-cell:first-child{border-right:1px solid #f0f0f0;}
+.cpv-info-lbl{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700;margin-bottom:6px;}
+.cpv-cli-name{font-size:13px;font-weight:800;color:#111827;}
+.cpv-cli-detail{font-size:9px;color:#6b7280;margin-top:3px;line-height:1.7;}
+.cpv-date-rows{display:flex;flex-direction:column;gap:5px;}
+.cpv-date-row{display:flex;justify-content:space-between;align-items:center;}
+.cpv-date-lbl{font-size:9px;color:#9ca3af;}
+.cpv-date-val{font-size:9px;font-weight:700;color:#111827;}
+.cpv-validez-pill{display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:1px 7px;font-size:8px;font-weight:700;color:#0369a1;}
+.cpv-table-wrap{padding:0 22px;}
+.cpv-table-lbl{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:#aaa;font-weight:700;padding:11px 0 7px;}
+.cpv-table{width:100%;border-collapse:collapse;}
+.cpv-table thead tr{background:#0f1624;}
+.cpv-table th{padding:7px 9px;text-align:left;font-size:8px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.cpv-table th:nth-child(3),.cpv-table th:nth-child(4),.cpv-table td:nth-child(3),.cpv-table td:nth-child(4){text-align:center;}
+.cpv-table th:last-child,.cpv-table td:last-child{text-align:right;}
+.cpv-table td{padding:7px 9px;font-size:10px;color:#374151;border-bottom:1px solid #f5f5f5;}
+.cpv-table td:first-child{color:#d1d5db;font-size:9px;font-weight:600;}
+.cpv-table td:nth-child(2){font-weight:500;color:#111827;}
+.cpv-table td:last-child{font-weight:700;color:#111827;}
+.cpv-totals{display:flex;justify-content:flex-end;padding:10px 22px 14px;}
+.cpv-totals-card{width:210px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;}
+.cpv-totals-inner{padding:10px 14px;}
+.cpv-tot-row{display:flex;justify-content:space-between;padding:3px 0;font-size:10px;color:#6b7280;}
+.cpv-tot-grand{background:linear-gradient(135deg,#0f1624,#1e3250);padding:9px 14px;display:flex;justify-content:space-between;align-items:center;}
+.cpv-tot-grand-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);font-weight:700;}
+.cpv-tot-grand-val{font-size:16px;font-weight:900;color:#c9a84c;}
+.cpv-footer{background:#f8fafc;border-top:1px solid #e5e7eb;padding:9px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+.cpv-footer-left{font-size:9px;color:#9ca3af;line-height:1.6;}
+.cpv-footer-brand{font-size:9px;font-weight:800;color:#c9a84c;}
 @media(max-width:768px){.cot-modal-preview{display:none;}.cot-modal-form{width:100%;}}
 
 .card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;}
@@ -2221,10 +2235,16 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
           <div class="cot-page-title">Cotizaciones <span id="cot-count" style="font-size:13px;font-weight:400;color:rgba(255,255,255,.35);"></span></div>
           <div class="cot-page-sub">Crea y gestiona presupuestos para tus clientes</div>
         </div>
-        <button id="cot-nueva-btn" class="btn btn-gold" onclick="abrirModalCotizacion()" style="font-size:13px;padding:10px 20px;">+ Nueva cotización</button>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button id="cot-nueva-btn" class="btn btn-gold" onclick="abrirModalCotizacion()" style="font-size:13px;padding:10px 20px;">+ Nueva cotización</button>
+          <button class="btn btn-outline btn-sm" onclick="verPapeleraCotizaciones()" title="Ver cotizaciones eliminadas" style="font-size:12px;padding:8px 14px;">🗑 Papelera</button>
+        </div>
       </div>
       <div id="cot-main-content" class="cot-main-content">
         <div id="cot-stats-row" class="cot-stats"></div>
+        <div style="margin-bottom:12px;">
+          <input type="search" id="cot-buscar" class="cot-finput" placeholder="🔍  Buscar por folio (ej: 0003) o nombre de cliente…" oninput="cotBusqueda=this.value;renderCotizaciones();" style="font-size:13px;"/>
+        </div>
         <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
       </div>
       <div id="cot-inline-panel" class="cot-inline-panel"></div>
@@ -6802,16 +6822,22 @@ async function eliminarMiembro(id){
 })();
 /* ══ COTIZACIONES ══ */
 let cotizaciones = [];
+let cotBusqueda = '';
+let cotVersion = 0; // Incrementa en cada mutación local; cancela fetches en vuelo
+
 
 function cargarCotizaciones(){
   const pfx=`neg_${currentNegocioId}_`;
   try{ const c=localStorage.getItem(pfx+'cots'); if(c) cotizaciones=JSON.parse(c); }catch(e){}
-  // Sincronizar con Supabase
   if(currentNegocioId && sbOK){
-    sb.from('cotizaciones').select('*').eq('negocio_id',currentNegocioId).order('fecha',{ascending:false})
+    const fetchVersion=cotVersion;
+    // Solo trae cotizaciones activas (deleted_at IS NULL)
+    sb.from('cotizaciones').select('*')
+      .eq('negocio_id',currentNegocioId)
+      .is('deleted_at',null)
+      .order('fecha',{ascending:false})
       .then(({data})=>{
-        if(data&&data.length){
-          // Parsear items si vienen como string
+        if(data && fetchVersion===cotVersion){
           cotizaciones=data.map(c=>({...c,items:typeof c.items==='string'?JSON.parse(c.items):(c.items||[])}));
           guardarCotizaciones();
           if(document.getElementById('page-cotizaciones')?.classList.contains('active')) renderCotizaciones();
@@ -6834,6 +6860,12 @@ function renderCotizaciones(){
   const pend=cotizaciones.filter(c=>c.estado==='pendiente').length;
   const acep=cotizaciones.filter(c=>c.estado==='aceptada').length;
   const totalGen=cotizaciones.reduce((a,c)=>a+(c.total||0),0);
+  // Filtro de búsqueda
+  const q=(cotBusqueda||'').toLowerCase().trim();
+  const lista=q?cotizaciones.filter(c=>{
+    const folio='cot-'+String(c.numero).padStart(4,'0');
+    return folio.includes(q)||(c.numero&&String(c.numero).includes(q))||(c.cliente||'').toLowerCase().includes(q);
+  }):cotizaciones;
   if(statsRow) statsRow.innerHTML=`
     <div class="cot-stat cot-stat-amber">
       <div class="cot-stat-lbl">Pendientes</div>
@@ -6850,15 +6882,20 @@ function renderCotizaciones(){
       <div class="cot-stat-val" style="font-size:19px;color:#c9a84c;">$${totalGen.toLocaleString('es-CL')}</div>
       <div class="cot-stat-sub">suma de cotizaciones</div>
     </div>`;
-  if(!cotizaciones.length){
-    grid.innerHTML=`<div style="text-align:center;padding:3.5rem 1rem;color:var(--text-muted);">
-      <div style="font-size:2.5rem;margin-bottom:.75rem;">📋</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:.35rem;">Aún no tienes cotizaciones</div>
-      <div style="font-size:12px;">Crea tu primera cotización profesional para enviar a tus clientes</div>
-    </div>`;
+  if(!lista.length){
+    grid.innerHTML=q
+      ?`<div style="text-align:center;padding:3rem 1rem;color:var(--text-muted);">
+          <div style="font-size:2rem;margin-bottom:.5rem;">🔍</div>
+          <div style="font-size:13px;font-weight:600;">Sin resultados para "${q}"</div>
+        </div>`
+      :`<div style="text-align:center;padding:3.5rem 1rem;color:var(--text-muted);">
+          <div style="font-size:2.5rem;margin-bottom:.75rem;">📋</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:.35rem;">Aún no tienes cotizaciones</div>
+          <div style="font-size:12px;">Crea tu primera cotización profesional para enviar a tus clientes</div>
+        </div>`;
     return;
   }
-  grid.innerHTML=cotizaciones.map(c=>{
+  grid.innerHTML=lista.map(c=>{
     const accent=c.estado==='aceptada'?'#22c55e':c.estado==='rechazada'?'#ef4444':'#f59e0b';
     const bbg=c.estado==='aceptada'?'rgba(34,197,94,.15)':c.estado==='rechazada'?'rgba(239,68,68,.15)':'rgba(245,158,11,.13)';
     const btxt=c.estado==='aceptada'?'✓ Aceptada':c.estado==='rechazada'?'✗ Rechazada':'⏳ Pendiente';
@@ -6934,12 +6971,15 @@ function abrirModalCotizacion(cotId=null){
       <div class="cot-form-body">
         <div>
           <div class="cot-section-title">Datos del cliente</div>
+          <div style="position:relative;margin-bottom:8px;">
+            <input type="text" id="cot-cli-rut" class="cot-finput" placeholder="RUT del cliente (ej: 76.123.456-7)" value="${cot?.cliente_rut||''}" oninput="cotBuscarClienteRUT(this.value);cotUpdatePreview();"/>
+            <div id="cot-cli-found" style="display:${cot?.cliente_rut?'none':'none'};margin-top:5px;font-size:11px;font-weight:600;color:#22c55e;padding:5px 10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);border-radius:7px;"></div>
+          </div>
           <input type="text" id="cot-cliente" class="cot-finput" placeholder="Razón social o nombre *" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-            <input type="text" id="cot-cli-rut" class="cot-finput" placeholder="RUT (ej: 76.123.456-7)" value="${cot?.cliente_rut||''}" oninput="cotUpdatePreview()"/>
             <input type="tel" id="cot-cli-tel" class="cot-finput" placeholder="Teléfono" value="${cot?.cliente_tel||''}" oninput="cotUpdatePreview()"/>
+            <input type="email" id="cot-cli-email" class="cot-finput" placeholder="Email" value="${cot?.cliente_email||''}" oninput="cotUpdatePreview()"/>
           </div>
-          <input type="email" id="cot-cli-email" class="cot-finput" placeholder="Email del cliente" value="${cot?.cliente_email||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
           <textarea id="cot-notas" class="cot-finput" rows="2" placeholder="Notas o condiciones (opcional)" oninput="cotUpdatePreview()" style="resize:vertical;">${cot?.notas||''}</textarea>
         </div>
         <div>
@@ -7040,6 +7080,26 @@ function cotCalcTotal(){
   if(elTot) elTot.textContent=fmt(Math.round(total));
 }
 
+function cotBuscarClienteRUT(val){
+  const chip=document.getElementById('cot-cli-found');
+  const rut=(val||'').replace(/[\.\-\s]/g,'').toLowerCase();
+  if(rut.length<6){if(chip)chip.style.display='none';return;}
+  const c=clientes.find(x=>x.rut&&x.rut.replace(/[\.\-\s]/g,'').toLowerCase()===rut);
+  if(!c){if(chip)chip.style.display='none';return;}
+  const elNombre=document.getElementById('cot-cliente');
+  const elTel=document.getElementById('cot-cli-tel');
+  const elEmail=document.getElementById('cot-cli-email');
+  if(elNombre) elNombre.value=c.nombre||'';
+  if(elTel)    elTel.value=c.telefono||'';
+  if(elEmail)  elEmail.value=c.email||'';
+  if(chip){
+    const badge=c.etiqueta==='vip'?' 👑':c.etiqueta==='frecuente'?' ⭐':c.etiqueta==='mayorista'?' 📦':'';
+    chip.textContent=`✓ ${c.nombre}${badge} — datos completados automáticamente`;
+    chip.style.display='block';
+  }
+  cotUpdatePreview();
+}
+
 function cotUpdatePreview(){
   const doc=document.getElementById('cot-preview-doc');
   if(!doc) return;
@@ -7069,56 +7129,70 @@ function cotUpdatePreview(){
   const fecha=new Date();
   const vence=new Date(fecha.getTime()+validez*24*60*60*1000);
   const fmtD=d=>d.toLocaleDateString('es-CL');
-  doc.innerHTML=`<div class="cpd">
-    <div class="cpd-topbar"></div>
-    <div class="cpd-head">
-      <div>
-        ${neg.logo_url?`<img src="${neg.logo_url}" style="max-height:48px;max-width:120px;object-fit:contain;margin-bottom:6px;display:block;"/>`:``}
-        <div class="cpd-neg-name">${neg.nombre||'Mi negocio'}</div>
-        <div class="cpd-neg-info">${neg.rut?`RUT: ${neg.rut}<br/>`:''}${neg.direccion?`${neg.direccion}<br/>`:''}${neg.contacto||''}</div>
+  const cliMeta=[clienteRut?`RUT ${clienteRut}`:'',clienteEmail,clienteTel].filter(Boolean);
+  const logo=_logoBase64||neg.logo_url||'';
+  doc.innerHTML=`<div class="cpv-doc">
+    <div class="cpv-header">
+      <div class="cpv-hinner">
+        <div>
+          ${logo?`<img src="${logo}" class="cpv-neg-logo"/>`:''}
+          <div class="cpv-neg-name">${neg.nombre||'Mi negocio'}</div>
+          <div class="cpv-neg-info">${neg.rut?`RUT ${neg.rut}<br/>`:''}${neg.direccion?`${neg.direccion}<br/>`:''}${neg.contacto||''}</div>
+        </div>
+        <div class="cpv-doc-block">
+          <div class="cpv-doc-label">Documento comercial</div>
+          <div class="cpv-doc-title">COTIZACIÓN</div>
+          <div class="cpv-doc-folio-lbl">N.° de folio</div>
+          <div class="cpv-doc-folio-num">COT-${String(numero).padStart(4,'0')}</div>
+          <div class="cpv-doc-badge" style="background:#fef3c7;color:#b45309;">PENDIENTE</div>
+        </div>
       </div>
-      <div style="text-align:right;">
-        <div class="cpd-title">COTIZACIÓN</div>
-        <div class="cpd-num">COT-${String(numero).padStart(4,'0')}</div>
-        <span class="cpd-badge" style="background:#fef3c7;color:#d97706;">⏳ Pendiente</span>
+    </div>
+    <div class="cpv-gold-bar"></div>
+    <div class="cpv-info-grid">
+      <div class="cpv-info-cell">
+        <div class="cpv-info-lbl">Dirigida a</div>
+        <div class="cpv-cli-name">${cliente||'—'}</div>
+        ${cliMeta.length?`<div class="cpv-cli-detail">${cliMeta.join('<br/>')}</div>`:''}
+        ${notas?`<div class="cpv-cli-detail" style="font-style:italic;margin-top:4px;">${notas}</div>`:''}
+      </div>
+      <div class="cpv-info-cell">
+        <div class="cpv-info-lbl">Detalles del documento</div>
+        <div class="cpv-date-rows">
+          <div class="cpv-date-row"><span class="cpv-date-lbl">Fecha emisión</span><span class="cpv-date-val">${fmtD(fecha)}</span></div>
+          <div class="cpv-date-row"><span class="cpv-date-lbl">Válida hasta</span><span class="cpv-date-val">${fmtD(vence)}</span></div>
+          <div class="cpv-date-row"><span class="cpv-date-lbl">Vigencia</span><span><span class="cpv-validez-pill">${validez} días</span></span></div>
+        </div>
       </div>
     </div>
-    <div class="cpd-strip">
-      <div class="cpd-strip-item"><label>Fecha emisión</label><span>${fmtD(fecha)}</span></div>
-      <div class="cpd-strip-item"><label>Válida hasta</label><span>${fmtD(vence)}</span></div>
-      <div class="cpd-strip-item"><label>Validez</label><span>${validez} días</span></div>
-    </div>
-    <div class="cpd-cliente">
-      <div class="cpd-cliente-lbl">Dirigida a</div>
-      <div class="cpd-cliente-name">${cliente||'—'}</div>
-      ${clienteRut?`<div class="cpd-cli-detail">RUT ${clienteRut}</div>`:''}
-      ${(clienteEmail||clienteTel)?`<div class="cpd-cli-meta">${[clienteEmail,clienteTel].filter(Boolean).join(' · ')}</div>`:''}
-      ${notas?`<div class="cpd-notas">${notas}</div>`:''}
-    </div>
-    <div class="cpd-table">
-      <table>
-        <thead><tr>
-          <th>Descripción</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th>
-        </tr></thead>
-        <tbody>
-          ${items.length?items.map(it=>`<tr>
-            <td>${it.desc}</td>
-            <td style="text-align:center;">${it.qty}</td>
-            <td style="text-align:center;">${fmt(it.precio)}</td>
-            <td style="text-align:right;font-weight:600;">${fmt(it.subtotal)}</td>
-          </tr>`).join(''):`<tr><td colspan="4" style="text-align:center;color:#bbb;padding:20px;font-size:12px;">Sin ítems aún</td></tr>`}
-        </tbody>
+    <div class="cpv-table-wrap">
+      <div class="cpv-table-lbl">Detalle de productos y servicios</div>
+      <table class="cpv-table">
+        <thead><tr><th>#</th><th>Descripción</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th></tr></thead>
+        <tbody>${items.length?items.map((it,i)=>`<tr>
+          <td>${i+1}</td><td>${it.desc}</td>
+          <td style="text-align:center;">${it.qty}</td>
+          <td style="text-align:center;">${fmt(it.precio)}</td>
+          <td>${fmt(it.subtotal)}</td>
+        </tr>`).join(''):`<tr><td colspan="5" style="text-align:center;color:#bbb;padding:14px;font-size:10px;">Sin ítems aún</td></tr>`}</tbody>
       </table>
     </div>
-    <div class="cpd-totals">
-      <div class="cpd-totals-inner">
-        <div class="cpd-tot-row"><span>Neto</span><span>${fmt(sub)}</span></div>
-        <div class="cpd-tot-row"><span>IVA 19%</span><span>${fmt(iva)}</span></div>
-        <div class="cpd-tot-grand"><span>Total</span><span>${fmt(total)}</span></div>
+    <div class="cpv-totals">
+      <div class="cpv-totals-card">
+        <div class="cpv-totals-inner">
+          <div class="cpv-tot-row"><span>Subtotal neto</span><span>${fmt(sub)}</span></div>
+          <div class="cpv-tot-row"><span>IVA (19%)</span><span>${fmt(iva)}</span></div>
+        </div>
+        <div class="cpv-tot-grand">
+          <span class="cpv-tot-grand-lbl">Total a pagar</span>
+          <span class="cpv-tot-grand-val">${fmt(total)}</span>
+        </div>
       </div>
     </div>
-    <div class="cpd-foot">Válida hasta el ${fmtD(vence)}. Para aceptarla, contacte a ${neg.contacto||neg.nombre||'el emisor'}.</div>
-    <div class="cpd-botbar"></div>
+    <div class="cpv-footer">
+      <div class="cpv-footer-left">Válida hasta ${fmtD(vence)}. Contacte a <strong>${neg.contacto||neg.nombre||'el emisor'}</strong>.</div>
+      <span class="cpv-footer-brand">stockeo.cl</span>
+    </div>
   </div>`;
 }
 
@@ -7137,6 +7211,7 @@ async function guardarCotizacion(cotId){
     const artId=row.querySelector('.cot-sel')?.value||'';
     if(desc||precio>0) items.push({artId,desc:desc||'Sin descripción',qty,precio,subtotal:qty*precio});
   });
+  if(!cliente){toast('⚠ Ingresa el nombre del cliente','error');return;}
   if(!items.length){toast('⚠ Agrega al menos un ítem con precio','error');return;}
   const totalBruto=items.reduce((a,it)=>a+it.subtotal,0);
   const sub=Math.round(totalBruto/1.19);
@@ -7148,6 +7223,7 @@ async function guardarCotizacion(cotId){
 
   const clienteData={cliente,cliente_rut,cliente_tel,cliente_email,notas,validez,items,sub,iva,total};
 
+  cotVersion++; // Invalidar cualquier fetch en vuelo
   if(cotId){
     const idx=cotizaciones.findIndex(c=>c.id===cotId);
     if(idx!==-1){
@@ -7155,6 +7231,14 @@ async function guardarCotizacion(cotId){
       await sbRun(()=>sb.from('cotizaciones').update(clienteData).eq('id',cotId));
     }
   } else {
+    // Snapshot del negocio al momento de emisión
+    const negSnap={
+      negocio_nombre:cfgNegocio.nombre||'',
+      negocio_rut:cfgNegocio.rut||'',
+      negocio_direccion:cfgNegocio.direccion||'',
+      negocio_contacto:cfgNegocio.contacto||'',
+      negocio_logo_url:cfgNegocio.logo_url||''
+    };
     // Folio atómico — nunca se repite aunque se borren cotizaciones
     let numero;
     try{
@@ -7165,8 +7249,9 @@ async function guardarCotizacion(cotId){
       numero=(cotizaciones.length?Math.max(...cotizaciones.map(c=>c.numero||0)):0)+1;
     }
     const nueva={
-      id:'cot-'+Date.now(), numero,
+      id:(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:r&0x3|0x8).toString(16)})), numero,
       ...clienteData,
+      ...negSnap,
       fecha:new Date().toISOString(), estado:'pendiente',
       negocio_id:currentNegocioId
     };
@@ -7223,15 +7308,81 @@ function compartirCotizacion(id){
   modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
 }
 
-function cambiarEstadoCot(id, estado){
+async function cambiarEstadoCot(id, estado){
   const c=cotizaciones.find(c=>c.id===id);
-  if(c){ c.estado=estado; guardarCotizaciones(); renderCotizaciones(); toast(`Cotización ${estado}`,'success'); }
+  if(!c) return;
+  cotVersion++;
+  c.estado=estado;
+  guardarCotizaciones();
+  renderCotizaciones();
+  toast(`Cotización ${estado}`,'success');
+  await sbRun(()=>sb.from('cotizaciones').update({estado}).eq('id',id));
 }
 
-function eliminarCotizacion(id){
+async function eliminarCotizacion(id){
   if(!confirm('¿Eliminar esta cotización?'))return;
+  cotVersion++;
+  // Soft delete: marca deleted_at en Supabase, nunca se pierde el dato
   cotizaciones=cotizaciones.filter(c=>c.id!==id);
-  guardarCotizaciones(); renderCotizaciones();
+  guardarCotizaciones();
+  renderCotizaciones();
+  await sbRun(()=>sb.from('cotizaciones').update({
+    deleted_at:new Date().toISOString(),
+    deleted_by:currentUser?.email||currentNegocioId||'usuario'
+  }).eq('id',id));
+}
+
+async function verPapeleraCotizaciones(){
+  if(!sbOK){toast('Sin conexión a internet','error');return;}
+  const{data}=await sb.from('cotizaciones').select('*')
+    .eq('negocio_id',currentNegocioId)
+    .not('deleted_at','is',null)
+    .order('deleted_at',{ascending:false});
+  const items=data||[];
+  let modal=document.getElementById('modal-papelera-cot');
+  if(modal) modal.remove();
+  modal=document.createElement('div');
+  modal.className='modal-overlay open';
+  modal.id='modal-papelera-cot';
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  modal.innerHTML=`
+    <div class="modal" style="max-width:540px;max-height:85vh;display:flex;flex-direction:column;">
+      <div class="modal-drag"></div>
+      <div class="modal-header">
+        <span class="modal-title">🗑 Papelera — cotizaciones eliminadas</span>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-papelera-cot').remove()">✕</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;">
+        ${!items.length
+          ?'<div style="padding:2.5rem;text-align:center;color:var(--text-muted);font-size:13px;">No hay cotizaciones eliminadas</div>'
+          :items.map(c=>`
+            <div style="padding:14px 20px;border-bottom:1px solid var(--navy-border);display:flex;justify-content:space-between;align-items:center;gap:12px;">
+              <div style="min-width:0;">
+                <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.5px;">COT-${String(c.numero).padStart(4,'0')}</div>
+                <div style="font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.cliente||'Sin nombre'}</div>
+                <div style="font-size:11px;color:var(--text-muted);">Eliminada el ${new Date(c.deleted_at).toLocaleDateString('es-CL')} · ${fmt(c.total)}</div>
+              </div>
+              <button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2);flex-shrink:0;" onclick="recuperarCotizacion('${c.id}')">↩ Recuperar</button>
+            </div>`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+async function recuperarCotizacion(id){
+  await sbRun(()=>sb.from('cotizaciones').update({deleted_at:null,deleted_by:null}).eq('id',id));
+  const{data}=await sb.from('cotizaciones').select('*').eq('id',id).single();
+  if(data){
+    const c={...data,items:typeof data.items==='string'?JSON.parse(data.items):(data.items||[])};
+    cotizaciones=cotizaciones.filter(x=>x.id!==id);
+    cotizaciones.unshift(c);
+    cotizaciones.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    guardarCotizaciones();
+    renderCotizaciones();
+  }
+  toast('✓ Cotización recuperada','success');
+  document.getElementById('modal-papelera-cot')?.remove();
 }
 
 function verCotizacion(id){
@@ -7275,23 +7426,25 @@ function verCotizacion(id){
       </div>
       <div class="modal-footer">
         <button class="btn btn-outline" onclick="document.getElementById('modal-cot-detalle').remove()">Cerrar</button>
+        <button class="btn btn-outline" onclick="document.getElementById('modal-cot-detalle').remove();abrirModalCotizacion('${c.id}')">✏ Editar</button>
         <button class="btn btn-gold" onclick="exportarCotizacionPDF('${c.id}');document.getElementById('modal-cot-detalle').remove()">📄 Descargar PDF</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
 }
 
+
 function exportarCotizacionPDF(id){
   const c=cotizaciones.find(ct=>ct.id===id);
   if(!c) return;
-  const neg=cfgNegocio||{};
-  const logo=_logoBase64||neg.logo_url||'';
-  const acColor=c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#b45309';
-  const acBg=c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
-  const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
-  const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*24*60*60*1000).toLocaleDateString('es-CL');
-  const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
-  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  // Priorizar snapshot guardado en la cotización; fallback al config actual
+  const neg={
+    nombre:   c.negocio_nombre    || cfgNegocio.nombre    || '',
+    rut:      c.negocio_rut       || cfgNegocio.rut       || '',
+    direccion:c.negocio_direccion || cfgNegocio.direccion || '',
+    contacto: c.negocio_contacto  || cfgNegocio.contacto  || ''
+  };
+  const logo=c.negocio_logo_url||_logoBase64||cfgNegocio.logo_url||'';
   const cliMeta=[c.cliente_rut?`RUT ${c.cliente_rut}`:'',c.cliente_email||'',c.cliente_tel||''].filter(Boolean);
 
   const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
@@ -7314,7 +7467,8 @@ function exportarCotizacionPDF(id){
     .doc-block{text-align:right;}
     .doc-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.7);font-weight:700;margin-bottom:6px;}
     .doc-title{font-size:34px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;}
-    .doc-num{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;font-weight:500;}
+    .doc-folio-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(201,168,76,.55);font-weight:700;margin-top:10px;}
+    .doc-folio-num{font-size:17px;font-weight:900;color:#fff;letter-spacing:2.5px;margin-top:2px;font-variant-numeric:tabular-nums;}
     .doc-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;background:${acBg};color:${acColor};}
     .gold-bar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c,#f0d585,#c9a84c);}
 
@@ -7385,7 +7539,8 @@ function exportarCotizacionPDF(id){
         <div class="doc-block">
           <div class="doc-label">Documento comercial</div>
           <div class="doc-title">COTIZACIÓN</div>
-          <div class="doc-num">N.° COT-${String(c.numero).padStart(4,'0')}</div>
+          <div class="doc-folio-lbl">N.° de folio</div>
+          <div class="doc-folio-num">COT-${String(c.numero).padStart(4,'0')}</div>
           <div class="doc-badge">${estadoTxt}</div>
         </div>
       </div>
