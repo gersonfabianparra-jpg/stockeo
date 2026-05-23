@@ -35,7 +35,7 @@ body.app-mode{height:100%;overflow:hidden;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px;}
 
-#app{display:flex;height:100vh;overflow:hidden;}
+#app{display:flex;height:100vh;height:100dvh;overflow:hidden;}
 .layout{display:flex;width:100%;height:100%;}
 
 .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-mid);border-right:1px solid var(--navy-border);display:flex;flex-direction:column;overflow:hidden;transition:transform 0.25s ease;}
@@ -64,10 +64,7 @@ body.app-mode{height:100%;overflow:hidden;}
 .sidebar-footer{padding:0.75rem;border-top:1px solid var(--navy-border);}
 .sidebar-version{font-size:10px;color:var(--text-muted);text-align:center;}
 
-.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;
-  /* Espacio para el bottom nav + home indicator iPhone */
-  padding-bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 0.5rem);
-}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
 .topbar{padding:0.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--navy-border);background:var(--navy);flex-shrink:0;position:sticky;top:0;z-index:20;gap:10px;
   /* iPhone safe area */
   padding-top:max(0.9rem, env(safe-area-inset-top));
@@ -355,6 +352,10 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 .modal-body{padding:1.25rem;}
 .modal-footer{padding:0.9rem 1.25rem;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--navy-border);position:sticky;bottom:0;background:var(--navy-mid);}
 .modal-drag{width:36px;height:4px;background:var(--navy-border);border-radius:2px;margin:0.6rem auto 0;}
+/* Modales fijos dinámicos (contraseña, plan, etc): respetar home indicator */
+@supports(padding:env(safe-area-inset-bottom)){
+  [id^="modal-"]{padding-bottom:env(safe-area-inset-bottom);}
+}
 
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;}
 .cat-card{background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -507,26 +508,61 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
 /* ════════════ RESPONSIVE ════════════ */
 @media(max-width:768px){
-  :root{--sidebar-w:260px;}
+  :root{--sidebar-w:260px;--bottom-nav-h:58px;}
+  /* ── Sidebar ── */
   .sidebar{position:fixed;top:0;left:0;height:100%;z-index:40;transform:translateX(-100%);transition:transform 0.25s ease;
     padding-top:env(safe-area-inset-top);
     padding-bottom:env(safe-area-inset-bottom);
+    display:flex;flex-direction:column;
   }
+  /* Sidebar nav scrollable para iPhones pequeños */
+  .sidebar .nav{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .sidebar.open{transform:translateX(0);}
   .sidebar-overlay.open{display:block;}
   .menu-toggle{display:flex;}
+  /* Touch targets mínimo 44px (iOS HIG) */
+  .nav-item{min-height:44px;padding:10px 12px;}
+  .btn{min-height:44px;}
+  .btn-sm{min-height:36px;}
+  .btn-icon{min-height:44px;min-width:44px;}
+  .bn-item{min-height:44px;}
+  /* ── Bottom nav ── */
   .bottom-nav{display:none;}
-  /* Solo mostrar bottom-nav cuando el app está visible */
   #app:not([style*="display:none"]) ~ .bottom-nav,
   body.app-mode .bottom-nav{display:flex;}
-  #toast-container{bottom:calc(var(--bottom-nav-h) + 0.5rem);}
-  .content{padding:1rem;padding-bottom:calc(var(--bottom-nav-h) + 1rem);}
+  /* ── Topbar: safe area para notch y Dynamic Island ── */
+  .topbar{
+    padding:0.75rem 1rem;
+    /* Sobrescribir explícitamente para que el notch no tape el contenido */
+    padding-top:max(0.75rem, env(safe-area-inset-top));
+    padding-left:max(1rem, env(safe-area-inset-left));
+    padding-right:max(1rem, env(safe-area-inset-right));
+    position:sticky;top:0;z-index:30;
+  }
+  /* ── Contenido: padding inferior suma home indicator ── */
+  .content{
+    padding:1rem;
+    padding-top:1rem;
+    padding-left:max(1rem, env(safe-area-inset-left));
+    padding-right:max(1rem, env(safe-area-inset-right));
+    padding-bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 1rem);
+  }
+  /* ── Toast por encima del home indicator ── */
+  #toast-container{bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 0.5rem);}
+  /* ── Modales: no quedar tapados por home indicator ── */
+  .modal{
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    max-height:calc(95vh - env(safe-area-inset-top));
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .modal-overlay{padding-bottom:env(safe-area-inset-bottom);}
+  /* ── Grids ── */
   .charts-grid{grid-template-columns:1fr;}
   .dash-hero-grid{grid-template-columns:1fr;}
   .fin-grid{grid-template-columns:1fr 1fr !important;}
   .fin-bottom-grid{grid-template-columns:1fr !important;}
   .chart-wrap{height:180px;}
-  .gm-grid{grid-template-columns:1fr 1fr;}.gm-value{font-size:1.65rem;}
+  .gm-grid{grid-template-columns:1fr 1fr;}
   .gm-layout{grid-template-columns:1fr;}
   .gm-value{font-size:1.65rem;}
   .dash-ap-metrics{grid-template-columns:1fr 1fr;}
@@ -535,24 +571,27 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   .inv-table-wrap{display:none;}
   .art-card-list{display:flex;}
   .scanner-layout{grid-template-columns:1fr;}
-  .modal{border-radius:var(--radius-lg) var(--radius-lg) 0 0;max-height:95vh;}
-  .topbar{padding:0.75rem 1rem;position:sticky;top:0;z-index:30;}
   .topbar-left{flex:1;min-width:0;}
   .page-title{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
   .topbar-actions{gap:4px;}
   .topbar-hide-mobile{display:none;}
   .stats-grid{grid-template-columns:1fr 1fr;}
   .cat-grid{grid-template-columns:1fr 1fr;}
+  /* ── Menú 'Más' ── */
+  .bn-more-menu{padding-bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 8px);}
+  /* ── Inputs: evitar zoom en iOS (font-size mínimo 16px) ── */
+  input,select,textarea{font-size:16px !important;}
 }
 @media(max-width:400px){
   .stats-grid{grid-template-columns:1fr 1fr;}
   .stat-value{font-size:20px;}
   .cat-grid{grid-template-columns:1fr;}
+  .page-title{max-width:120px;}
 }
 
 /* ══ LOGIN ══ */
 #login-screen{display:none;position:fixed;inset:0;z-index:300;background:var(--navy);align-items:center;justify-content:center;}
-#login-screen.show{display:block !important;position:relative !important;inset:auto !important;z-index:auto !important;background:none !important;min-height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#login-screen.show{display:block !important;position:relative !important;inset:auto !important;z-index:auto !important;background:none !important;min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 #login-screen.show-centered{display:flex;position:fixed;inset:0;z-index:300;background:var(--navy);align-items:center;justify-content:center;}
 /* Pantalla de carga inicial */
 #splash-screen{display:flex;position:fixed;inset:0;z-index:400;background:var(--navy);align-items:center;justify-content:center;flex-direction:column;gap:16px;}
