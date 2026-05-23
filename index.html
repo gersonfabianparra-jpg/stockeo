@@ -2964,10 +2964,11 @@ async function doLogin(){
     btn.disabled=false;btn.textContent='Iniciar sesión';
     return;
   }
-  if(data?.user){ mostrarCargandoApp(); await onLogin(data.user); }
+  if(data?.user && !currentUser){ await onLogin(data.user); }
 }
 
 async function onLogin(user){
+  mostrarCargandoApp();
   currentUser=user;
   esAdmin=user.email===ADMIN_EMAIL;
   sbOK=true;
@@ -3031,51 +3032,55 @@ async function onLogin(user){
     }
   }catch(e){console.warn('[negocio]',e.message);}
 
-  // Preparar DOM del usuario
-  document.getElementById('user-avatar').textContent=user.email.substring(0,2).toUpperCase();
-  document.getElementById('user-name').textContent=user.email;
-  const negSidebar=document.getElementById('neg-nombre-sidebar');
-  if(negSidebar) negSidebar.textContent=negNombre||(esAdmin?'Administrador':'Mi negocio');
-  const negLogoNombre=document.getElementById('neg-nombre-logo');
-  if(negLogoNombre) negLogoNombre.textContent=negNombre||'';
-  const ph=document.getElementById('neg-logo-placeholder');
-  if(ph) ph.textContent=(negNombre||'LS').substring(0,2).toUpperCase();
-  const navAdmin=document.getElementById('nav-admin');
-  const bnAdmin=document.getElementById('bn-admin-item');
-  if(navAdmin) navAdmin.style.display=esAdmin?'':'none';
-  if(bnAdmin)  bnAdmin.style.display=esAdmin?'':'none';
-
-  // MOSTRAR APP INMEDIATAMENTE — sin esperar a Supabase
-  // Cargar lo que hay en localStorage para no mostrar pantalla vacía
-  cargarConfigNegocio();
-  renderAll();
-  aplicarPermisosRol();
-
-  // Ocultar landing/login y mostrar app en el mismo frame
-  const loginScreen=document.getElementById('login-screen');
-  loginScreen.classList.remove('show');
-  loginScreen.style.display='none';
-  const authPanel=document.getElementById('auth-panel');
-  if(authPanel) authPanel.style.display='none';
-  const landingPage=document.getElementById('landing-page');
-  if(landingPage) landingPage.style.display='none';
-  document.getElementById('app').style.display='flex';
-  document.body.classList.add('app-mode');
-  const bn=document.querySelector('.bottom-nav');
-  if(bn) bn.style.removeProperty('display');
-  const splash=document.getElementById('splash-screen');
-  if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
-  _ocultarOverlayCarga();
-
-  // Ir a la página correcta de inmediato
   try{
+    // Preparar DOM del usuario
+    const avEl=document.getElementById('user-avatar');
+    if(avEl) avEl.textContent=user.email.substring(0,2).toUpperCase();
+    const unEl=document.getElementById('user-name');
+    if(unEl) unEl.textContent=user.email;
+    const negSidebar=document.getElementById('neg-nombre-sidebar');
+    if(negSidebar) negSidebar.textContent=negNombre||(esAdmin?'Administrador':'Mi negocio');
+    const negLogoNombre=document.getElementById('neg-nombre-logo');
+    if(negLogoNombre) negLogoNombre.textContent=negNombre||'';
+    const ph=document.getElementById('neg-logo-placeholder');
+    if(ph) ph.textContent=(negNombre||'LS').substring(0,2).toUpperCase();
+    const navAdmin=document.getElementById('nav-admin');
+    const bnAdmin=document.getElementById('bn-admin-item');
+    if(navAdmin) navAdmin.style.display=esAdmin?'':'none';
+    if(bnAdmin)  bnAdmin.style.display=esAdmin?'':'none';
+
+    // Cargar config y renderizar desde localStorage
+    cargarConfigNegocio();
+    renderAll();
+    aplicarPermisosRol();
+
+    // Ocultar landing/login y mostrar app
+    const loginScreen=document.getElementById('login-screen');
+    if(loginScreen){loginScreen.classList.remove('show');loginScreen.style.display='none';}
+    const authPanel=document.getElementById('auth-panel');
+    if(authPanel) authPanel.style.display='none';
+    const landingPage=document.getElementById('landing-page');
+    if(landingPage) landingPage.style.display='none';
+    const appEl=document.getElementById('app');
+    if(appEl) appEl.style.display='flex';
+    document.body.classList.add('app-mode');
+    const bn=document.querySelector('.bottom-nav');
+    if(bn) bn.style.removeProperty('display');
+    const splash=document.getElementById('splash-screen');
+    if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
+
+    // Ir a la página correcta
     const pathPage=window.location.pathname.replace('/','').toLowerCase();
     const savedPage=sessionStorage.getItem('stockeo_page');
     const targetPage=(VALID_PAGES.includes(pathPage)?pathPage:null)
                    ||(VALID_PAGES.includes(savedPage)?savedPage:null)
                    ||'dashboard';
     showPage(targetPage);
-  }catch(e){}
+  }catch(e){
+    console.error('[onLogin render]',e);
+  }finally{
+    _ocultarOverlayCarga();
+  }
 
   // Luego cargar datos frescos de Supabase en segundo plano
   actualizarConexion();
