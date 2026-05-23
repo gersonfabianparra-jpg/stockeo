@@ -3079,13 +3079,7 @@ async function onLogin(user){
     const targetPage = (VALID_PAGES.includes(pathPage) ? pathPage : null)
                     || (VALID_PAGES.includes(savedPage) ? savedPage : null)
                     || 'dashboard';
-    if(targetPage !== 'dashboard') showPage(targetPage);
-    else {
-      // Establecer URL a /dashboard si estamos en /
-      if(window.location.pathname === '/' || window.location.pathname === ''){
-        window.history.replaceState({page:'dashboard'}, '', '/dashboard');
-      }
-    }
+    showPage(targetPage);
   }catch(e){}
   cargarCotizaciones();
 }
