@@ -6834,11 +6834,13 @@ async function eliminarMiembro(id){
 let cotizaciones = [];
 let cotBusqueda = '';
 let cotVersion = 0; // Incrementa en cada mutación local; cancela fetches en vuelo
+let cotRegistradas = new Set(); // IDs de cotizaciones ya convertidas a venta
 
 
 function cargarCotizaciones(){
   const pfx=`neg_${currentNegocioId}_`;
   try{ const c=localStorage.getItem(pfx+'cots'); if(c) cotizaciones=JSON.parse(c); }catch(e){}
+  try{ const r=localStorage.getItem(pfx+'cot_reg'); cotRegistradas=new Set(r?JSON.parse(r):[]); }catch(e){}
   if(currentNegocioId && sbOK){
     const fetchVersion=cotVersion;
     // Solo trae cotizaciones activas (deleted_at IS NULL)
@@ -6933,10 +6935,13 @@ function renderCotizaciones(){
           <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Detalle</button>
           <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ PDF</button>
           <button class="btn btn-sm" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
-          ${c.estado==='pendiente'?`
-            <button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.22);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>
-            <button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>
-          `:''}
+          ${c.estado!=='aceptada'?`<button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.22);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>`:''}
+          ${c.estado!=='rechazada'?`<button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>`:''}
+          ${c.estado!=='pendiente'?`<button class="btn btn-sm" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);" onclick="cambiarEstadoCot('${c.id}','pendiente')">↩ Pendiente</button>`:''}
+          ${c.estado==='aceptada'?(cotRegistradas.has(c.id)?
+            `<button class="btn btn-sm" disabled style="background:rgba(34,197,94,.06);color:rgba(34,197,94,.35);border:1px solid rgba(34,197,94,.12);cursor:default;">✓ Registrada</button>`:
+            `<button class="btn btn-sm" style="background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(34,197,94,.1));color:#22c55e;border:1px solid rgba(34,197,94,.35);font-weight:700;" onclick="registrarCotizacionComoVenta('${c.id}')">💰 Registrar venta</button>`
+          ):''}
           <button class="btn btn-sm" style="background:rgba(239,68,68,.06);color:rgba(239,68,68,.6);" onclick="eliminarCotizacion('${c.id}')">🗑</button>
         </div>
       </div>
@@ -7365,6 +7370,43 @@ async function cambiarEstadoCot(id, estado){
   renderCotizaciones();
   toast(`Cotización ${estado}`,'success');
   await sbRun(()=>sb.from('cotizaciones').update({estado}).eq('id',id));
+}
+
+async function registrarCotizacionComoVenta(id){
+  const c=cotizaciones.find(ct=>ct.id===id);
+  if(!c) return;
+  if(cotRegistradas.has(id)){toast('Esta cotización ya fue registrada como venta','info');return;}
+  if(!confirm(`¿Registrar COT-${String(c.numero).padStart(4,'0')} como venta?\n\nCliente: ${c.cliente||'Sin especificar'}\nTotal: $${(c.total||0).toLocaleString('es-CL')}\n\nSe creará una boleta y se sumará al resumen de ventas.`)) return;
+
+  const fecha=new Date().toISOString();
+  const ventasInsert=(c.items||[]).map(it=>({
+    id:'v_cot_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    art_id:it.artId||null, art_nombre:it.desc||'Sin descripción', cat_id:null,
+    qty:it.qty||1, precio:it.precio||0, costo:0,
+    total:it.subtotal||0, costo_total:0, ganancia:it.subtotal||0,
+    cliente_rut:c.cliente_rut||null, cliente_nombre:c.cliente||null,
+    negocio_id:currentNegocioId||null, fecha
+  }));
+  await sbRun(()=>sb.from('ventas').insert(ventasInsert));
+  ventasInsert.forEach(v=>ventas.unshift(v));
+
+  const boleta={
+    id:'bol_cot_'+Date.now(), numero:boletaSeq++, fecha,
+    negocio:{...cfgNegocio},
+    cliente:{nombre:c.cliente||'', rut:c.cliente_rut||null, telefono:c.cliente_tel||null, email:c.cliente_email||null},
+    items:(c.items||[]).map(it=>({nombre:it.desc||'Sin descripción', id:it.artId||null, qty:it.qty||1, precioUnit:it.precio||0, neto:Math.round((it.subtotal||0)/1.19)})),
+    neto:c.sub||0, iva:c.iva||0, total:c.total||0,
+    ventaId:ventasInsert[0]?.id
+  };
+  boletas.unshift(boleta);
+  await persistirBoleta(boleta);
+
+  cotRegistradas.add(id);
+  const pfx=`neg_${currentNegocioId}_`;
+  localStorage.setItem(pfx+'cot_reg',JSON.stringify([...cotRegistradas]));
+  renderCotizaciones();
+  renderAll();
+  toast(`✓ Boleta ${numBoleta(boleta.numero)} creada — COT-${String(c.numero).padStart(4,'0')} sumada a ventas`,'success');
 }
 
 async function eliminarCotizacion(id){
