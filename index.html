@@ -7500,43 +7500,67 @@ async function guardarCotizacion(cotId){
   toast('Cotización guardada ✓','success');
 }
 
-function compartirCotizacion(id){
+function _telWA(tel){
+  // Normaliza número chileno para wa.me (ej: "912345678" → "56912345678")
+  const d=(tel||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.startsWith('56')&&d.length>=11) return d;
+  if(d.startsWith('9')&&d.length===9) return '56'+d;
+  if(d.length===8) return '569'+d;
+  return d;
+}
+
+async function compartirCotizacion(id){
   const c = cotizaciones.find(ct=>ct.id===id);
   if(!c) return;
   const url = `https://stockeo.cl/cotizacion/${id}`;
+  const numCot = 'COT-'+String(c.numero).padStart(4,'0');
+  const mensaje = `Hola${c.cliente?' '+c.cliente:''}, te envío la cotización *${numCot}*:\n${url}`;
+  const telWA = _telWA(c.cliente_tel||'');
 
-  // Mostrar modal con el link
+  // En iPhone/móvil: usar el share sheet nativo de iOS directamente
+  if(navigator.share && /iPhone|iPad|Android/i.test(navigator.userAgent)){
+    try{
+      await navigator.share({title:`Cotización ${numCot}`, text:mensaje, url});
+    }catch(e){ /* usuario canceló */ }
+    return;
+  }
+
+  // Desktop o sin share API: mostrar modal con opciones
   let modal = document.getElementById('modal-compartir');
   if(modal) modal.remove();
   modal = document.createElement('div');
   modal.className = 'modal-overlay open';
   modal.id = 'modal-compartir';
+
+  const btnWA = telWA
+    ? `<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
+    : `<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+
   modal.innerHTML = `
     <div class="modal" style="max-width:420px;">
       <div class="modal-drag"></div>
       <div class="modal-header">
-        <span class="modal-title">🔗 Compartir cotización</span>
+        <span class="modal-title">🔗 Compartir ${numCot}</span>
         <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
       </div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
         <div style="font-size:13px;color:var(--text-secondary);">
-          Comparte este link con tu cliente. Podrá ver la cotización sin necesidad de crear una cuenta.
+          El cliente puede ver la cotización sin necesidad de crear cuenta.
         </div>
-        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--gold);word-break:break-all;">
+        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--gold);word-break:break-all;cursor:pointer;"
+          onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success')">
           ${url}
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-gold" style="flex:1;min-width:120px;" onclick="
+          <button class="btn btn-gold" style="flex:1;min-width:140px;" onclick="
             navigator.clipboard.writeText('${url}');
             toast('✓ Link copiado al portapapeles','success');
             document.getElementById('modal-compartir').remove();
           ">📋 Copiar link</button>
-          <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="window.open('${url}','_blank')">🌐 Abrir enlace</button>
-          <button class="btn btn-outline" style="flex:1;min-width:120px;" onclick="
-            window.open('https://wa.me/?text=${encodeURIComponent('Hola, te comparto la cotización COT-'+String(c.numero).padStart(4,'0')+': '+url)}','_blank');
-            document.getElementById('modal-compartir').remove();
-          ">💬 WhatsApp</button>
+          ${btnWA}
         </div>
+        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Tip: agrega el teléfono del cliente en la cotización para enviar directo a su WhatsApp</div>`}
       </div>
     </div>`;
   document.body.appendChild(modal);
