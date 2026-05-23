@@ -3365,6 +3365,7 @@ async function adminListar(){
     const nom=(n.nombre||'').replace(/'/g,"\\'");
     const eml=(n.email||'').replace(/'/g,"\\'");
     const rut=(n.rut||'').replace(/'/g,"\\'");
+    const uid=n.user_id||'';
     const plan=n.plan||'gratis';
     const activo=n.plan_activo!==false;
     const planColor={gratis:'var(--text-muted)',pro:'var(--gold)',business:'#a78bfa'}[plan]||'var(--text-muted)';
@@ -3383,10 +3384,85 @@ async function adminListar(){
         <button class="btn btn-outline btn-sm" onclick="adminVerNegocio('${n.id}','${nom}')">👁 Ver</button>
         <button class="btn btn-gold btn-sm" onclick="adminEditarNegocio('${n.id}','${nom}','${eml}','${rut}')">✎ Editar</button>
         <button class="btn btn-outline btn-sm" onclick="adminGestionarPlan('${n.id}','${nom}','${plan}',${activo},'${n.plan_vence||''}')">💳 Plan</button>
+        <button class="btn btn-outline btn-sm" onclick="adminCambiarPassword('${uid}','${nom}')">🔑 Contraseña</button>
         <button class="btn btn-danger-outline btn-sm btn-icon" onclick="adminEliminar('${n.id}','${nom}')">✕</button>
       </div>
     </div>`;
   }).join('');
+}
+
+function adminCambiarPassword(userId, nombre){
+  let modal=document.getElementById('modal-cambiar-pass');
+  if(modal) modal.remove();
+  modal=document.createElement('div');
+  modal.id='modal-cambiar-pass';
+  modal.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(10,18,30,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:1rem';
+  modal.innerHTML=`
+    <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1.75rem;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.5);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--text-primary)">🔑 Cambiar contraseña</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${nombre}</div>
+        </div>
+        <button onclick="document.getElementById('modal-cambiar-pass').remove()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;line-height:1;padding:4px">✕</button>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:500">Nueva contraseña</label>
+        <div style="position:relative">
+          <input id="cp-pass" type="password" placeholder="Mínimo 6 caracteres"
+            style="width:100%;padding:10px 40px 10px 12px;background:var(--navy-dark);border:1px solid var(--navy-border);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;outline:none;"
+            oninput="document.getElementById('cp-msg').textContent=''"
+            onkeydown="if(event.key==='Enter')adminGuardarPassword('${userId}')">
+          <button onclick="var i=document.getElementById('cp-pass');i.type=i.type==='password'?'text':'password'"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1">👁</button>
+        </div>
+      </div>
+      <div id="cp-msg" style="font-size:12px;min-height:18px;margin-bottom:1rem;text-align:center"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('modal-cambiar-pass').remove()">Cancelar</button>
+        <button class="btn btn-gold" style="flex:1;font-weight:700" onclick="adminGuardarPassword('${userId}')">Cambiar contraseña</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(()=>document.getElementById('cp-pass')?.focus(),100);
+}
+
+async function adminGuardarPassword(userId){
+  const pass=document.getElementById('cp-pass')?.value?.trim();
+  const msg=document.getElementById('cp-msg');
+  if(!pass||pass.length<6){
+    msg.style.color='var(--danger)';
+    msg.textContent='La contraseña debe tener al menos 6 caracteres';
+    return;
+  }
+  if(!userId){
+    msg.style.color='var(--danger)';
+    msg.textContent='No se encontró el usuario en el sistema';
+    return;
+  }
+  const btn=document.querySelector('#modal-cambiar-pass .btn-gold');
+  btn.disabled=true; btn.textContent='Cambiando...';
+  msg.style.color='var(--text-muted)'; msg.textContent='';
+  try{
+    const headers=await _authHeader();
+    const res=await fetch('/api/admin-action',{
+      method:'POST',
+      headers:{...headers,'Content-Type':'application/json'},
+      body:JSON.stringify({action:'change_password',payload:{user_id:userId,password:pass}})
+    });
+    const r=await res.json();
+    if(res.ok&&r.ok){
+      msg.style.color='var(--success)'; msg.textContent='✓ Contraseña cambiada correctamente';
+      btn.textContent='Listo';
+      setTimeout(()=>document.getElementById('modal-cambiar-pass')?.remove(),1500);
+    } else {
+      msg.style.color='var(--danger)'; msg.textContent='Error: '+(r.error||'inténtalo de nuevo');
+      btn.disabled=false; btn.textContent='Cambiar contraseña';
+    }
+  }catch(e){
+    msg.style.color='var(--danger)'; msg.textContent='Error de conexión';
+    btn.disabled=false; btn.textContent='Cambiar contraseña';
+  }
 }
 
 async function adminVerNegocio(negId,nombre){
