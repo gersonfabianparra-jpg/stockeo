@@ -243,6 +243,37 @@ body.app-mode{height:100%;overflow:hidden;}
 .cot-rut-item:hover,.cot-rut-item:active{background:rgba(201,168,76,.13);}
 .cot-rut-item-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cot-rut-item-rut{font-size:11px;color:rgba(255,255,255,.38);flex-shrink:0;}
+/* ── MI CUENTA ── */
+.cta-hero{background:linear-gradient(135deg,#0f1624 0%,#162438 60%,#1e3250 100%);border:1px solid rgba(201,168,76,.18);border-radius:16px;padding:28px 32px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.cta-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#d9a43a);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#0f1624;flex-shrink:0;letter-spacing:-1px;}
+.cta-hero-info{flex:1;min-width:0;}
+.cta-hero-email{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cta-hero-sub{font-size:12px;color:rgba(255,255,255,.4);}
+.cta-plan-badge{padding:5px 16px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;white-space:nowrap;}
+.cta-section{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:14px;margin-bottom:16px;overflow:hidden;}
+.cta-section-head{padding:16px 22px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;gap:10px;}
+.cta-section-icon{font-size:18px;line-height:1;}
+.cta-section-title{font-size:14px;font-weight:700;color:#fff;}
+.cta-section-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px;}
+.cta-body{padding:20px 22px;}
+.cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cta-field{display:flex;flex-direction:column;gap:5px;}
+.cta-field.full{grid-column:1/-1;}
+.cta-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);font-weight:700;}
+.cta-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:13px;padding:9px 12px;transition:border-color .2s;font-family:inherit;}
+.cta-input:focus{border-color:rgba(201,168,76,.5);outline:none;}
+.cta-input:disabled{opacity:.45;cursor:not-allowed;}
+.cta-divider{height:1px;background:var(--navy-border);margin:18px 0;}
+.cta-logo-row{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.cta-logo-box{width:72px;height:72px;border-radius:12px;background:var(--navy-light);border:1px solid var(--navy-border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.cta-logo-box img{width:100%;height:100%;object-fit:contain;padding:4px;}
+.cta-danger-btn{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+.cta-danger-btn:hover{background:rgba(239,68,68,.16);}
+.cta-plan-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.cta-plan-feat{display:flex;flex-direction:column;gap:6px;margin-top:14px;}
+.cta-plan-feat-item{font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:7px;}
+.cta-plan-feat-item::before{content:'✓';color:#22c55e;font-weight:700;font-size:13px;}
+@media(max-width:600px){.cta-grid{grid-template-columns:1fr;}.cta-hero{padding:20px;}.cta-body{padding:16px;}.cta-section-head{padding:14px 16px;}}
 .cot-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;margin-bottom:8px;}
 .cot-row-header{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .cot-row-sel{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;padding:7px 10px;}
@@ -1766,6 +1797,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
     <div class="nav-item" onclick="showPage('historial');closeSidebar()"><span class="nav-icon">◷</span>Historial ventas</div>
     <div class="nav-item" onclick="showPage('clientes');closeSidebar()"><span class="nav-icon">👥</span>Clientes</div>
     <div class="nav-section">Configuración</div>
+    <div class="nav-item" onclick="showPage('cuenta');closeSidebar()"><span class="nav-icon">👤</span>Mi cuenta</div>
     <div class="nav-item" onclick="showPage('categorias');closeSidebar()"><span class="nav-icon">⊞</span>Categorías</div>
     <div class="nav-item" onclick="showPage('boletas');closeSidebar()"><span class="nav-icon">🧾</span>Boletas</div>
     <div class="nav-item" onclick="showPage('cotizaciones');closeSidebar()"><span class="nav-icon">📋</span>Cotizaciones</div>
@@ -2255,6 +2287,163 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
         <div id="cot-grid" style="display:flex;flex-direction:column;gap:10px;padding-bottom:2rem;"></div>
       </div>
       <div id="cot-inline-panel" class="cot-inline-panel"></div>
+    </div>
+
+    <!-- ══ MI CUENTA ══ -->
+    <div class="page" id="page-cuenta">
+      <div style="max-width:680px;margin:0 auto;padding-bottom:3rem;">
+
+        <!-- Hero usuario -->
+        <div class="cta-hero">
+          <div class="cta-avatar" id="cta-avatar-initials">GP</div>
+          <div class="cta-hero-info">
+            <div class="cta-hero-email" id="cta-hero-email">usuario@email.com</div>
+            <div class="cta-hero-sub" id="cta-hero-sub">Cuenta activa</div>
+          </div>
+          <div id="cta-plan-badge-hero" class="cta-plan-badge" style="background:linear-gradient(135deg,rgba(201,168,76,.25),rgba(201,168,76,.1));color:#c9a84c;border:1px solid rgba(201,168,76,.3);">Plan Business</div>
+        </div>
+
+        <!-- Datos del negocio -->
+        <div class="cta-section">
+          <div class="cta-section-head">
+            <span class="cta-section-icon">🏢</span>
+            <div>
+              <div class="cta-section-title">Datos del negocio</div>
+              <div class="cta-section-sub">Información que aparece en boletas y cotizaciones</div>
+            </div>
+          </div>
+          <div class="cta-body">
+            <div class="cta-logo-row">
+              <div class="cta-logo-box" id="cta-logo-box">
+                <span style="font-size:11px;font-weight:700;color:var(--gold)" id="cta-logo-placeholder">LOGO</span>
+              </div>
+              <div>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file-input').click()">📷 Cambiar logo</button>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:5px;">JPG, PNG · máx 2 MB</div>
+              </div>
+            </div>
+            <div class="cta-grid">
+              <div class="cta-field full">
+                <label class="cta-label">Nombre del negocio *</label>
+                <input class="cta-input" id="cta-neg-nombre" type="text" placeholder="Ej: Cleans Chile"/>
+              </div>
+              <div class="cta-field">
+                <label class="cta-label">RUT del negocio</label>
+                <input class="cta-input" id="cta-neg-rut" type="text" placeholder="76.123.456-7"/>
+              </div>
+              <div class="cta-field">
+                <label class="cta-label">Teléfono / Email de contacto</label>
+                <input class="cta-input" id="cta-neg-contacto" type="text" placeholder="contacto@negocio.cl"/>
+              </div>
+              <div class="cta-field full">
+                <label class="cta-label">Dirección</label>
+                <input class="cta-input" id="cta-neg-direccion" type="text" placeholder="Av. Ejemplo 123, Santiago"/>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+              <button class="btn btn-gold" onclick="guardarNegocioFull()">Guardar datos del negocio</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seguridad -->
+        <div class="cta-section">
+          <div class="cta-section-head">
+            <span class="cta-section-icon">🔒</span>
+            <div>
+              <div class="cta-section-title">Seguridad</div>
+              <div class="cta-section-sub">Cambia tu contraseña o correo de acceso</div>
+            </div>
+          </div>
+          <div class="cta-body">
+            <!-- Cambiar contraseña -->
+            <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;">Cambiar contraseña</div>
+            <div class="cta-grid">
+              <div class="cta-field">
+                <label class="cta-label">Nueva contraseña</label>
+                <input class="cta-input" id="cta-pass-nueva" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"/>
+              </div>
+              <div class="cta-field">
+                <label class="cta-label">Confirmar contraseña</label>
+                <input class="cta-input" id="cta-pass-confirm" type="password" placeholder="Repite la nueva contraseña" autocomplete="new-password"/>
+              </div>
+            </div>
+            <div id="cta-pass-msg" style="font-size:12px;margin-top:8px;min-height:18px;"></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+              <button class="btn btn-outline" onclick="cambiarPasswordCuenta()">Actualizar contraseña</button>
+            </div>
+
+            <div class="cta-divider"></div>
+
+            <!-- Cambiar email -->
+            <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;">Cambiar correo de acceso</div>
+            <div class="cta-grid">
+              <div class="cta-field">
+                <label class="cta-label">Correo actual</label>
+                <input class="cta-input" id="cta-email-actual" type="email" disabled/>
+              </div>
+              <div class="cta-field">
+                <label class="cta-label">Nuevo correo</label>
+                <input class="cta-input" id="cta-email-nuevo" type="email" placeholder="nuevo@correo.cl"/>
+              </div>
+            </div>
+            <div id="cta-email-msg" style="font-size:12px;margin-top:8px;min-height:18px;color:rgba(255,255,255,.4);">Se enviará un enlace de confirmación al nuevo correo.</div>
+            <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+              <button class="btn btn-outline" onclick="cambiarEmailCuenta()">Actualizar correo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan actual -->
+        <div class="cta-section">
+          <div class="cta-section-head">
+            <span class="cta-section-icon">💎</span>
+            <div>
+              <div class="cta-section-title">Plan actual</div>
+              <div class="cta-section-sub">Beneficios incluidos en tu suscripción</div>
+            </div>
+          </div>
+          <div class="cta-body">
+            <div class="cta-plan-row">
+              <div>
+                <div id="cta-plan-nombre" style="font-size:20px;font-weight:900;color:#c9a84c;margin-bottom:4px;">Plan Business</div>
+                <div id="cta-plan-vence" style="font-size:12px;color:rgba(255,255,255,.35);"></div>
+              </div>
+              <div id="cta-plan-badge-big" class="cta-plan-badge" style="background:linear-gradient(135deg,rgba(201,168,76,.25),rgba(201,168,76,.1));color:#c9a84c;border:1px solid rgba(201,168,76,.3);font-size:13px;padding:7px 20px;">ACTIVO</div>
+            </div>
+            <div class="cta-plan-feat" id="cta-plan-feats"></div>
+          </div>
+        </div>
+
+        <!-- Sesión -->
+        <div class="cta-section">
+          <div class="cta-section-head">
+            <span class="cta-section-icon">🚪</span>
+            <div>
+              <div class="cta-section-title">Sesión</div>
+              <div class="cta-section-sub">Gestiona el acceso activo a tu cuenta</div>
+            </div>
+          </div>
+          <div class="cta-body">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;">Cerrar sesión</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.35);">Salir en este dispositivo</div>
+              </div>
+              <button class="btn btn-outline" onclick="if(typeof logout==='function')logout();">Cerrar sesión</button>
+            </div>
+            <div class="cta-divider"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#ef4444;margin-bottom:3px;">Cerrar sesión en todos los dispositivos</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.35);">Revoca todas las sesiones activas</div>
+              </div>
+              <button class="cta-danger-btn" onclick="cerrarTodasSesiones()">Cerrar todo</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
@@ -3504,7 +3693,7 @@ function renderAll(){
   aplicarPermisosRol();
 }
 
-const pageLabels={dashboard:'Dashboard',inventario:'Inventario',servicios:'Servicios',ventas:'Registrar venta',scanner:'Escanear QR',historial:'Historial de ventas',clientes:'Clientes frecuentes',categorias:'Categorías',boletas:'Boletas',cotizaciones:'Cotizaciones',qrcodes:'Códigos QR',equipo:'Mi equipo',admin:'Panel Administrador'};
+const pageLabels={dashboard:'Dashboard',inventario:'Inventario',servicios:'Servicios',ventas:'Registrar venta',scanner:'Escanear QR',historial:'Historial de ventas',clientes:'Clientes frecuentes',categorias:'Categorías',boletas:'Boletas',cotizaciones:'Cotizaciones',qrcodes:'Códigos QR',equipo:'Mi equipo',admin:'Panel Administrador',cuenta:'Mi cuenta'};
 
 // Páginas válidas del sistema
 const VALID_PAGES = ['dashboard','inventario','servicios','ventas','scanner','historial','clientes','categorias','boletas','cotizaciones','qrcodes','equipo','admin'];
@@ -3556,6 +3745,7 @@ function showPage(id){
   if(id==='boletas'){poblarInputsNegocio();renderBoletas();}
   if(id==='cotizaciones'){renderCotizaciones();}
   if(id==='qrcodes'){actualizarQRFilterCat();renderQRPage();}
+  if(id==='cuenta'){renderCuenta();}
 }
 
 // Manejar botón atrás/adelante del navegador
@@ -7719,6 +7909,125 @@ function exportarCotizacionPDF(id){
     toast('Archivo descargado — ábrelo en el navegador y usa Imprimir → Guardar como PDF','info');
   }
   setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+
+/* ══ MI CUENTA ══ */
+const PLAN_FEATS={
+  business:['Artículos y boletas ilimitados','Gestión de inventario, ventas y cotizaciones','Clientes CRM con etiquetas','Cotizaciones profesionales con folio único','Reportes e indicadores SII','Hasta 3 usuarios colaboradores con roles','Soporte prioritario'],
+  pro:['Artículos y boletas ilimitados','Gestión completa de inventario y ventas','Clientes CRM','Cotizaciones profesionales','Reportes de ventas'],
+  gratis:['Hasta 30 artículos','Hasta 20 boletas por mes','Inventario básico','Cotizaciones (hasta 5/mes)']
+};
+
+function renderCuenta(){
+  const u=currentUser||{};
+  const email=u.email||'—';
+  const initials=email.substring(0,2).toUpperCase();
+  // Avatar
+  const av=document.getElementById('cta-avatar-initials'); if(av) av.textContent=initials;
+  // Email
+  const he=document.getElementById('cta-hero-email'); if(he) he.textContent=email;
+  const ea=document.getElementById('cta-email-actual'); if(ea) ea.value=email;
+  // Plan
+  const plan=(u.user_metadata?.plan||'gratis').toLowerCase();
+  const planNombre=plan==='business'?'Plan Business':plan==='pro'?'Plan Pro':'Plan Gratis';
+  const planColor=plan==='business'?'#c9a84c':plan==='pro'?'#63b3ed':'#9ca3af';
+  const planBg=plan==='business'?'rgba(201,168,76,.15)':plan==='pro'?'rgba(99,179,237,.15)':'rgba(156,163,175,.1)';
+  ['cta-plan-badge-hero','cta-plan-badge-big'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.textContent=planNombre;el.style.color=planColor;el.style.background=planBg;el.style.border=`1px solid ${planColor}44`;}
+  });
+  const pn=document.getElementById('cta-plan-nombre'); if(pn){pn.textContent=planNombre;pn.style.color=planColor;}
+  // Fecha vencimiento negocio
+  if(currentNegocioId&&sbOK){
+    sb.from('negocios').select('plan,plan_activo,plan_vence,nombre,rut,direccion,contacto').eq('id',currentNegocioId).maybeSingle().then(({data})=>{
+      if(!data) return;
+      const pv=document.getElementById('cta-plan-vence');
+      if(pv) pv.textContent=data.plan_vence?`Activo hasta: ${new Date(data.plan_vence).toLocaleDateString('es-CL')}`:'Sin fecha de vencimiento registrada';
+      // Cargar datos del negocio desde Supabase
+      const n=document.getElementById('cta-neg-nombre'); if(n) n.value=data.nombre||cfgNegocio.nombre||'';
+      const r=document.getElementById('cta-neg-rut'); if(r) r.value=data.rut||cfgNegocio.rut||'';
+      const d=document.getElementById('cta-neg-direccion'); if(d) d.value=data.direccion||cfgNegocio.direccion||'';
+      const c=document.getElementById('cta-neg-contacto'); if(c) c.value=data.contacto||cfgNegocio.contacto||'';
+      // Sync plan feats
+      const key=data.plan||plan;
+      const feats=PLAN_FEATS[key]||PLAN_FEATS.gratis;
+      const pf=document.getElementById('cta-plan-feats');
+      if(pf) pf.innerHTML=feats.map(f=>`<div class="cta-plan-feat-item">${f}</div>`).join('');
+    }).catch(()=>{});
+  } else {
+    // fallback localStorage
+    const n=document.getElementById('cta-neg-nombre'); if(n) n.value=cfgNegocio.nombre||'';
+    const r=document.getElementById('cta-neg-rut'); if(r) r.value=cfgNegocio.rut||'';
+    const d=document.getElementById('cta-neg-direccion'); if(d) d.value=cfgNegocio.direccion||'';
+    const c=document.getElementById('cta-neg-contacto'); if(c) c.value=cfgNegocio.contacto||'';
+    const feats=PLAN_FEATS[plan]||PLAN_FEATS.gratis;
+    const pf=document.getElementById('cta-plan-feats');
+    if(pf) pf.innerHTML=feats.map(f=>`<div class="cta-plan-feat-item">${f}</div>`).join('');
+  }
+  const hs=document.getElementById('cta-hero-sub');
+  if(hs) hs.textContent=`Miembro desde ${new Date(u.created_at||Date.now()).toLocaleDateString('es-CL')}`;
+  // Logo preview
+  const lb=document.getElementById('cta-logo-box');
+  if(lb){
+    const logoUrl=cfgNegocio.logo_url||'';
+    if(logoUrl) lb.innerHTML=`<img src="${logoUrl}" style="width:100%;height:100%;object-fit:contain;padding:4px;">`;
+    else lb.innerHTML=`<span style="font-size:11px;font-weight:700;color:var(--gold)">${(cfgNegocio.nombre||'').substring(0,2).toUpperCase()||'N'}</span>`;
+  }
+}
+
+async function guardarNegocioFull(){
+  const nombre=document.getElementById('cta-neg-nombre')?.value.trim();
+  const rut=document.getElementById('cta-neg-rut')?.value.trim()||'';
+  const direccion=document.getElementById('cta-neg-direccion')?.value.trim()||'';
+  const contacto=document.getElementById('cta-neg-contacto')?.value.trim()||'';
+  if(!nombre){toast('El nombre del negocio es obligatorio','error');return;}
+  // Actualizar objeto local + localStorage
+  cfgNegocio={...cfgNegocio,nombre,rut,direccion,contacto};
+  localStorage.setItem('ls_cfg_negocio',JSON.stringify(cfgNegocio));
+  // Sincronizar inputs existentes del sistema de boletas
+  const cn=document.getElementById('cfg-nombre'); if(cn) cn.value=nombre;
+  const cr=document.getElementById('cfg-rut'); if(cr) cr.value=rut;
+  const cd=document.getElementById('cfg-direccion'); if(cd) cd.value=direccion;
+  const cc=document.getElementById('cfg-contacto'); if(cc) cc.value=contacto;
+  // Actualizar sidebar
+  const ns=document.getElementById('neg-nombre-sidebar'); if(ns) ns.textContent=nombre;
+  const nl=document.getElementById('neg-nombre-logo'); if(nl) nl.textContent=nombre;
+  // Guardar en Supabase
+  await sbRun(()=>sb.from('negocios').update({nombre,rut,direccion,contacto}).eq('id',currentNegocioId));
+  toast('✓ Datos del negocio actualizados','success');
+}
+
+async function cambiarPasswordCuenta(){
+  const nueva=document.getElementById('cta-pass-nueva')?.value||'';
+  const confirm=document.getElementById('cta-pass-confirm')?.value||'';
+  const msg=document.getElementById('cta-pass-msg');
+  if(nueva.length<8){if(msg){msg.textContent='La contraseña debe tener al menos 8 caracteres.';msg.style.color='#ef4444';}return;}
+  if(nueva!==confirm){if(msg){msg.textContent='Las contraseñas no coinciden.';msg.style.color='#ef4444';}return;}
+  if(msg){msg.textContent='Actualizando...';msg.style.color='rgba(255,255,255,.4)';}
+  const{error}=await sb.auth.updateUser({password:nueva});
+  if(error){if(msg){msg.textContent='Error: '+error.message;msg.style.color='#ef4444';}return;}
+  document.getElementById('cta-pass-nueva').value='';
+  document.getElementById('cta-pass-confirm').value='';
+  if(msg){msg.textContent='✓ Contraseña actualizada correctamente.';msg.style.color='#22c55e';}
+  toast('✓ Contraseña actualizada','success');
+}
+
+async function cambiarEmailCuenta(){
+  const nuevo=document.getElementById('cta-email-nuevo')?.value.trim()||'';
+  const msg=document.getElementById('cta-email-msg');
+  if(!nuevo||!nuevo.includes('@')){if(msg){msg.textContent='Ingresa un correo válido.';msg.style.color='#ef4444';}return;}
+  if(msg){msg.textContent='Enviando confirmación...';msg.style.color='rgba(255,255,255,.4)';}
+  const{error}=await sb.auth.updateUser({email:nuevo});
+  if(error){if(msg){msg.textContent='Error: '+error.message;msg.style.color='#ef4444';}return;}
+  if(msg){msg.textContent=`✓ Enlace de confirmación enviado a ${nuevo}. Revisa tu bandeja de entrada.`;msg.style.color='#22c55e';}
+  toast('✓ Confirmación enviada al nuevo correo','success');
+}
+
+async function cerrarTodasSesiones(){
+  if(!confirm('¿Cerrar sesión en todos los dispositivos? Tendrás que volver a iniciar sesión.')) return;
+  await sb.auth.signOut({scope:'global'});
+  toast('Sesiones cerradas. Redirigiendo...','info');
+  setTimeout(()=>location.reload(),1200);
 }
 
 /* ══ FAQ LANDING ══ */
