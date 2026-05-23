@@ -7930,20 +7930,28 @@ function renderCuenta(){
   // Email
   const he=document.getElementById('cta-hero-email'); if(he) he.textContent=email;
   const ea=document.getElementById('cta-email-actual'); if(ea) ea.value=email;
-  // Plan
-  const plan=(u.user_metadata?.plan||'gratis').toLowerCase();
-  const planNombre=plan==='business'?'Plan Business':plan==='pro'?'Plan Pro':'Plan Gratis';
-  const planColor=plan==='business'?'#c9a84c':plan==='pro'?'#63b3ed':'#9ca3af';
-  const planBg=plan==='business'?'rgba(201,168,76,.15)':plan==='pro'?'rgba(99,179,237,.15)':'rgba(156,163,175,.1)';
-  ['cta-plan-badge-hero','cta-plan-badge-big'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.textContent=planNombre;el.style.color=planColor;el.style.background=planBg;el.style.border=`1px solid ${planColor}44`;}
-  });
-  const pn=document.getElementById('cta-plan-nombre'); if(pn){pn.textContent=planNombre;pn.style.color=planColor;}
-  // Fecha vencimiento negocio
+  // Plan — usar currentPlan (cargado desde negocios en Supabase al login)
+  function _aplicarPlanUI(planKey){
+    const p=(planKey||'gratis').toLowerCase();
+    const planNombre=p==='business'?'Plan Business':p==='pro'?'Plan Pro':'Plan Gratis';
+    const planColor=p==='business'?'#c9a84c':p==='pro'?'#63b3ed':'#9ca3af';
+    const planBg=p==='business'?'rgba(201,168,76,.15)':p==='pro'?'rgba(99,179,237,.15)':'rgba(156,163,175,.1)';
+    ['cta-plan-badge-hero','cta-plan-badge-big'].forEach(bid=>{
+      const el=document.getElementById(bid);
+      if(el){el.textContent=planNombre;el.style.color=planColor;el.style.background=planBg;el.style.border=`1px solid ${planColor}44`;}
+    });
+    const pn=document.getElementById('cta-plan-nombre'); if(pn){pn.textContent=planNombre;pn.style.color=planColor;}
+    const feats=PLAN_FEATS[p]||PLAN_FEATS.gratis;
+    const pf=document.getElementById('cta-plan-feats');
+    if(pf) pf.innerHTML=feats.map(f=>`<div class="cta-plan-feat-item">${f}</div>`).join('');
+  }
+  _aplicarPlanUI(currentPlan);
+  // Fecha vencimiento + datos negocio desde Supabase
   if(currentNegocioId&&sbOK){
     sb.from('negocios').select('plan,plan_activo,plan_vence,nombre,rut,direccion,contacto').eq('id',currentNegocioId).maybeSingle().then(({data})=>{
       if(!data) return;
+      // Refrescar plan con el valor real de la BD
+      _aplicarPlanUI(data.plan||currentPlan);
       const pv=document.getElementById('cta-plan-vence');
       if(pv) pv.textContent=data.plan_vence?`Activo hasta: ${new Date(data.plan_vence).toLocaleDateString('es-CL')}`:'Sin fecha de vencimiento registrada';
       // Cargar datos del negocio desde Supabase
@@ -7951,11 +7959,6 @@ function renderCuenta(){
       const r=document.getElementById('cta-neg-rut'); if(r) r.value=data.rut||cfgNegocio.rut||'';
       const d=document.getElementById('cta-neg-direccion'); if(d) d.value=data.direccion||cfgNegocio.direccion||'';
       const c=document.getElementById('cta-neg-contacto'); if(c) c.value=data.contacto||cfgNegocio.contacto||'';
-      // Sync plan feats
-      const key=data.plan||plan;
-      const feats=PLAN_FEATS[key]||PLAN_FEATS.gratis;
-      const pf=document.getElementById('cta-plan-feats');
-      if(pf) pf.innerHTML=feats.map(f=>`<div class="cta-plan-feat-item">${f}</div>`).join('');
     }).catch(()=>{});
   } else {
     // fallback localStorage
@@ -7963,9 +7966,6 @@ function renderCuenta(){
     const r=document.getElementById('cta-neg-rut'); if(r) r.value=cfgNegocio.rut||'';
     const d=document.getElementById('cta-neg-direccion'); if(d) d.value=cfgNegocio.direccion||'';
     const c=document.getElementById('cta-neg-contacto'); if(c) c.value=cfgNegocio.contacto||'';
-    const feats=PLAN_FEATS[plan]||PLAN_FEATS.gratis;
-    const pf=document.getElementById('cta-plan-feats');
-    if(pf) pf.innerHTML=feats.map(f=>`<div class="cta-plan-feat-item">${f}</div>`).join('');
   }
   const hs=document.getElementById('cta-hero-sub');
   if(hs) hs.textContent=`Miembro desde ${new Date(u.created_at||Date.now()).toLocaleDateString('es-CL')}`;
