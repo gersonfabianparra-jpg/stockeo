@@ -3031,16 +3031,7 @@ async function onLogin(user){
     }
   }catch(e){console.warn('[negocio]',e.message);}
 
-  // Ocultar pantallas de login/landing inmediatamente
-  const loginScreen=document.getElementById('login-screen');
-  loginScreen.classList.remove('show');
-  loginScreen.style.display='none';
-  const authPanel=document.getElementById('auth-panel');
-  if(authPanel) authPanel.style.display='none';
-  const landingPage=document.getElementById('landing-page');
-  if(landingPage) landingPage.style.display='none';
-
-  // Preparar datos de usuario en el DOM antes de mostrar la app
+  // Preparar DOM del usuario
   document.getElementById('user-avatar').textContent=user.email.substring(0,2).toUpperCase();
   document.getElementById('user-name').textContent=user.email;
   const negSidebar=document.getElementById('neg-nombre-sidebar');
@@ -3054,34 +3045,43 @@ async function onLogin(user){
   if(navAdmin) navAdmin.style.display=esAdmin?'':'none';
   if(bnAdmin)  bnAdmin.style.display=esAdmin?'':'none';
 
-  // Cargar datos ANTES de mostrar la app para evitar flash vacío
-  await loadData();
+  // MOSTRAR APP INMEDIATAMENTE — sin esperar a Supabase
+  // Cargar lo que hay en localStorage para no mostrar pantalla vacía
   cargarConfigNegocio();
   renderAll();
   aplicarPermisosRol();
-  actualizarConexion();
 
-  // Mostrar app solo cuando los datos ya están listos
+  // Ocultar landing/login y mostrar app en el mismo frame
+  const loginScreen=document.getElementById('login-screen');
+  loginScreen.classList.remove('show');
+  loginScreen.style.display='none';
+  const authPanel=document.getElementById('auth-panel');
+  if(authPanel) authPanel.style.display='none';
+  const landingPage=document.getElementById('landing-page');
+  if(landingPage) landingPage.style.display='none';
   document.getElementById('app').style.display='flex';
   document.body.classList.add('app-mode');
   const bn=document.querySelector('.bottom-nav');
   if(bn) bn.style.removeProperty('display');
-  // Ocultar splash y overlay de carga si existen
   const splash=document.getElementById('splash-screen');
   if(splash){splash.classList.add('hidden');setTimeout(()=>splash.remove(),350);}
   _ocultarOverlayCarga();
-  iniciarRealtime();
-  if(!esAdmin) verificarPlan();
-  // Restaurar página desde URL o sessionStorage
+
+  // Ir a la página correcta de inmediato
   try{
-    const pathPage = window.location.pathname.replace('/','').toLowerCase();
-    const savedPage = sessionStorage.getItem('stockeo_page');
-    const targetPage = (VALID_PAGES.includes(pathPage) ? pathPage : null)
-                    || (VALID_PAGES.includes(savedPage) ? savedPage : null)
-                    || 'dashboard';
+    const pathPage=window.location.pathname.replace('/','').toLowerCase();
+    const savedPage=sessionStorage.getItem('stockeo_page');
+    const targetPage=(VALID_PAGES.includes(pathPage)?pathPage:null)
+                   ||(VALID_PAGES.includes(savedPage)?savedPage:null)
+                   ||'dashboard';
     showPage(targetPage);
   }catch(e){}
-  cargarCotizaciones();
+
+  // Luego cargar datos frescos de Supabase en segundo plano
+  actualizarConexion();
+  iniciarRealtime();
+  if(!esAdmin) verificarPlan();
+  loadData().then(()=>{renderAll();cargarCotizaciones();});
 }
 
 function mostrarCambiarPassword(){
