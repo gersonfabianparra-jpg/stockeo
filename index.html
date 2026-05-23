@@ -6378,12 +6378,17 @@ async function adminGuardarPlan(negId){
   const vence=document.getElementById('ap-vence').value||null;
   const msg=document.getElementById('ap-msg');
   msg.style.color='var(--text-muted)';msg.textContent='Guardando...';
-  const{error}=await sb.from('negocios').update({
-    plan, plan_activo:activo, plan_vence:vence
-  }).eq('id',negId);
-  if(error){msg.style.color='var(--danger)';msg.textContent='Error: '+error.message;return;}
+  // Usar admin-action con service key para bypassear RLS
+  const headers=await _authHeader();
+  const res=await fetch('/api/admin-action',{
+    method:'POST',
+    headers:{...headers,'Content-Type':'application/json'},
+    body:JSON.stringify({action:'change_plan',payload:{negocio_id:negId,plan,plan_activo:activo,plan_vence:vence}})
+  });
+  const r=await res.json();
+  if(!res.ok||!r.ok){msg.style.color='var(--danger)';msg.textContent='Error: '+(r.error||'desconocido');return;}
   document.getElementById('modal-plan-admin').remove();
-  toast('✓ Plan actualizado','success');
+  toast('✓ Plan actualizado a '+plan,'success');
   adminListar();
 }
 

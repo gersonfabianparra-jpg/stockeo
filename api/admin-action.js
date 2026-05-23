@@ -50,14 +50,15 @@ export default async function handler(req, res) {
 
     // ── CAMBIAR PLAN ──
     if (action === 'change_plan') {
-      const { negocio_id, plan } = payload;
-      const vence = new Date();
-      vence.setDate(vence.getDate() + 30);
-      await fetch(`${SUPABASE_URL}/rest/v1/negocios?id=eq.${negocio_id}`, {
+      const { negocio_id, plan, plan_activo, plan_vence } = payload;
+      const body = { plan, plan_activo: plan_activo !== false };
+      if (plan_vence) body.plan_vence = plan_vence;
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/negocios?id=eq.${negocio_id}`, {
         method: 'PATCH',
         headers: sbHeaders,
-        body: JSON.stringify({ plan, plan_activo: true, plan_vence: vence.toISOString() })
+        body: JSON.stringify(body)
       });
+      if (!r.ok) return res.status(500).json({ ok: false, error: 'Error actualizando plan' });
       return res.status(200).json({ ok: true });
     }
 
