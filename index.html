@@ -3124,7 +3124,7 @@ async function onLogin(user){
   let negNombre='';
   try{
     // 1. Buscar si es dueño de un negocio
-    const{data:neg}=await sb.from('negocios').select('id,nombre,rut,email,logo_url,plan,plan_activo,plan_vence').eq('user_id',user.id).maybeSingle();
+    const{data:neg}=await sb.from('negocios').select('id,nombre,rut,direccion,contacto,email,logo_url,plan,plan_activo,plan_vence').eq('user_id',user.id).maybeSingle();
     if(neg){
       currentNegocioId=neg.id;
       negNombre=neg.nombre||'';
@@ -3132,6 +3132,9 @@ async function onLogin(user){
       planActivo=neg.plan_activo!==false;
       planVence=neg.plan_vence||null;
       currentRol='dueño';
+      // Poblar cfgNegocio desde Supabase (fuente de verdad)
+      cfgNegocio={...cfgNegocio,nombre:neg.nombre||'',rut:neg.rut||'',direccion:neg.direccion||'',contacto:neg.contacto||''};
+      localStorage.setItem('ls_cfg_negocio',JSON.stringify(cfgNegocio));
       if(neg.logo_url){ aplicarLogo(neg.logo_url); _guardarLogoUrl(neg.logo_url); }
     } else {
       // 2. Buscar si es miembro del equipo de otro negocio
