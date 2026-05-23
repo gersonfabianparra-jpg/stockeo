@@ -2975,7 +2975,15 @@ async function onLogin(user){
   let negNombre='';
   try{
     // 1. Buscar si es dueño de un negocio
-    const{data:neg}=await sb.from('negocios').select('id,nombre,rut,email,logo_url,plan,plan_activo,plan_vence').eq('user_id',user.id).maybeSingle();
+    // CRÍTICO: usar limit(1) con order — maybeSingle() falla si hay >1 fila y crea duplicados
+    const{data:negs}=await sb.from('negocios')
+      .select('id,nombre,rut,email,logo_url,plan,plan_activo,plan_vence')
+      .eq('user_id',user.id)
+      .order('plan',{ascending:true})         // business antes que gratis (b < g)
+      .order('logo_url',{nullsFirst:false})    // priorizar fila con logo
+      .order('created_at',{ascending:true})   // la más antigua primero
+      .limit(1);
+    const neg=negs?.[0]||null;
     if(neg){
       currentNegocioId=neg.id;
       negNombre=neg.nombre||'';
@@ -2983,12 +2991,17 @@ async function onLogin(user){
       planActivo=neg.plan_activo!==false;
       planVence=neg.plan_vence||null;
       currentRol='dueño';
-      if(neg.logo_url){ aplicarLogo(neg.logo_url); _guardarLogoUrl(neg.logo_url); }
+      // Preservar logo_url del localStorage si Supabase aún no lo tiene
+      let _prevLogo='';
+      try{_prevLogo=JSON.parse(localStorage.getItem('ls_cfg_negocio')||'{}').logo_url||'';}catch(e){}
+      const _logoFinal=neg.logo_url||_prevLogo;
+      if(_logoFinal){ aplicarLogo(_logoFinal); _guardarLogoUrl(_logoFinal); }
     } else {
       // 2. Buscar si es miembro del equipo de otro negocio
-      const{data:miembro}=await sb.from('usuarios_negocio')
+      const{data:miembros}=await sb.from('usuarios_negocio')
         .select('negocio_id,rol,activo,negocios(id,nombre,logo_url,plan,plan_activo,plan_vence)')
-        .eq('email',user.email).eq('activo',true).maybeSingle();
+        .eq('email',user.email).eq('activo',true).limit(1);
+      const miembro=miembros?.[0]||null;
       if(miembro&&miembro.negocios){
         const neg2=miembro.negocios;
         currentNegocioId=neg2.id;
@@ -2999,12 +3012,20 @@ async function onLogin(user){
         currentRol=miembro.rol||'vendedor';
         if(neg2.logo_url){ aplicarLogo(neg2.logo_url); _guardarLogoUrl(neg2.logo_url); }
       } else {
-        // Crear negocio nuevo
-        const{data:nuevo}=await sb.from('negocios').insert({
-          user_id:user.id,nombre:user.email.split('@')[0],
-          email:user.email,activo:true,created_at:new Date().toISOString()
-        }).select('id,nombre').single();
-        if(nuevo){currentNegocioId=nuevo.id;negNombre=nuevo.nombre||'';}
+        // 3. Crear negocio nuevo SOLO si realmente no existe ninguno
+        // Verificar una vez más con count para evitar race condition
+        const{count}=await sb.from('negocios').select('id',{count:'exact',head:true}).eq('user_id',user.id);
+        if(!count||count===0){
+          const{data:nuevo}=await sb.from('negocios').insert({
+            user_id:user.id,nombre:user.email.split('@')[0],
+            email:user.email,activo:true,created_at:new Date().toISOString()
+          }).select('id,nombre').single();
+          if(nuevo){currentNegocioId=nuevo.id;negNombre=nuevo.nombre||'';}
+        } else {
+          // Hay filas pero limit(1) no las tomó — buscar sin filtros adicionales
+          const{data:fallback}=await sb.from('negocios').select('id,nombre,plan').eq('user_id',user.id).limit(1);
+          if(fallback?.[0]){currentNegocioId=fallback[0].id;negNombre=fallback[0].nombre||'';currentPlan=fallback[0].plan||'gratis';}
+        }
         currentRol='dueño';
       }
     }
