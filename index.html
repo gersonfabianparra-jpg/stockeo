@@ -7749,31 +7749,27 @@ function exportarCotizacionPDF(id){
   const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
 
   const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>COT-${String(c.numero).padStart(4,'0')} — ${neg.nombre||'Cotización'}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#eef1f6;min-height:100vh;display:flex;justify-content:center;padding:32px 16px;}
-    .page{background:#fff;width:760px;border-radius:0;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18);}
-
-    /* ── HEADER OSCURO ── */
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#eef1f6;min-height:100vh;padding:32px 16px;display:flex;flex-direction:column;align-items:center;}
+    .page{background:#fff;width:100%;max-width:760px;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);}
     .doc-header{background:linear-gradient(135deg,#0f1624 0%,#162438 60%,#1e3250 100%);padding:36px 44px 32px;position:relative;overflow:hidden;}
     .doc-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(201,168,76,.07);}
     .doc-header::after{content:'';position:absolute;bottom:-60px;left:160px;width:160px;height:160px;border-radius:50%;background:rgba(201,168,76,.05);}
-    .header-inner{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;}
-    .neg-block{}
+    .header-inner{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;flex-wrap:wrap;gap:20px;}
     .neg-logo{max-height:52px;max-width:140px;object-fit:contain;margin-bottom:10px;display:block;}
     .neg-name{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.2px;}
     .neg-info{font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;margin-top:4px;}
     .doc-block{text-align:right;}
     .doc-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.7);font-weight:700;margin-bottom:6px;}
     .doc-title{font-size:34px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;}
-    .doc-folio-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(201,168,76,.55);font-weight:700;margin-top:10px;}
-    .doc-folio-num{font-size:17px;font-weight:900;color:#fff;letter-spacing:2.5px;margin-top:2px;font-variant-numeric:tabular-nums;}
-    .doc-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;background:${acBg};color:${acColor};}
+    .doc-num{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;font-weight:500;}
+    .doc-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;}
     .gold-bar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c,#f0d585,#c9a84c);}
-
-    /* ── INFO GRID ── */
     .info-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f0f0f0;}
     .info-cell{padding:22px 44px;}
     .info-cell:first-child{border-right:1px solid #f0f0f0;}
@@ -7785,14 +7781,12 @@ function exportarCotizacionPDF(id){
     .date-row-lbl{font-size:11px;color:#9ca3af;}
     .date-row-val{font-size:12px;font-weight:700;color:#111827;}
     .validez-pill{display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;color:#0369a1;}
-
-    /* ── TABLA ── */
-    .table-wrap{padding:0 44px 0;}
+    .table-wrap{padding:0 44px;}
     .table-title{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700;padding:20px 0 12px;}
     table{width:100%;border-collapse:collapse;}
     thead tr{background:#0f1624;}
     th{padding:11px 14px;text-align:left;font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
-    th:nth-child(1){width:32px;color:rgba(255,255,255,.3);}
+    th:nth-child(1){width:36px;color:rgba(255,255,255,.3);}
     th:nth-child(3),th:nth-child(4),td:nth-child(3),td:nth-child(4){text-align:center;}
     th:last-child,td:last-child{text-align:right;}
     td{padding:12px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
@@ -7800,35 +7794,39 @@ function exportarCotizacionPDF(id){
     td:nth-child(2){font-weight:500;color:#111827;}
     td:last-child{font-weight:700;color:#111827;}
     tr:last-child td{border-bottom:2px solid #f3f4f6;}
-    tbody tr:hover td{background:#fafafa;}
-
-    /* ── TOTALES ── */
     .totals-section{display:flex;justify-content:flex-end;padding:20px 44px 28px;}
     .totals-card{width:280px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;}
     .totals-card-inner{padding:16px 20px;}
     .tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;color:#6b7280;}
-    .tot-sep{height:1px;background:#e5e7eb;margin:10px 0;}
     .tot-grand{background:linear-gradient(135deg,#0f1624,#1e3250);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
     .tot-grand-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);font-weight:700;}
     .tot-grand-val{font-size:22px;font-weight:900;color:#c9a84c;letter-spacing:-.5px;}
-
-    /* ── FOOTER ── */
-    .doc-footer{background:#f8fafc;border-top:1px solid #e5e7eb;padding:16px 44px;display:flex;justify-content:space-between;align-items:center;}
+    .doc-footer{background:#f8fafc;border-top:1px solid #e5e7eb;padding:16px 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
     .footer-left{font-size:11px;color:#9ca3af;line-height:1.7;}
     .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-    .footer-brand{font-size:11px;font-weight:800;color:#c9a84c;letter-spacing:.3px;}
+    .footer-brand{font-size:11px;font-weight:800;color:#c9a84c;}
     .footer-brand-sub{font-size:10px;color:#9ca3af;}
-
+    @media(max-width:600px){
+      .doc-header{padding:24px 20px 20px;}
+      .info-grid{grid-template-columns:1fr;}
+      .info-cell:first-child{border-right:none;border-bottom:1px solid #f0f0f0;}
+      .info-cell{padding:16px 20px;}
+      .table-wrap{padding:0 20px;}
+      .totals-section{padding:16px 20px 24px;}
+      .doc-footer{padding:14px 20px;}
+      .doc-title{font-size:26px;}
+      th:nth-child(1){display:none;}td:nth-child(1){display:none;}
+    }
     @media print{
       body{background:#fff;padding:0;}
-      .page{box-shadow:none;width:100%;}
+      .page{box-shadow:none;border-radius:0;max-width:100%;}
     }
   </style>
   </head><body>
   <div class="page">
     <div class="doc-header">
       <div class="header-inner">
-        <div class="neg-block">
+        <div>
           ${logo?`<img src="${logo}" class="neg-logo"/>`:''}
           <div class="neg-name">${neg.nombre||'Mi negocio'}</div>
           <div class="neg-info">
@@ -7840,14 +7838,12 @@ function exportarCotizacionPDF(id){
         <div class="doc-block">
           <div class="doc-label">Documento comercial</div>
           <div class="doc-title">COTIZACIÓN</div>
-          <div class="doc-folio-lbl">N.° de folio</div>
-          <div class="doc-folio-num">COT-${String(c.numero).padStart(4,'0')}</div>
-          <div class="doc-badge">${estadoTxt}</div>
+          <div class="doc-num">N.° COT-${String(c.numero).padStart(4,'0')}</div>
+          <div class="doc-badge" style="background:${acBg};color:${acColor};">${estadoTxt}</div>
         </div>
       </div>
     </div>
     <div class="gold-bar"></div>
-
     <div class="info-grid">
       <div class="info-cell">
         <div class="info-cell-label">Dirigida a</div>
@@ -7864,29 +7860,23 @@ function exportarCotizacionPDF(id){
         </div>
       </div>
     </div>
-
     <div class="table-wrap">
       <div class="table-title">Detalle de productos y servicios</div>
       <table>
         <thead><tr>
-          <th>#</th>
-          <th>Descripción</th>
-          <th>Cantidad</th>
-          <th>Precio unit.</th>
-          <th>Subtotal</th>
+          <th>#</th><th>Descripción</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th>
         </tr></thead>
         <tbody>
           ${c.items.map((it,i)=>`<tr>
             <td>${i+1}</td>
             <td>${it.desc||'Sin descripción'}</td>
-            <td style="text-align:center;">${it.qty}</td>
+            <td style="text-align:center;">${it.qty||1}</td>
             <td style="text-align:center;">${fmt(it.precio)}</td>
             <td>${fmt(it.subtotal)}</td>
           </tr>`).join('')}
         </tbody>
       </table>
     </div>
-
     <div class="totals-section">
       <div class="totals-card">
         <div class="totals-card-inner">
@@ -7899,11 +7889,10 @@ function exportarCotizacionPDF(id){
         </div>
       </div>
     </div>
-
     <div class="doc-footer">
       <div class="footer-left">
         Esta cotización es válida hasta el <strong>${venceDate}</strong>.<br/>
-        Para aceptarla o consultar, contacte a <strong>${neg.contacto||neg.nombre||'el emisor'}</strong>.
+        Para aceptarla, contacte a <strong>${neg.contacto||neg.nombre||'el emisor'}</strong>.
       </div>
       <div class="footer-right">
         <span class="footer-brand">stockeo.cl</span>
