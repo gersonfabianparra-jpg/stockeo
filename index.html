@@ -7759,60 +7759,63 @@ function _telWA(tel){
 }
 
 async function compartirCotizacion(id){
-  const c = cotizaciones.find(ct=>ct.id===id);
+  const c=cotizaciones.find(ct=>ct.id===id);
   if(!c) return;
-  const url = `https://stockeo.cl/cotizacion/${id}`;
-  const numCot = 'COT-'+String(c.numero).padStart(4,'0');
-  const mensaje = `Hola${c.cliente?' '+c.cliente:''}, te envío la cotización *${numCot}*:\n${url}`;
-  const telWA = _telWA(c.cliente_tel||'');
+  const numCot='COT-'+String(c.numero).padStart(4,'0');
+  const telWA=_telWA(c.cliente_tel||'');
+  const url=`https://stockeo.cl/cotizacion/${id}`;
+  const msgTexto=`Hola${c.cliente?' '+c.cliente:''}, te envío la cotización *${numCot}*:\n${url}`;
 
-  // En iPhone/móvil: usar el share sheet nativo de iOS directamente
-  if(navigator.share && /iPhone|iPad|Android/i.test(navigator.userAgent)){
-    try{
-      await navigator.share({title:`Cotización ${numCot}`, text:mensaje, url});
-    }catch(e){ /* usuario canceló */ }
+  // Móvil: intentar adjuntar el documento directamente
+  if(/iPhone|iPad|Android/i.test(navigator.userAgent)){
+    exportarCotizacionPDF(id, async(blob, filename)=>{
+      const file=new File([blob],filename+'.pdf',{type:'application/pdf'});
+      if(navigator.canShare?.({files:[file]})){
+        try{ await navigator.share({files:[file],title:numCot,text:`Hola${c.cliente?' '+c.cliente:''}, aquí está tu cotización ${numCot}.`}); return; }
+        catch(e){ if(e.name==='AbortError') return; }
+      }
+      // Fallback: share sheet sin archivo
+      if(navigator.share){
+        try{ await navigator.share({title:numCot,text:msgTexto,url}); return; }catch(e){}
+      }
+      _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto);
+    });
     return;
   }
 
-  // Desktop o sin share API: mostrar modal con opciones
-  let modal = document.getElementById('modal-compartir');
+  _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto);
+}
+
+function _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto){
+  let modal=document.getElementById('modal-compartir');
   if(modal) modal.remove();
-  modal = document.createElement('div');
-  modal.className = 'modal-overlay open';
-  modal.id = 'modal-compartir';
-
-  const btnWA = telWA
-    ? `<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
-    : `<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
-
-  modal.innerHTML = `
+  modal=document.createElement('div');
+  modal.className='modal-overlay open';
+  modal.id='modal-compartir';
+  const btnWA=telWA
+    ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(msgTexto)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp</button>`
+    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(msgTexto)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+  modal.innerHTML=`
     <div class="modal" style="max-width:420px;">
       <div class="modal-drag"></div>
       <div class="modal-header">
-        <span class="modal-title">🔗 Compartir ${numCot}</span>
+        <span class="modal-title">📤 Compartir ${numCot}</span>
         <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
       </div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
-        <div style="font-size:13px;color:var(--text-secondary);">
-          El cliente puede ver la cotización sin necesidad de crear cuenta.
-        </div>
+        <div style="font-size:13px;color:var(--text-secondary);">El cliente puede ver la cotización sin necesidad de crear cuenta.</div>
         <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--gold);word-break:break-all;cursor:pointer;"
-          onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success')">
-          ${url}
-        </div>
+          onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success')">${url}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-gold" style="flex:1;min-width:140px;" onclick="
-            navigator.clipboard.writeText('${url}');
-            toast('✓ Link copiado al portapapeles','success');
-            document.getElementById('modal-compartir').remove();
-          ">📋 Copiar link</button>
+          <button class="btn btn-gold" style="flex:1;" onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success');document.getElementById('modal-compartir').remove()">📋 Copiar link</button>
           ${btnWA}
+          <button class="btn btn-outline" style="flex:1;" onclick="exportarCotizacionPDF('${id}');document.getElementById('modal-compartir').remove()">⬇ Descargar PDF</button>
         </div>
-        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Tip: agrega el teléfono del cliente en la cotización para enviar directo a su WhatsApp</div>`}
+        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente para enviar directo a su WhatsApp</div>`}
       </div>
     </div>`;
   document.body.appendChild(modal);
-  modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
 
 async function compartirOrden(id){
@@ -8067,7 +8070,7 @@ function verCotizacion(id){
 }
 
 
-function exportarCotizacionPDF(id){
+function exportarCotizacionPDF(id,_onBlob){
   const c=cotizaciones.find(ct=>ct.id===id);
   if(!c){toast('Cotización no encontrada','error');return;}
   const neg={
@@ -8240,10 +8243,10 @@ function exportarCotizacionPDF(id){
   <script>window.onload=function(){window.print();}<\/script>
   </body></html>`;
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  if(_onBlob){_onBlob(blob,`COT-${String(c.numero).padStart(4,'0')}`);return;}
   const url=URL.createObjectURL(blob);
   const win=window.open(url,'_blank');
   if(!win){
-    // Popup bloqueado → descarga directa el archivo
     const a=document.createElement('a');
     a.href=url;
     a.download=`COT-${String(c.numero).padStart(4,'0')}.html`;
