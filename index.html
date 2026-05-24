@@ -637,6 +637,37 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 .boleta-total-val{color:var(--success);}
 .boleta-actions{display:flex;gap:6px;margin-top:9px;}
 .boleta-cfg{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;}
+/* ══ ORDEN DE TRABAJO ══ */
+.ot-header{background:linear-gradient(135deg,#162438 0%,#1a2d48 100%);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:20px 24px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.ot-header-line{width:36px;height:3px;background:linear-gradient(90deg,#38bdf8,#7dd3fc);border-radius:2px;margin-bottom:6px;}
+.ot-title{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.ot-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;}
+.ot-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.ot-stat{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:10px;padding:12px 14px;text-align:center;}
+.ot-stat-n{font-size:22px;font-weight:800;color:#38bdf8;}
+.ot-stat-l{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.ot-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.ot-tab{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:.15s;}
+.ot-tab.active{background:#38bdf8;color:#0f1624;border-color:#38bdf8;}
+.ot-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.15s;}
+.ot-card:hover{border-color:#38bdf8;}
+.ot-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.ot-patente{font-size:18px;font-weight:900;color:#fff;letter-spacing:2px;font-family:monospace;}
+.ot-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:.5px;}
+.ot-card-mid{font-size:12px;color:var(--text-secondary);margin-top:6px;}
+.ot-card-bot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--navy-border);}
+.ot-form-section{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.ot-form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#38bdf8;margin-bottom:12px;}
+.ot-fuel{display:flex;align-items:center;gap:10px;}
+.ot-fuel input[type=range]{flex:1;accent-color:#38bdf8;}
+.ot-foto-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
+.ot-foto-chip{display:flex;align-items:center;gap:7px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:8px;padding:6px 10px;cursor:pointer;transition:border-color .15s;max-width:150px;min-width:90px;}
+.ot-foto-chip:hover{border-color:#38bdf8;}
+.ot-foto-chip-name{font-size:12px;font-weight:600;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.ot-foto-add{height:36px;padding:0 14px;border-radius:8px;border:2px dashed var(--navy-border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-muted);cursor:pointer;background:var(--navy-light);}
+.ot-foto-add:hover{border-color:#38bdf8;color:#38bdf8;}
+.ot-detail-overlay{position:fixed;inset:0;z-index:200;background:rgba(10,18,30,.92);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);}
+.ot-detail-box{background:var(--navy-mid);border:1px solid rgba(56,189,248,.25);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;}
 </style>
 </head>
 <body>
@@ -1799,6 +1830,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   <nav class="nav">
     <div class="nav-section">Principal</div>
     <div class="nav-item active" onclick="showPage('dashboard');closeSidebar()"><span class="nav-icon">▦</span>Dashboard</div>
+    <div class="nav-item" id="nav-ot" style="display:none" onclick="showPage('ot');closeSidebar()"><span class="nav-icon">🚗</span>Órdenes de trabajo</div>
     <div class="nav-item" onclick="showPage('inventario');closeSidebar()"><span class="nav-icon">☰</span>Inventario</div>
     <div class="nav-item" onclick="showPage('servicios');closeSidebar()"><span class="nav-icon">🔧</span>Servicios</div>
     <div class="nav-item" onclick="showPage('ventas');closeSidebar()"><span class="nav-icon">◎</span>Registrar venta</div>
@@ -1888,8 +1920,7 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
         <div class="card-header">
           <span class="card-title" id="table-count">Artículos</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn btn-outline btn-sm" onclick="openAIModal()">✦ IA</button>
-            <button class="btn btn-gold btn-sm" onclick="openModal()">+ Nuevo</button>
+<button class="btn btn-gold btn-sm" onclick="openModal()">+ Nuevo</button>
           </div>
         </div>
         <div class="table-wrap inv-table-wrap">
@@ -2297,6 +2328,32 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
       <div id="cot-inline-panel" class="cot-inline-panel"></div>
     </div>
 
+    <!-- PÁGINA ÓRDENES DE TRABAJO -->
+    <div class="page" id="page-ot">
+      <div class="ot-header">
+        <div>
+          <div class="ot-header-line"></div>
+          <div class="ot-title">Órdenes de trabajo <span id="ot-count" style="font-size:13px;font-weight:400;color:rgba(255,255,255,.35);"></span></div>
+          <div class="ot-sub">Recepción y seguimiento de vehículos</div>
+        </div>
+        <button class="btn btn-gold" onclick="abrirNuevaOrden()">+ Nueva orden</button>
+      </div>
+      <div class="ot-stats">
+        <div class="ot-stat"><div class="ot-stat-n" id="ot-st-total">0</div><div class="ot-stat-l">Total activas</div></div>
+        <div class="ot-stat"><div class="ot-stat-n" id="ot-st-listas" style="color:#4ade80;">0</div><div class="ot-stat-l">Listas p/entregar</div></div>
+        <div class="ot-stat"><div class="ot-stat-n" id="ot-st-hoy" style="color:#c9a84c;">0</div><div class="ot-stat-l">Ingresadas hoy</div></div>
+      </div>
+      <div class="ot-tabs">
+        <div class="ot-tab active" onclick="otFiltro='todas';renderOrdenes()" id="ot-tab-todas">Todas</div>
+        <div class="ot-tab" onclick="otFiltro='recibido';renderOrdenes()" id="ot-tab-recibido">Recibidas</div>
+        <div class="ot-tab" onclick="otFiltro='en_proceso';renderOrdenes()" id="ot-tab-en_proceso">En proceso</div>
+        <div class="ot-tab" onclick="otFiltro='listo';renderOrdenes()" id="ot-tab-listo">Listas</div>
+        <div class="ot-tab" onclick="otFiltro='entregado';renderOrdenes()" id="ot-tab-entregado">Entregadas</div>
+      </div>
+      <div id="ot-list"></div>
+      <div id="ot-form-panel"></div>
+    </div>
+
   </div>
 </main>
 </div>
@@ -2362,6 +2419,11 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
     <div class="bn-more-item" onclick="showPage('qrcodes');closeMoreMenu()">
       <div class="bn-more-item-icon" style="background:rgba(56,189,248,.15);color:#38bdf8;">⊟</div>
       <span class="bn-more-item-label">Códigos QR</span>
+      <span style="color:rgba(255,255,255,.2);font-size:12px;">›</span>
+    </div>
+    <div class="bn-more-item" id="bn-ot-item" style="display:none" onclick="showPage('ot');closeMoreMenu()">
+      <div class="bn-more-item-icon" style="background:rgba(56,189,248,.15);color:#38bdf8;">🚗</div>
+      <span class="bn-more-item-label">Órdenes de trabajo</span>
       <span style="color:rgba(255,255,255,.2);font-size:12px;">›</span>
     </div>
     <div class="bn-more-item" id="bn-equipo-item" style="display:none" onclick="showPage('equipo');closeMoreMenu()">
@@ -2687,6 +2749,18 @@ window.addEventListener('DOMContentLoaded',async()=>{
     return;
   }
 
+  // Es magic link (admin ingresando como otro negocio, o login directo)
+  if(tokenType === 'magiclink' && accessToken){
+    window.history.replaceState({}, document.title, window.location.pathname);
+    try{
+      const{data,error}=await sb.auth.setSession({
+        access_token: accessToken,
+        refresh_token: hashParams.get('refresh_token')||''
+      });
+      if(!error && data?.user){ await onLogin(data.user); return; }
+    }catch(e){ console.warn('[magiclink setSession]',e); }
+  }
+
   // Es confirmación de cuenta nueva (clic en link del email)
   if((tokenType === 'signup' || tokenType === 'email_change') && accessToken){
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -2968,6 +3042,7 @@ async function doLogin(){
 }
 
 async function onLogin(user){
+  if(currentUser) return; // evitar doble ejecución (onAuthStateChange + magiclink handler)
   mostrarCargandoApp();
   currentUser=user;
   esAdmin=user.email===ADMIN_EMAIL;
@@ -2992,6 +3067,8 @@ async function onLogin(user){
       planActivo=neg.plan_activo!==false;
       planVence=neg.plan_vence||null;
       currentRol='dueño';
+      if(neg.nombre) cfgNegocio.nombre=cfgNegocio.nombre||neg.nombre;
+      if(neg.email)  cfgNegocio.email=neg.email;
       // Preservar logo_url del localStorage si Supabase aún no lo tiene
       let _prevLogo='';
       try{_prevLogo=JSON.parse(localStorage.getItem('ls_cfg_negocio')||'{}').logo_url||'';}catch(e){}
@@ -3327,6 +3404,7 @@ function closeMoreMenu(){
 }
 
 async function loadData(){
+  cotizaciones=[];
   if(!currentNegocioId){
     categorias=[];inventario=[];ventas=[];boletas=[];
     return;
@@ -3370,6 +3448,7 @@ async function loadData(){
     const sv=localStorage.getItem(pfx+'vts');ventas=sv?JSON.parse(sv):[];
     const bl=localStorage.getItem(pfx+'bols');boletas=bl?JSON.parse(bl):[];
   }
+  if(_esModuloOT()) cargarOrdenes();
 }
 
 function saveLocal(){
@@ -3511,10 +3590,35 @@ async function adminListar(){
         <button class="btn btn-gold btn-sm" onclick="adminEditarNegocio('${n.id}','${nom}','${eml}','${rut}')">✎ Editar</button>
         <button class="btn btn-outline btn-sm" onclick="adminGestionarPlan('${n.id}','${nom}','${plan}',${activo},'${n.plan_vence||''}')">💳 Plan</button>
         <button class="btn btn-outline btn-sm" onclick="adminCambiarPassword('${uid}','${nom}')">🔑 Contraseña</button>
+        <button class="btn btn-outline btn-sm" style="color:#7dd3fc;" onclick="adminEntrarComoNegocio('${eml}','${nom}','${n.id}')">→ Entrar</button>
         <button class="btn btn-danger-outline btn-sm btn-icon" onclick="adminEliminar('${n.id}','${nom}')">✕</button>
       </div>
     </div>`;
   }).join('');
+}
+
+async function adminEntrarComoNegocio(email, nombre, negId){
+  if(!email){toast('Este negocio no tiene email registrado','error');return;}
+  if(!confirm(`¿Entrar al sistema como "${nombre}"?\n\nSe generará un link de acceso temporal.\nSe abrirá en una pestaña nueva.`)) return;
+  try{
+    const session=await sb.auth.getSession();
+    const token=session?.data?.session?.access_token;
+    const redirect_to=window.location.origin; // 'http://localhost:3333' o 'https://stockeo.cl'
+    const res=await fetch('/api/admin-action',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({action:'generate_magic_link',payload:{email,redirect_to}})
+    });
+    const r=await res.json();
+    if(r.error==='sin_service_key'){
+      toast('En local: agrega SUPABASE_SERVICE_KEY en .env.development.local','info');
+      return;
+    }
+    if(!res.ok||!r.link){toast('Error: '+(r.error||'desconocido'),'error');return;}
+    window.open(r.link,'_blank');
+  }catch(e){
+    toast('Error de conexión con el servidor','error');
+  }
 }
 
 function adminCambiarPassword(userId, nombre){
@@ -3591,17 +3695,69 @@ async function adminGuardarPassword(userId){
   }
 }
 
-async function adminVerNegocio(negId,nombre){
-  if(!confirm('¿Ver datos de "'+nombre+'"?'))return;
+async function adminVerNegocio(negId,nombre,skipConfirm=false){
+  if(!skipConfirm&&!confirm('¿Ver datos de "'+nombre+'"?'))return;
   const prev=currentNegocioId;
+  const prevCfg={...cfgNegocio};
+  const prevInv=[...inventario],prevVts=[...ventas],prevBols=[...boletas],prevCats=[...categorias],prevCots=[...cotizaciones];
+  const esLocal=window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1';
+
+  // En producción: cargar via API con service key (bypass RLS total)
+  if(!esLocal){
+    try{
+      const session=await sb.auth.getSession();
+      const token=session?.data?.session?.access_token;
+      const res=await fetch('/api/admin-action',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({action:'load_negocio',payload:{negocio_id:negId}})
+      });
+      const r=await res.json();
+      if(res.ok&&r.ok){
+        const neg=r.negocio||{};
+        currentNegocioId=negId;
+        cfgNegocio={...cfgNegocio,nombre:neg.nombre||'',rut:neg.rut||'',direccion:neg.direccion||'',contacto:neg.contacto||'',logo_url:neg.logo_url||'',email:neg.email||''};
+        if(neg.logo_url) aplicarLogo(neg.logo_url);
+        inventario=r.inventario||[];
+        ventas=r.ventas||[];
+        categorias=r.categorias||[];
+        boletas=(r.boletas||[]).map(b=>({id:b.id,numero:b.numero,fecha:b.fecha,negocio:{nombre:b.negocio_nombre||neg.nombre||'',rut:b.negocio_rut||neg.rut||'',direccion:'',contacto:''},cliente:{nombre:b.cliente_nombre||'',rut:b.cliente_rut||''},items:typeof b.items==='string'?JSON.parse(b.items):(b.items||[]),neto:b.neto,iva:b.iva,total:b.total,ventaId:b.venta_id}));
+        cotizaciones=(r.cotizaciones||[]).map(c=>({...c,items:typeof c.items==='string'?JSON.parse(c.items):(c.items||[])}));
+        renderAll();
+        showPage('dashboard');
+        toast('Entrando como: '+nombre,'success');
+        _mostrarBannerVolver(prev,prevCfg,prevInv,prevVts,prevBols,prevCats,prevCots);
+        return;
+      }
+    }catch(e){ console.warn('[adminVerNegocio api]',e.message); }
+  }
+
+  // Local (o fallback si API falla): consulta directa con el JWT del admin
+  // Requiere haber corrido el SQL de bypass RLS en Supabase
   currentNegocioId=negId;
-  await loadData();renderAll();
+  const{data:neg}=await sb.from('negocios').select('nombre,rut,direccion,contacto,logo_url,email').eq('id',negId).maybeSingle();
+  if(neg){
+    cfgNegocio={...cfgNegocio,nombre:neg.nombre||'',rut:neg.rut||'',direccion:neg.direccion||'',contacto:neg.contacto||'',logo_url:neg.logo_url||'',email:neg.email||''};
+    if(neg.logo_url) aplicarLogo(neg.logo_url);
+  }
+  await loadData();renderAll();cargarCotizaciones();
   showPage('dashboard');
   toast('Viendo: '+nombre,'info');
+  _mostrarBannerVolver(prev,prevCfg,prevInv,prevVts,prevBols,prevCats,prevCots);
+}
+
+function _mostrarBannerVolver(prev,prevCfg,prevInv,prevVts,prevBols,prevCats,prevCots){
+  document.getElementById('admin-ver-banner')?.remove();
   const t=document.createElement('div');
-  t.style.cssText='position:fixed;top:70px;right:1rem;z-index:999;background:var(--gold);color:var(--navy);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;';
+  t.id='admin-ver-banner';
+  t.style.cssText='position:fixed;top:70px;right:1rem;z-index:999;background:var(--gold);color:var(--navy);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);';
   t.textContent='← Volver a mis datos';
-  t.onclick=async()=>{currentNegocioId=prev;await loadData();renderAll();showPage('admin');t.remove();};
+  t.onclick=async()=>{
+    currentNegocioId=prev;cfgNegocio={...prevCfg};
+    inventario=prevInv;ventas=prevVts;boletas=prevBols;categorias=prevCats;cotizaciones=prevCots;
+    if(prevCfg.logo_url) aplicarLogo(prevCfg.logo_url);
+    renderAll();showPage('admin');t.remove();
+  };
   document.body.appendChild(t);
 }
 
@@ -3709,7 +3865,7 @@ function renderAll(){
 const pageLabels={dashboard:'Dashboard',inventario:'Inventario',servicios:'Servicios',ventas:'Registrar venta',scanner:'Escanear QR',historial:'Historial de ventas',clientes:'Clientes frecuentes',categorias:'Categorías',boletas:'Boletas',cotizaciones:'Cotizaciones',qrcodes:'Códigos QR',equipo:'Mi equipo',admin:'Panel Administrador'};
 
 // Páginas válidas del sistema
-const VALID_PAGES = ['dashboard','inventario','servicios','ventas','scanner','historial','clientes','categorias','boletas','cotizaciones','qrcodes','equipo','admin'];
+const VALID_PAGES = ['dashboard','inventario','servicios','ventas','scanner','historial','clientes','categorias','boletas','cotizaciones','qrcodes','equipo','admin','ot'];
 
 function showPage(id){
   // Bloquear acceso si no tiene permiso
@@ -3756,7 +3912,8 @@ function showPage(id){
   if(id==='equipo'){cargarEquipo();}
   if(id==='admin'){if(esAdmin)adminListar();}
   if(id==='boletas'){poblarInputsNegocio();renderBoletas();}
-  if(id==='cotizaciones'){renderCotizaciones();}
+  if(id==='cotizaciones'){renderCotizaciones();cargarCotizaciones();}
+  if(id==='ot'){renderOrdenes();}
   if(id==='qrcodes'){actualizarQRFilterCat();renderQRPage();}
 }
 
@@ -3977,14 +4134,14 @@ function renderDashboard(){
   const totalMes=ventasMes.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
   const totalMesAnt=ventasMesAnt.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
 
-  const ivaMes=Math.round(totalMes*0.19/1.19);
-  const netoMes=totalMes-ivaMes;
+  const netoMes=Math.round(totalMes);
+  const ivaMes=Math.round(totalMes*0.19);
   const costoMes=Math.round(ventasMes.reduce((s,v)=>s+Number(v.costo_total||0),0));
   const ganMes=netoMes-costoMes;
   const margenMes=netoMes>0?+(ganMes/netoMes*100).toFixed(1):0;
 
-  const ivaAnt=Math.round(totalMesAnt*0.19/1.19);
-  const netoAnt=totalMesAnt-ivaAnt;
+  const netoAnt=Math.round(totalMesAnt);
+  const ivaAnt=Math.round(totalMesAnt*0.19);
   const costoAnt=Math.round(ventasMesAnt.reduce((s,v)=>s+Number(v.costo_total||0),0));
   const ganAnt=netoAnt-costoAnt;
 
@@ -4125,8 +4282,8 @@ function renderChartTrend(){
     const key=d.toISOString().slice(0,7);
     const mv=ventas.filter(v=>(v.fecha||'').slice(0,7)===key);
     const ing=mv.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
-    const iva=Math.round(ing*0.19/1.19);
-    const neto=ing-iva;
+    const neto=Math.round(ing);
+    const iva=Math.round(ing*0.19);
     const costo=Math.round(mv.reduce((s,v)=>s+Number(v.costo_total||0),0));
     const gan=Math.max(0,neto-costo);
     labels.push(nm[d.getMonth()]);
@@ -4429,18 +4586,18 @@ function renderCarrito(){
     </div>`;
   }).join('');
 
-  const neto=Math.round(totalConIVA/1.19);
-  const iva=totalConIVA-neto;
+  const neto=Math.round(totalConIVA);
+  const iva=Math.round(totalConIVA*0.19);
 
   if(totalesEl){
     totalesEl.style.display='';
     document.getElementById('cart-neto').textContent='$'+neto.toLocaleString('es-CL');
-    document.getElementById('cart-iva').textContent='$'+Math.round(iva).toLocaleString('es-CL');
-    document.getElementById('cart-total').textContent='$'+Math.round(totalConIVA).toLocaleString('es-CL');
+    document.getElementById('cart-iva').textContent='$'+iva.toLocaleString('es-CL');
+    document.getElementById('cart-total').textContent='$'+(neto+iva).toLocaleString('es-CL');
   }
   if(btnCobrar){
     btnCobrar.disabled=false;
-    btnCobrar.textContent=`✓ Cobrar $${Math.round(totalConIVA).toLocaleString('es-CL')}`;
+    btnCobrar.textContent=`✓ Cobrar $${(neto+iva).toLocaleString('es-CL')}`;
   }
 }
 
@@ -4448,9 +4605,10 @@ function abrirCobro(){
   if(!carrito.length)return;
   if(!verificarLimiteAntesDe('boleta'))return;
   // Calcular totales del carrito
-  const totalConIVA=carrito.reduce((s,{item,qty})=>s+Number(item.precio)*qty,0);
-  const neto=Math.round(totalConIVA/1.19);
-  const iva=Math.round(totalConIVA-neto);
+  const netoCarrito=carrito.reduce((s,{item,qty})=>s+Number(item.precio)*qty,0);
+  const neto=Math.round(netoCarrito);
+  const iva=Math.round(netoCarrito*0.19);
+  const totalConIVA=neto+iva;
 
   // Mostrar resumen en modal cliente
   document.getElementById('cl-nombre').value='';
@@ -4506,7 +4664,7 @@ async function ejecutarVentaConBoleta(){
 
   for(const {item,qty} of items){
     const subtotal=Math.round(Number(item.precio)*qty*100)/100;
-    const netoItem=Math.round(subtotal/1.19*100)/100;
+    const netoItem=Math.round(subtotal*100)/100;
     const costo=Number(item.costo||0);
     const ganancia=(Number(item.precio)-costo)*qty;
     totalConIVA+=subtotal;
@@ -4551,15 +4709,15 @@ async function ejecutarVentaConBoleta(){
     await cargarClientes();
   }
 
-  const netoTotal=Math.round(totalConIVA/1.19);
-  const ivaTotal=Math.round(totalConIVA-netoTotal);
+  const netoTotal=Math.round(totalConIVA);
+  const ivaTotal=Math.round(totalConIVA*0.19);
 
   const boleta={
     id:'bol_'+Date.now(), numero:boletaSeq++, fecha:new Date().toISOString(),
     negocio:{...cfgNegocio},
     cliente:{nombre:clienteNombre, rut:clienteRut, telefono:clienteTel||null, email:clienteEmail||null},
     items:boletaItems,
-    neto:netoTotal, iva:ivaTotal, total:Math.round(totalConIVA),
+    neto:netoTotal, iva:ivaTotal, total:Math.round(netoTotal+ivaTotal),
     ventaId:ventasInsert[0]?.id
   };
   boletas.unshift(boleta);
@@ -4760,9 +4918,9 @@ async function confirmarScanAccion(){
     closeModal('modal-scan-confirm');
     // Reusar el flujo de venta con boleta
     ventaPendiente = {item, qty};
-    const total = Math.round(Number(item.precio)*qty*100)/100;
-    const neto  = Math.round(total/1.19*100)/100;
-    const iva   = Math.round((total-neto)*100)/100;
+    const neto  = Math.round(Number(item.precio)*qty*100)/100;
+    const iva   = Math.round(neto*0.19*100)/100;
+    const total = Math.round((neto+iva)*100)/100;
     document.getElementById('cl-nombre').value='';
     document.getElementById('cl-rut').value='';
     document.getElementById('cl-tel').value='';
@@ -4771,7 +4929,7 @@ async function confirmarScanAccion(){
     document.getElementById('cl-resumen').innerHTML=`
       <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Artículo</span><span style="font-weight:600">${item.nombre}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Cantidad</span><span>${qty} ud.</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Precio c/IVA</span><span>$${Number(item.precio).toLocaleString('es-CL')}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--text-secondary)">Precio neto</span><span>$${Number(item.precio).toLocaleString('es-CL')}</span></div>
       <hr style="border:none;border-top:1px solid var(--navy-border);margin:6px 0"/>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--text-secondary)">Neto</span><span>$${neto.toLocaleString('es-CL')}</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--text-secondary)">IVA 19%</span><span>$${iva.toLocaleString('es-CL')}</span></div>
@@ -4852,15 +5010,15 @@ function renderHistorial(){
   if(desde)filtradas=filtradas.filter(v=>v.fecha>=desde);
   if(hasta)filtradas=filtradas.filter(v=>v.fecha<=hasta+'T23:59:59');
 
-  // Cálculos generales — totalConIVA = lo que paga el cliente (precio × qty)
-  const totalConIVA = filtradas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0);
-  const totalNeto   = Math.round(totalConIVA / 1.19);
+  // Cálculos generales — precio es neto, total = neto * 1.19
+  const totalNeto   = Math.round(filtradas.reduce((s,v)=>s+Number(v.precio||0)*Number(v.qty||1),0));
+  const totalConIVA = Math.round(totalNeto * 1.19);
   const totalG      = filtradas.reduce((s,v)=>s+Number(v.ganancia||0),0);
   const totalU      = filtradas.reduce((s,v)=>s+Number(v.qty||0),0);
   const totalCosto  = filtradas.reduce((s,v)=>s+Number(v.costo_total||0),0);
 
   // Cálculo SII
-  const ivaDebito  = totalConIVA - totalNeto;
+  const ivaDebito  = Math.round(totalNeto * 0.19);
   const ivaCredito = Math.round(totalCosto * 0.19);
   const ivaPagar   = Math.max(0, ivaDebito - ivaCredito);
 
@@ -4894,10 +5052,10 @@ function renderHistorial(){
         const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         if(!mesesMap[key]) mesesMap[key] = {ventas:0, iva:0, neto:0};
         const bruto = Number(v.precio||0) * Number(v.qty||1);
-        const neto = Math.round(bruto / 1.19);
-        mesesMap[key].ventas += bruto;
+        const neto = Math.round(bruto);
+        mesesMap[key].ventas += Math.round(bruto * 1.19);
         mesesMap[key].neto += neto;
-        mesesMap[key].iva += bruto - neto;
+        mesesMap[key].iva += Math.round(bruto * 0.19);
       });
 
       // IVA del mes actual para el mini display
@@ -6409,11 +6567,24 @@ function puedeHacer(accion){
   return perms[accion]===true;
 }
 
+function _esModuloOT(){
+  const userEmail=(currentUser?.email||'').toLowerCase();
+  const negEmail=(cfgNegocio.email||'').toLowerCase();
+  const negNom=(cfgNegocio.nombre||'').toLowerCase();
+  return esAdmin||userEmail.includes('cleanschile')||negEmail.includes('cleanschile')||negNom.includes('cleanschile');
+}
+
 function aplicarPermisosRol(){
   const topbarBadge=document.getElementById('topbar-rol-badge');
   const topbarIcon=document.getElementById('topbar-rol-icon');
   const topbarNombre=document.getElementById('topbar-rol-nombre');
   const navEquipo=document.getElementById('nav-equipo');
+  // Módulo Orden de Trabajo: solo CleanSchile y admin
+  const navOT=document.getElementById('nav-ot');
+  const bnOT=document.getElementById('bn-ot-item');
+  const showOT=_esModuloOT()?'':'none';
+  if(navOT) navOT.style.display=showOT;
+  if(bnOT)  bnOT.style.display=showOT;
 
   // Dueño y admin — acceso completo
   if(esAdmin||currentRol==='dueño'){
@@ -7194,11 +7365,15 @@ function abrirModalCotizacion(cotId=null){
             <div id="cot-rut-dropdown" class="cot-rut-dropdown" style="display:none;"></div>
             <div id="cot-cli-found" style="display:none;margin-top:5px;font-size:11px;font-weight:600;color:#22c55e;padding:5px 10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);border-radius:7px;"></div>
           </div>
-          <input type="text" id="cot-cliente" class="cot-finput" placeholder="Razón social o nombre *" value="${cot?.cliente||''}" oninput="cotUpdatePreview()" style="margin-bottom:8px;"/>
+          <input type="text" id="cot-cliente" class="cot-finput" placeholder="Razón social o nombre *" value="${cot?.cliente||''}" oninput="cotNombreClienteChange(this.value)" style="margin-bottom:8px;"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
             <input type="tel" id="cot-cli-tel" class="cot-finput" placeholder="Teléfono" value="${cot?.cliente_tel||''}" oninput="cotUpdatePreview()"/>
             <input type="email" id="cot-cli-email" class="cot-finput" placeholder="Email" value="${cot?.cliente_email||''}" oninput="cotUpdatePreview()"/>
           </div>
+          <label id="cot-save-cli-label" style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin-bottom:8px;user-select:none;padding:7px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;">
+            <input type="checkbox" id="cot-save-cliente" style="width:15px;height:15px;accent-color:var(--gold);flex-shrink:0;" ${cot?'':'checked'}/>
+            <span id="cot-save-cli-txt">Guardar como nuevo cliente en el CRM</span>
+          </label>
           <textarea id="cot-notas" class="cot-finput" rows="2" placeholder="Notas o condiciones (opcional)" oninput="cotUpdatePreview()" style="resize:vertical;">${cot?.notas||''}</textarea>
         </div>
         <div>
@@ -7288,20 +7463,22 @@ function cotCalcTotal(){
     const lbl=row.querySelector('.cot-sub-label');
     if(lbl) lbl.textContent='$'+Math.round(s).toLocaleString('es-CL');
   });
-  const sub=Math.round(total/1.19);
-  const iva=Math.round(total)-sub;
+  const sub=Math.round(total);
+  const iva=Math.round(total*0.19);
   const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
   const elSub=document.getElementById('cot-subtotal');
   const elIva=document.getElementById('cot-iva');
   const elTot=document.getElementById('cot-total');
   if(elSub) elSub.textContent=fmt(sub);
   if(elIva) elIva.textContent=fmt(iva);
-  if(elTot) elTot.textContent=fmt(Math.round(total));
+  if(elTot) elTot.textContent=fmt(sub+iva);
 }
 
 function cotBuscarClienteRUT(val){
   const dropdown=document.getElementById('cot-rut-dropdown');
   const chip=document.getElementById('cot-cli-found');
+  const chk=document.getElementById('cot-save-cliente');
+  const txt=document.getElementById('cot-save-cli-txt');
   const rut=(val||'').replace(/[\.\-\s]/g,'').toLowerCase();
   if(chip) chip.style.display='none';
   if(rut.length<2){if(dropdown)dropdown.style.display='none';cotUpdatePreview();return;}
@@ -7310,7 +7487,14 @@ function cotBuscarClienteRUT(val){
     const xr=x.rut.replace(/[\.\-\s]/g,'').toLowerCase();
     return xr.startsWith(rut)||xr.includes(rut);
   }).slice(0,7);
-  if(!matches.length){if(dropdown)dropdown.style.display='none';cotUpdatePreview();return;}
+  if(!matches.length){
+    if(dropdown)dropdown.style.display='none';
+    // Cliente no existe en CRM → auto-marcar guardar
+    if(chk){chk.checked=true;}
+    if(txt) txt.textContent='Crear este cliente en el CRM';
+    cotUpdatePreview();
+    return;
+  }
   dropdown.innerHTML=matches.map((c,i)=>{
     const badge=c.etiqueta==='vip'?' 👑':c.etiqueta==='frecuente'?' ⭐':c.etiqueta==='mayorista'?' 📦':'';
     return `<div class="cot-rut-item" onmousedown="cotSeleccionarClienteRUT(${i})"><span class="cot-rut-item-name">${c.nombre||'Sin nombre'}${badge}</span><span class="cot-rut-item-rut">${c.rut||''}</span></div>`;
@@ -7338,6 +7522,23 @@ function cotCerrarDropdownRUT(){
   if(d)d.style.display='none';
 }
 
+function cotNombreClienteChange(val){
+  cotUpdatePreview();
+  if(!val.trim()) return;
+  // Si el nombre no coincide con ningún cliente en CRM, sugerir guardar
+  const chk=document.getElementById('cot-save-cliente');
+  const txt=document.getElementById('cot-save-cli-txt');
+  const rut=(document.getElementById('cot-cli-rut')?.value||'').replace(/[\.\-\s]/g,'').toLowerCase();
+  const enCRM=clientes.some(c=>{
+    const xr=(c.rut||'').replace(/[\.\-\s]/g,'').toLowerCase();
+    return (rut&&xr===rut)||(c.nombre||'').toLowerCase()===val.trim().toLowerCase();
+  });
+  if(!enCRM&&chk){
+    chk.checked=true;
+    if(txt) txt.textContent='Guardar como nuevo cliente en el CRM';
+  }
+}
+
 function _cotFillCliente(c,showChip){
   const elNombre=document.getElementById('cot-cliente');
   const elTel=document.getElementById('cot-cli-tel');
@@ -7345,6 +7546,11 @@ function _cotFillCliente(c,showChip){
   if(elNombre) elNombre.value=c.nombre||'';
   if(elTel)    elTel.value=c.telefono||'';
   if(elEmail)  elEmail.value=c.email||'';
+  // Cliente ya existe en CRM → desmarcar guardar
+  const chk=document.getElementById('cot-save-cliente');
+  const txt=document.getElementById('cot-save-cli-txt');
+  if(chk) chk.checked=false;
+  if(txt) txt.textContent='Actualizar datos del cliente en el CRM';
   if(showChip){
     const chip=document.getElementById('cot-cli-found');
     if(chip){
@@ -7378,8 +7584,8 @@ function cotUpdatePreview(){
     if(desc||precio>0) items.push({desc:desc||'Sin descripción',qty:qty||1,precio,subtotal:(qty||1)*precio});
   });
   const total=items.reduce((a,it)=>a+it.subtotal,0);
-  const sub=Math.round(total/1.19);
-  const iva=Math.round(total)-sub;
+  const sub=Math.round(total);
+  const iva=Math.round(total*0.19);
   const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
   const fecha=new Date();
   const vence=new Date(fecha.getTime()+validez*24*60*60*1000);
@@ -7440,7 +7646,7 @@ function cotUpdatePreview(){
         </div>
         <div class="cpv-tot-grand">
           <span class="cpv-tot-grand-lbl">Total a pagar</span>
-          <span class="cpv-tot-grand-val">${fmt(total)}</span>
+          <span class="cpv-tot-grand-val">${fmt(sub+iva)}</span>
         </div>
       </div>
     </div>
@@ -7469,9 +7675,9 @@ async function guardarCotizacion(cotId){
   if(!cliente){toast('⚠ Ingresa el nombre del cliente','error');return;}
   if(!items.length){toast('⚠ Agrega al menos un ítem con precio','error');return;}
   const totalBruto=items.reduce((a,it)=>a+it.subtotal,0);
-  const sub=Math.round(totalBruto/1.19);
-  const iva=Math.round(totalBruto)-sub;
-  const total=Math.round(totalBruto);
+  const sub=Math.round(totalBruto);
+  const iva=Math.round(totalBruto*0.19);
+  const total=Math.round(totalBruto+totalBruto*0.19);
 
   const btn=document.querySelector('#modal-cotizacion .btn-gold');
   if(btn){btn.disabled=true;btn.textContent='Guardando...';}
@@ -7514,10 +7720,31 @@ async function guardarCotizacion(cotId){
     if(!ok) toast('⚠ Guardado local. Sin conexión a internet.','info');
     cotizaciones.unshift(nueva);
   }
+  // Guardar / actualizar cliente en CRM si el checkbox está marcado
+  const saveCliente=document.getElementById('cot-save-cliente')?.checked;
+  if(saveCliente&&cliente&&currentNegocioId){
+    const payload={negocio_id:currentNegocioId,nombre:cliente};
+    if(cliente_rut) payload.rut=cliente_rut;
+    if(cliente_tel) payload.telefono=cliente_tel;
+    if(cliente_email) payload.email=cliente_email;
+    if(cliente_rut){
+      await sbRun(()=>sb.from('clientes').upsert(payload,{onConflict:'negocio_id,rut',ignoreDuplicates:false}));
+    } else {
+      // Sin RUT: evitar duplicados por nombre exacto
+      const yaExiste=clientes.find(c=>c.nombre?.toLowerCase()===cliente.toLowerCase());
+      if(yaExiste){
+        await sbRun(()=>sb.from('clientes').update(payload).eq('id',yaExiste.id));
+      } else {
+        await sbRun(()=>sb.from('clientes').insert(payload));
+      }
+    }
+    cargarClientes(); // Refrescar lista en background
+  }
+
   guardarCotizaciones();
   cerrarFormCotizacion();
   renderCotizaciones();
-  toast('Cotización guardada ✓','success');
+  toast(saveCliente&&cliente?'Cotización guardada y cliente registrado ✓':'Cotización guardada ✓','success');
 }
 
 function _telWA(tel){
@@ -7620,7 +7847,7 @@ async function registrarCotizacionComoVenta(id){
     id:'bol_cot_'+Date.now(), numero:boletaSeq++, fecha,
     negocio:{...cfgNegocio},
     cliente:{nombre:c.cliente||'', rut:c.cliente_rut||null, telefono:c.cliente_tel||null, email:c.cliente_email||null},
-    items:(c.items||[]).map(it=>({nombre:it.desc||'Sin descripción', id:it.artId||null, qty:it.qty||1, precioUnit:it.precio||0, neto:Math.round((it.subtotal||0)/1.19)})),
+    items:(c.items||[]).map(it=>({nombre:it.desc||'Sin descripción', id:it.artId||null, qty:it.qty||1, precioUnit:it.precio||0, neto:Math.round(it.subtotal||0)})),
     neto:c.sub||0, iva:c.iva||0, total:c.total||0,
     ventaId:ventasInsert[0]?.id
   };
@@ -8063,6 +8290,343 @@ function exportarCotizacionPDF(id){
     initCounters();
   }
 })();
+
+/* ══════════════════════════════════════════
+   MÓDULO ÓRDENES DE TRABAJO (CleanSchile)
+   ══════════════════════════════════════════ */
+let ordenesOT = [];
+let otFiltro = 'todas';
+const OT_ESTADOS = {
+  recibido:   { label:'Recibido',    color:'#60a5fa', bg:'rgba(96,165,250,.15)' },
+  en_proceso: { label:'En proceso',  color:'#fbbf24', bg:'rgba(251,191,36,.15)' },
+  listo:      { label:'Listo',       color:'#4ade80', bg:'rgba(74,222,128,.15)' },
+  entregado:  { label:'Entregado',   color:'#9ca3af', bg:'rgba(156,163,175,.1)' }
+};
+
+async function cargarOrdenes(){
+  if(!currentNegocioId) return;
+  const{data}=await sb.from('ordenes_trabajo')
+    .select('*').eq('negocio_id',currentNegocioId)
+    .is('deleted_at',null).order('created_at',{ascending:false});
+  if(data) ordenesOT=data;
+  renderOrdenes();
+}
+
+function renderOrdenes(){
+  const list=document.getElementById('ot-list');
+  if(!list) return;
+  // Stats
+  const activas=ordenesOT.filter(o=>o.estado!=='entregado');
+  const listas=ordenesOT.filter(o=>o.estado==='listo');
+  const hoy=ordenesOT.filter(o=>(o.created_at||'').slice(0,10)===new Date().toISOString().slice(0,10));
+  const stTotal=document.getElementById('ot-st-total');
+  const stListas=document.getElementById('ot-st-listas');
+  const stHoy=document.getElementById('ot-st-hoy');
+  if(stTotal) stTotal.textContent=activas.length;
+  if(stListas) stListas.textContent=listas.length;
+  if(stHoy)   stHoy.textContent=hoy.length;
+  // Filtro tabs
+  document.querySelectorAll('.ot-tab').forEach(t=>t.classList.remove('active'));
+  const tabEl=document.getElementById('ot-tab-'+(otFiltro==='todas'?'todas':otFiltro));
+  if(tabEl) tabEl.classList.add('active');
+  // Filtrar
+  const filtradas=otFiltro==='todas'?ordenesOT:ordenesOT.filter(o=>o.estado===otFiltro);
+  const cnt=document.getElementById('ot-count');
+  if(cnt) cnt.textContent=filtradas.length?'('+filtradas.length+')':'';
+  if(!filtradas.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">🚗</div><p>Sin órdenes${otFiltro!=='todas'?' en este estado':''}</p></div>`;
+    return;
+  }
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  list.innerHTML=filtradas.map(o=>{
+    const est=OT_ESTADOS[o.estado]||OT_ESTADOS.recibido;
+    const servicios=typeof o.servicios==='string'?JSON.parse(o.servicios||'[]'):(o.servicios||[]);
+    const total=servicios.reduce((s,sv)=>s+(sv.precio||0),0);
+    const entrega=o.fecha_entrega?new Date(o.fecha_entrega).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'Sin fecha';
+    const fotos=typeof o.fotos==='string'?JSON.parse(o.fotos||'[]'):(o.fotos||[]);
+    return`<div class="ot-card" onclick="verOrden('${o.id}')">
+      <div class="ot-card-top">
+        <div>
+          <div class="ot-patente">${o.patente||'—'}</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">${[o.marca,o.modelo,o.color].filter(Boolean).join(' · ')}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ot-badge" style="background:${est.bg};color:${est.color};">${est.label}</div>
+          ${total?`<div style="font-size:13px;font-weight:700;color:var(--gold);margin-top:5px;">${fmt(total)}</div>`:''}
+        </div>
+      </div>
+      <div class="ot-card-mid">${o.cliente_nombre||'Sin cliente'}${o.cliente_tel?' · '+o.cliente_tel:''}</div>
+      <div class="ot-card-bot">
+        <span style="font-size:11px;color:var(--text-muted);">📅 Entrega: ${entrega}</span>
+        <div style="display:flex;gap:6px;">
+          ${fotos.length?`<span style="font-size:11px;color:var(--text-muted);">📷 ${fotos.length}</span>`:''}
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();cambiarEstadoOrden('${o.id}','${o.estado}')">Avanzar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function abrirNuevaOrden(id){
+  const panel=document.getElementById('ot-form-panel');
+  if(!panel) return;
+  const orden=id?ordenesOT.find(o=>o.id===id):null;
+  const sv=orden?(typeof orden.servicios==='string'?JSON.parse(orden.servicios||'[]'):(orden.servicios||[])):[];
+  const fotos=orden?(typeof orden.fotos==='string'?JSON.parse(orden.fotos||'[]'):(orden.fotos||[])):[];
+  panel.innerHTML=`
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">🚗 Datos del vehículo</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="form-group-m"><label>Patente *</label><input id="ot-patente" value="${orden?.patente||''}" placeholder="AB·CD·12" style="text-transform:uppercase;font-weight:700;letter-spacing:2px;"/></div>
+      <div class="form-group-m"><label>Año</label><input id="ot-anio" type="number" value="${orden?.anio||''}" placeholder="2020"/></div>
+      <div class="form-group-m"><label>Marca</label><input id="ot-marca" value="${orden?.marca||''}" placeholder="Toyota"/></div>
+      <div class="form-group-m"><label>Modelo</label><input id="ot-modelo" value="${orden?.modelo||''}" placeholder="Corolla"/></div>
+      <div class="form-group-m"><label>Color</label><input id="ot-color" value="${orden?.color||''}" placeholder="Blanco"/></div>
+      <div class="form-group-m"><label>Km ingreso</label><input id="ot-km" type="number" value="${orden?.km_ingreso||''}" placeholder="0"/></div>
+    </div>
+    <div class="form-group-m" style="margin-top:10px;">
+      <label>Combustible <span id="ot-fuel-val">${orden?.combustible??50}%</span></label>
+      <div class="ot-fuel"><span>E</span><input type="range" id="ot-fuel" min="0" max="100" step="10" value="${orden?.combustible??50}" oninput="document.getElementById('ot-fuel-val').textContent=this.value+'%'"/><span>F</span></div>
+    </div>
+  </div>
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">👤 Datos del cliente</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="form-group-m"><label>Nombre *</label><input id="ot-cli-nombre" value="${orden?.cliente_nombre||''}" placeholder="Juan Pérez"/></div>
+      <div class="form-group-m"><label>Teléfono</label><input id="ot-cli-tel" value="${orden?.cliente_tel||''}" placeholder="9 1234 5678"/></div>
+      <div class="form-group-m"><label>RUT</label><input id="ot-cli-rut" value="${orden?.cliente_rut||''}" placeholder="12.345.678-9"/></div>
+      <div class="form-group-m"><label>Email</label><input id="ot-cli-email" value="${orden?.cliente_email||''}" placeholder="correo@email.com"/></div>
+    </div>
+  </div>
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">🔧 Servicios</div>
+    <div id="ot-servicios-wrap">${sv.map((s,i)=>`
+      <div class="ot-sv-row" style="display:flex;gap:8px;margin-bottom:8px;">
+        <input class="ot-sv-desc" value="${s.desc||''}" placeholder="Servicio" style="flex:1"/>
+        <input class="ot-sv-precio" type="number" value="${s.precio||''}" placeholder="Precio" style="width:100px"/>
+        <button class="btn btn-ghost btn-icon" onclick="this.parentElement.remove();otCalcTotal()" style="flex-shrink:0;">✕</button>
+      </div>`).join('')}</div>
+    <button class="btn btn-outline btn-sm" onclick="otAgregarServicio()" style="margin-top:6px;">+ Agregar servicio</button>
+    <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--navy-border);">
+      <span style="font-size:13px;color:var(--text-muted);">Total estimado</span>
+      <span id="ot-total-display" style="font-size:15px;font-weight:700;color:var(--gold);">$0</span>
+    </div>
+  </div>
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">📅 Recepción</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="form-group-m"><label>Fecha entrega estimada</label><input id="ot-fecha-entrega" type="datetime-local" value="${orden?.fecha_entrega?orden.fecha_entrega.slice(0,16):''}"/></div>
+      <div class="form-group-m"><label>Estado inicial</label>
+        <select id="ot-estado">${Object.entries(OT_ESTADOS).map(([k,v])=>`<option value="${k}"${(orden?.estado||'recibido')===k?' selected':''}>${v.label}</option>`).join('')}</select>
+      </div>
+    </div>
+  </div>
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">📝 Observaciones</div>
+    <textarea id="ot-obs" rows="3" placeholder="Daños visibles, condición del vehículo, solicitudes especiales...">${orden?.observaciones||''}</textarea>
+  </div>
+  <div class="ot-form-section">
+    <div class="ot-form-section-title">📷 Fotos <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(máx. 6)</span></div>
+    <input type="file" id="ot-foto-input" accept="image/*" multiple capture="environment" style="display:none" onchange="otAgregarFotos(this)"/>
+    <div class="ot-foto-grid" id="ot-fotos-grid">
+      ${fotos.map((f,i)=>`<div class="ot-foto-chip" onclick="otVerFoto(${i})"><span style="font-size:15px;">📷</span><span class="ot-foto-chip-name">Foto ${i+1}</span><button onclick="event.stopPropagation();otEliminarFoto(${i})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;flex-shrink:0;line-height:1;">✕</button></div>`).join('')}
+      <div class="ot-foto-add" onclick="document.getElementById('ot-foto-input').click()">+</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:4px;margin-bottom:24px;">
+    <button class="btn btn-outline" style="flex:1" onclick="cerrarFormOrden()">Cancelar</button>
+    <button class="btn btn-gold" style="flex:2;font-weight:700;" onclick="guardarOrden('${id||''}')">💾 Guardar orden</button>
+  </div>`;
+  panel.dataset.fotos=JSON.stringify(fotos);
+  otCalcTotal();
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function otAgregarServicio(){
+  const wrap=document.getElementById('ot-servicios-wrap');
+  if(!wrap) return;
+  const row=document.createElement('div');
+  row.className='ot-sv-row';
+  row.style.cssText='display:flex;gap:8px;margin-bottom:8px;';
+  row.innerHTML=`<input class="ot-sv-desc" placeholder="Servicio" style="flex:1" oninput="otCalcTotal()"/>
+    <input class="ot-sv-precio" type="number" placeholder="Precio" style="width:100px" oninput="otCalcTotal()"/>
+    <button class="btn btn-ghost btn-icon" onclick="this.parentElement.remove();otCalcTotal()" style="flex-shrink:0;">✕</button>`;
+  wrap.appendChild(row);
+}
+
+function otCalcTotal(){
+  let t=0;
+  document.querySelectorAll('#ot-servicios-wrap .ot-sv-precio').forEach(i=>t+=Number(i.value)||0);
+  const el=document.getElementById('ot-total-display');
+  if(el) el.textContent='$'+Math.round(t).toLocaleString('es-CL');
+}
+
+function otAgregarFotos(input){
+  const panel=document.getElementById('ot-form-panel');
+  const fotosActuales=JSON.parse(panel.dataset.fotos||'[]');
+  const archivos=Array.from(input.files).slice(0,6-fotosActuales.length);
+  let procesados=0;
+  archivos.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      fotosActuales.push(e.target.result);
+      procesados++;
+      if(procesados===archivos.length){
+        panel.dataset.fotos=JSON.stringify(fotosActuales);
+        otRenderFotos(fotosActuales);
+      }
+    };
+    reader.readAsDataURL(f);
+  });
+  input.value='';
+}
+
+function otEliminarFoto(idx){
+  const panel=document.getElementById('ot-form-panel');
+  const fotos=JSON.parse(panel.dataset.fotos||'[]');
+  fotos.splice(idx,1);
+  panel.dataset.fotos=JSON.stringify(fotos);
+  otRenderFotos(fotos);
+}
+
+function otRenderFotos(fotos){
+  const grid=document.getElementById('ot-fotos-grid');
+  if(!grid) return;
+  grid.innerHTML=fotos.map((f,i)=>`<div class="ot-foto-chip" onclick="otVerFoto(${i})"><span style="font-size:15px;">📷</span><span class="ot-foto-chip-name">Foto ${i+1}</span><button onclick="event.stopPropagation();otEliminarFoto(${i})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;flex-shrink:0;line-height:1;">✕</button></div>`).join('')
+    +(fotos.length<6?`<div class="ot-foto-add" onclick="document.getElementById('ot-foto-input').click()">+</div>`:'');
+}
+
+function otVerFoto(idx){
+  const panel=document.getElementById('ot-form-panel');
+  const fotos=JSON.parse(panel?.dataset.fotos||'[]');
+  const src=fotos[idx];
+  if(!src) return;
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;';
+  overlay.innerHTML=`<div style="position:relative;"><img src="${src}" style="max-width:88vw;max-height:78vh;border-radius:10px;box-shadow:0 0 40px rgba(0,0,0,.6);display:block;"/><div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;">✕</div><div style="text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:10px;">Foto ${idx+1} — clic para cerrar</div></div>`;
+  overlay.onclick=()=>overlay.remove();
+  document.body.appendChild(overlay);
+}
+
+async function guardarOrden(ordenId){
+  const patente=(document.getElementById('ot-patente')?.value||'').trim().toUpperCase();
+  const clienteNombre=(document.getElementById('ot-cli-nombre')?.value||'').trim();
+  if(!patente){toast('Ingresa la patente','error');return;}
+  if(!clienteNombre){toast('Ingresa el nombre del cliente','error');return;}
+  const panel=document.getElementById('ot-form-panel');
+  const servicios=[];
+  document.querySelectorAll('#ot-servicios-wrap .ot-sv-row').forEach(row=>{
+    const desc=row.querySelector('.ot-sv-desc')?.value.trim();
+    const precio=Number(row.querySelector('.ot-sv-precio')?.value)||0;
+    if(desc||precio) servicios.push({desc:desc||'Servicio',precio});
+  });
+  const total=servicios.reduce((s,sv)=>s+(sv.precio||0),0);
+  const data={
+    patente, anio:Number(document.getElementById('ot-anio')?.value)||null,
+    marca:document.getElementById('ot-marca')?.value.trim()||null,
+    modelo:document.getElementById('ot-modelo')?.value.trim()||null,
+    color:document.getElementById('ot-color')?.value.trim()||null,
+    km_ingreso:Number(document.getElementById('ot-km')?.value)||null,
+    combustible:Number(document.getElementById('ot-fuel')?.value)||50,
+    cliente_nombre:clienteNombre,
+    cliente_tel:document.getElementById('ot-cli-tel')?.value.trim()||null,
+    cliente_rut:document.getElementById('ot-cli-rut')?.value.trim()||null,
+    cliente_email:document.getElementById('ot-cli-email')?.value.trim()||null,
+    fecha_entrega:document.getElementById('ot-fecha-entrega')?.value||null,
+    estado:document.getElementById('ot-estado')?.value||'recibido',
+    observaciones:document.getElementById('ot-obs')?.value.trim()||null,
+    servicios:JSON.stringify(servicios),
+    fotos:panel.dataset.fotos||'[]',
+    total, negocio_id:currentNegocioId
+  };
+  if(ordenId){
+    const idx=ordenesOT.findIndex(o=>o.id===ordenId);
+    if(idx!==-1){ ordenesOT[idx]={...ordenesOT[idx],...data}; }
+    await sbRun(()=>sb.from('ordenes_trabajo').update(data).eq('id',ordenId));
+    toast('Orden actualizada ✓','success');
+  } else {
+    const nueva={id:(crypto.randomUUID?crypto.randomUUID():'ot_'+Date.now()),
+      ...data, created_at:new Date().toISOString(), deleted_at:null};
+    ordenesOT.unshift(nueva);
+    await sbRun(()=>sb.from('ordenes_trabajo').insert(nueva));
+    toast('Orden creada ✓','success');
+  }
+  cerrarFormOrden();
+  renderOrdenes();
+}
+
+function cerrarFormOrden(){
+  const panel=document.getElementById('ot-form-panel');
+  if(panel) panel.innerHTML='';
+}
+
+function cambiarEstadoOrden(id, estadoActual){
+  const flujo=['recibido','en_proceso','listo','entregado'];
+  const idx=flujo.indexOf(estadoActual);
+  if(idx===-1||idx===flujo.length-1){toast('Ya fue entregado','info');return;}
+  const nuevo=flujo[idx+1];
+  const orden=ordenesOT.find(o=>o.id===id);
+  if(!orden) return;
+  orden.estado=nuevo;
+  sbRun(()=>sb.from('ordenes_trabajo').update({estado:nuevo}).eq('id',id));
+  toast('Estado: '+OT_ESTADOS[nuevo].label,'success');
+  renderOrdenes();
+}
+
+function verOrden(id){
+  const o=ordenesOT.find(x=>x.id===id);
+  if(!o) return;
+  const est=OT_ESTADOS[o.estado]||OT_ESTADOS.recibido;
+  const servicios=typeof o.servicios==='string'?JSON.parse(o.servicios||'[]'):(o.servicios||[]);
+  const fotos=typeof o.fotos==='string'?JSON.parse(o.fotos||'[]'):(o.fotos||[]);
+  const total=servicios.reduce((s,sv)=>s+(sv.precio||0),0);
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
+  const entrega=o.fecha_entrega?new Date(o.fecha_entrega).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Sin fecha';
+  let modal=document.getElementById('ot-detail-modal');
+  if(modal) modal.remove();
+  modal=document.createElement('div');
+  modal.id='ot-detail-modal';
+  modal.className='ot-detail-overlay';
+  modal.innerHTML=`<div class="ot-detail-box">
+    <div style="padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:3px;font-family:monospace;">${o.patente||'—'}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${[o.marca,o.modelo,o.color,o.anio].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="ot-badge" style="background:${est.bg};color:${est.color};font-size:12px;">${est.label}</div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--navy-border);margin-top:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+        <div><span style="color:var(--text-muted);">Cliente:</span> <strong>${o.cliente_nombre||'—'}</strong></div>
+        <div><span style="color:var(--text-muted);">Tel:</span> ${o.cliente_tel||'—'}</div>
+        <div><span style="color:var(--text-muted);">RUT:</span> ${o.cliente_rut||'—'}</div>
+        <div><span style="color:var(--text-muted);">Email:</span> ${o.cliente_email||'—'}</div>
+        <div><span style="color:var(--text-muted);">Km ingreso:</span> ${o.km_ingreso!=null?o.km_ingreso.toLocaleString('es-CL')+' km':'—'}</div>
+        <div><span style="color:var(--text-muted);">Combustible:</span> ${o.combustible!=null?o.combustible+'%':'—'}</div>
+        <div><span style="color:var(--text-muted);">Entrega:</span> ${entrega}</div>
+      </div>
+      ${o.observaciones?`<div style="margin-top:10px;padding:10px;background:var(--navy-light);border-radius:8px;font-size:12px;color:var(--text-secondary);">${o.observaciones}</div>`:''}
+    </div>
+    ${servicios.length?`<div style="padding:0 20px 14px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#38bdf8;margin-bottom:8px;">Servicios</div>
+      ${servicios.map(sv=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--navy-border);">
+        <span>${sv.desc||'Servicio'}</span><span style="color:var(--gold);">${fmt(sv.precio||0)}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-top:8px;">
+        <span>Total</span><span style="color:var(--gold);">${fmt(total)}</span></div>
+    </div>`:''}
+    ${fotos.length?`<div style="padding:0 20px 14px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#38bdf8;margin-bottom:8px;">Fotos</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">${fotos.map(f=>`<img src="${f}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" onclick="window.open(this.src,'_blank')"/>`).join('')}</div>
+    </div>`:''}
+    <div style="padding:14px 20px 20px;display:flex;gap:8px;border-top:1px solid var(--navy-border);">
+      <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('ot-detail-modal').remove()">Cerrar</button>
+      <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('ot-detail-modal').remove();abrirNuevaOrden('${o.id}')">✎ Editar</button>
+      <button class="btn btn-gold" style="flex:1;font-weight:700;" onclick="document.getElementById('ot-detail-modal').remove();cambiarEstadoOrden('${o.id}','${o.estado}')">→ Avanzar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{ if(e.target===modal) modal.remove(); });
+}
 
 </script>
 
