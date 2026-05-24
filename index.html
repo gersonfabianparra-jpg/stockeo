@@ -8358,9 +8358,10 @@ function renderOrdenes(){
       <div class="ot-card-mid">${o.cliente_nombre||'Sin cliente'}${o.cliente_tel?' · '+o.cliente_tel:''}</div>
       <div class="ot-card-bot">
         <span style="font-size:11px;color:var(--text-muted);">📅 Entrega: ${entrega}</span>
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:6px;align-items:center;">
           ${fotos.length?`<span style="font-size:11px;color:var(--text-muted);">📷 ${fotos.length}</span>`:''}
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();cambiarEstadoOrden('${o.id}','${o.estado}')">Avanzar</button>
+          <button class="btn btn-danger-outline btn-sm btn-icon" onclick="event.stopPropagation();eliminarOrden('${o.id}','${o.patente||'esta OT'}')" title="Eliminar orden" style="padding:5px 8px;">✕</button>
         </div>
       </div>
     </div>`;
@@ -8512,6 +8513,14 @@ function otVerFoto(idx){
   overlay.innerHTML=`<div style="position:relative;"><img src="${src}" style="max-width:88vw;max-height:78vh;border-radius:10px;box-shadow:0 0 40px rgba(0,0,0,.6);display:block;"/><div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;">✕</div><div style="text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:10px;">Foto ${idx+1} — clic para cerrar</div></div>`;
   overlay.onclick=()=>overlay.remove();
   document.body.appendChild(overlay);
+}
+
+async function eliminarOrden(id, patente){
+  if(!confirm(`¿Eliminar la orden de trabajo "${patente}"?\n\nEsta acción no se puede deshacer.`)) return;
+  ordenesOT=ordenesOT.filter(o=>o.id!==id);
+  renderOrdenes();
+  await sbRun(()=>sb.from('ordenes_trabajo').update({deleted_at:new Date().toISOString()}).eq('id',id));
+  toast('Orden eliminada','info');
 }
 
 function otBuscarCliente(val){
