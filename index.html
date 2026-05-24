@@ -587,6 +587,10 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
   .stat-value{font-size:20px;}
   .cat-grid{grid-template-columns:1fr;}
   .page-title{max-width:120px;}
+  /* ── Admin responsive ── */
+  .neg-card{flex-direction:column;align-items:stretch;gap:12px;}
+  .neg-actions{width:100%;display:grid;grid-template-columns:repeat(3,1fr);}
+  .neg-actions .btn-danger-outline{grid-column:span 3;}
 }
 
 /* ══ LOGIN ══ */
@@ -623,7 +627,9 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 .neg-card:hover{border-color:var(--gold);}
 .neg-info{flex:1;min-width:0;}
 .neg-nombre{font-size:14px;font-weight:600;color:var(--text-primary);}
-.neg-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.neg-meta{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.neg-uuid{font-size:10px;color:var(--text-muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.neg-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;}
 /* ══ BOLETAS ══ */
 .boleta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding-bottom:2rem;}
 .boleta-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:1rem;transition:border-color .15s;}
@@ -3577,21 +3583,21 @@ async function adminListar(){
     const vence=n.plan_vence?` · Vence: ${new Date(n.plan_vence).toLocaleDateString('es-CL')}`:'';
     return`<div class="neg-card" style="${!activo?'opacity:0.6':''}">
       <div class="neg-info">
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <div class="neg-nombre">${n.nombre||'Sin nombre'}</div>
           <span style="font-size:10px;font-weight:700;color:${planColor};background:rgba(255,255,255,0.06);padding:2px 7px;border-radius:10px;text-transform:uppercase">${plan}</span>
           ${!activo?'<span style="font-size:10px;color:var(--danger);font-weight:600">SUSPENDIDO</span>':''}
         </div>
-        <div class="neg-meta">${n.email||''} ${n.rut?'· RUT: '+n.rut:''} · ${f}${vence}</div>
-        <div style="font-size:10px;color:var(--text-muted);font-family:monospace">${n.id}</div>
+        <div class="neg-meta">${n.email||''}${n.rut?' · RUT: '+n.rut:''} · ${f}${vence}</div>
+        <div class="neg-uuid">${n.id}</div>
       </div>
-      <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;">
+      <div class="neg-actions">
         <button class="btn btn-outline btn-sm" onclick="adminVerNegocio('${n.id}','${nom}')">👁 Ver</button>
         <button class="btn btn-gold btn-sm" onclick="adminEditarNegocio('${n.id}','${nom}','${eml}','${rut}')">✎ Editar</button>
         <button class="btn btn-outline btn-sm" onclick="adminGestionarPlan('${n.id}','${nom}','${plan}',${activo},'${n.plan_vence||''}')">💳 Plan</button>
-        <button class="btn btn-outline btn-sm" onclick="adminCambiarPassword('${uid}','${nom}')">🔑 Contraseña</button>
+        <button class="btn btn-outline btn-sm" onclick="adminCambiarPassword('${uid}','${nom}')">🔑 Pass</button>
         <button class="btn btn-outline btn-sm" style="color:#7dd3fc;" onclick="adminEntrarComoNegocio('${eml}','${nom}','${n.id}')">→ Entrar</button>
-        <button class="btn btn-danger-outline btn-sm btn-icon" onclick="adminEliminar('${n.id}','${nom}')">✕</button>
+        <button class="btn btn-danger-outline btn-sm btn-icon" onclick="adminEliminar('${n.id}','${nom}')">✕ Eliminar</button>
       </div>
     </div>`;
   }).join('');
