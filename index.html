@@ -5408,6 +5408,7 @@ function renderBoletas(){
       <div class="boleta-actions">
         <button class="btn btn-outline btn-sm" style="flex:1" onclick="verBoleta('${b.id}')">👁 Ver</button>
         <button class="btn btn-gold btn-sm" style="flex:1" onclick="_boletaActual=boletas.find(x=>x.id==='${b.id}');descargarBoletaPDF()">⬇ PDF</button>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="compartirBoleta('${b.id}')" title="Compartir">📤</button>
         <button class="btn btn-danger-outline btn-sm btn-icon" onclick="deleteBoleta('${b.id}')" title="Eliminar">✕</button>
       </div>
     </div>`;
@@ -7814,6 +7815,95 @@ async function compartirCotizacion(id){
   modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
 }
 
+async function compartirOrden(id){
+  const o=ordenesOT.find(x=>x.id===id);
+  if(!o) return;
+  const telWA=_telWA(o.cliente_tel||'');
+  const est=(OT_ESTADOS[o.estado]||OT_ESTADOS.recibido).label;
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
+  const servicios=typeof o.servicios==='string'?JSON.parse(o.servicios||'[]'):(o.servicios||[]);
+  const svLineas=servicios.map(s=>`• ${s.desc}: ${fmt(s.precio)}`).join('\n');
+  const entrega=o.fecha_entrega?new Date(o.fecha_entrega).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'Por confirmar';
+  const vehiculo=[o.marca,o.modelo,o.color,o.anio].filter(Boolean).join(' ');
+  const negNom=cfgNegocio?.nombre||negNombre||'';
+  const mensaje=`Hola${o.cliente_nombre?' '+o.cliente_nombre:''},👋\n\nTe informamos el estado de tu vehículo 🚗\n\n*Patente:* ${o.patente||'—'}\n${vehiculo?`*Vehículo:* ${vehiculo}\n`:''}\n*Estado:* ${est}\n\n*Servicios:*\n${svLineas||'—'}\n\n*Total:* ${fmt(o.total||0)}\n*Entrega estimada:* ${entrega}\n\n— ${negNom}`;
+
+  if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
+    try{ await navigator.share({title:`OT ${o.patente}`,text:mensaje}); }catch(e){}
+    return;
+  }
+  let modal=document.getElementById('modal-compartir');
+  if(modal) modal.remove();
+  modal=document.createElement('div');
+  modal.className='modal-overlay open';
+  modal.id='modal-compartir';
+  const btnWA=telWA
+    ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
+    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+  modal.innerHTML=`
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-drag"></div>
+      <div class="modal-header">
+        <span class="modal-title">📤 Compartir OT ${o.patente||''}</span>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--text-secondary);white-space:pre-wrap;line-height:1.6;">${mensaje.replace(/\*/g,'')}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-gold" style="flex:1;min-width:140px;" onclick="navigator.clipboard.writeText(${JSON.stringify(mensaje)});toast('✓ Mensaje copiado','success');document.getElementById('modal-compartir').remove()">📋 Copiar mensaje</button>
+          ${btnWA}
+        </div>
+        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente en la OT para enviar directo a su WhatsApp</div>`}
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+async function compartirBoleta(id){
+  const b=boletas.find(x=>x.id===id);
+  if(!b) return;
+  const telWA=_telWA(b.cliente?.telefono||'');
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
+  const numBol=numBoleta(b.numero);
+  const fecha=new Date(b.fecha).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const items=(b.items||[]).map(it=>`• ${it.nombre} x${it.qty}: ${fmt(it.precioUnit*it.qty)}`).join('\n');
+  const negNom=b.negocio?.nombre||cfgNegocio?.nombre||negNombre||'';
+  const cliNom=b.cliente?.nombre||'';
+  const mensaje=`Hola${cliNom?' '+cliNom:''},👋\n\nAquí está tu boleta 🧾\n\n*${numBol}* — ${negNom}\n*Fecha:* ${fecha}\n\n*Detalle:*\n${items||'—'}\n\n*Total:* ${fmt(b.total||0)}\n\n¡Gracias por tu compra! 🙌`;
+
+  if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
+    try{ await navigator.share({title:numBol,text:mensaje}); }catch(e){}
+    return;
+  }
+  let modal=document.getElementById('modal-compartir');
+  if(modal) modal.remove();
+  modal=document.createElement('div');
+  modal.className='modal-overlay open';
+  modal.id='modal-compartir';
+  const btnWA=telWA
+    ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
+    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+  modal.innerHTML=`
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-drag"></div>
+      <div class="modal-header">
+        <span class="modal-title">📤 Compartir ${numBol}</span>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--text-secondary);white-space:pre-wrap;line-height:1.6;">${mensaje.replace(/\*/g,'')}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-gold" style="flex:1;min-width:140px;" onclick="navigator.clipboard.writeText(${JSON.stringify(mensaje)});toast('✓ Mensaje copiado','success');document.getElementById('modal-compartir').remove()">📋 Copiar mensaje</button>
+          ${btnWA}
+        </div>
+        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente en la boleta para enviar directo a su WhatsApp</div>`}
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
 async function cambiarEstadoCot(id, estado){
   const c=cotizaciones.find(c=>c.id===id);
   if(!c) return;
@@ -8360,6 +8450,7 @@ function renderOrdenes(){
         <span style="font-size:11px;color:var(--text-muted);">📅 Entrega: ${entrega}</span>
         <div style="display:flex;gap:6px;align-items:center;">
           ${fotos.length?`<span style="font-size:11px;color:var(--text-muted);">📷 ${fotos.length}</span>`:''}
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();compartirOrden('${o.id}')">📤</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();cambiarEstadoOrden('${o.id}','${o.estado}')">Avanzar</button>
           <button class="btn btn-danger-outline btn-sm btn-icon" onclick="event.stopPropagation();eliminarOrden('${o.id}','${o.patente||'esta OT'}')" title="Eliminar orden" style="padding:5px 8px;">✕</button>
         </div>
