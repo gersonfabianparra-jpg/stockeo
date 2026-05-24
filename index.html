@@ -7776,7 +7776,7 @@ async function compartirCotizacion(id){
       }
       // Fallback: share sheet sin archivo
       if(navigator.share){
-        try{ await navigator.share({title:numCot,text:msgTexto,url}); return; }catch(e){}
+        try{ await navigator.share({title:numCot,text:msgTexto}); return; }catch(e){}
       }
       _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto);
     });
