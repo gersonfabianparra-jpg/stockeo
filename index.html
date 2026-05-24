@@ -8521,6 +8521,9 @@ async function guardarOrden(ordenId){
     if(desc||precio) servicios.push({desc:desc||'Servicio',precio});
   });
   const total=servicios.reduce((s,sv)=>s+(sv.precio||0),0);
+  const clienteTel=document.getElementById('ot-cli-tel')?.value.trim()||null;
+  const clienteRut=document.getElementById('ot-cli-rut')?.value.trim()||null;
+  const clienteEmail=document.getElementById('ot-cli-email')?.value.trim()||null;
   const data={
     patente, anio:Number(document.getElementById('ot-anio')?.value)||null,
     marca:document.getElementById('ot-marca')?.value.trim()||null,
@@ -8529,9 +8532,9 @@ async function guardarOrden(ordenId){
     km_ingreso:Number(document.getElementById('ot-km')?.value)||null,
     combustible:Number(document.getElementById('ot-fuel')?.value)||50,
     cliente_nombre:clienteNombre,
-    cliente_tel:document.getElementById('ot-cli-tel')?.value.trim()||null,
-    cliente_rut:document.getElementById('ot-cli-rut')?.value.trim()||null,
-    cliente_email:document.getElementById('ot-cli-email')?.value.trim()||null,
+    cliente_tel:clienteTel,
+    cliente_rut:clienteRut,
+    cliente_email:clienteEmail,
     fecha_entrega:document.getElementById('ot-fecha-entrega')?.value||null,
     estado:document.getElementById('ot-estado')?.value||'recibido',
     observaciones:document.getElementById('ot-obs')?.value.trim()||null,
@@ -8542,14 +8545,52 @@ async function guardarOrden(ordenId){
   if(ordenId){
     const idx=ordenesOT.findIndex(o=>o.id===ordenId);
     if(idx!==-1){ ordenesOT[idx]={...ordenesOT[idx],...data}; }
-    await sbRun(()=>sb.from('ordenes_trabajo').update(data).eq('id',ordenId));
+    const res=await sbRun(()=>sb.from('ordenes_trabajo').update(data).eq('id',ordenId));
+    if(res?.error){toast('Error al guardar: '+res.error.message,'error');return;}
     toast('Orden actualizada ✓','success');
   } else {
-    const nueva={id:(crypto.randomUUID?crypto.randomUUID():'ot_'+Date.now()),
+    const nueva={id:crypto.randomUUID(),
       ...data, created_at:new Date().toISOString(), deleted_at:null};
+    const res=await sb.from('ordenes_trabajo').insert(nueva);
+    if(res?.error){
+      toast('Error al guardar orden: '+res.error.message,'error');
+      console.error('[guardarOrden]',res.error);
+      return;
+    }
     ordenesOT.unshift(nueva);
-    await sbRun(()=>sb.from('ordenes_trabajo').insert(nueva));
+    // Registrar cada servicio como venta para que aparezca en ingresos
+    if(servicios.length>0&&total>0&&currentNegocioId){
+      const fecha=new Date().toISOString();
+      const ventasInsert=servicios.map(sv=>({
+        id:'v_ot_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+        art_id:null, art_nombre:'OT '+patente+(sv.desc?' — '+sv.desc:''), cat_id:null,
+        qty:1, precio:sv.precio||0, costo:0,
+        total:sv.precio||0, costo_total:0, ganancia:sv.precio||0,
+        cliente_rut:clienteRut||null, cliente_nombre:clienteNombre||null,
+        negocio_id:currentNegocioId, fecha
+      }));
+      await sbRun(()=>sb.from('ventas').insert(ventasInsert));
+      ventasInsert.forEach(v=>ventas.unshift(v));
+    }
     toast('Orden creada ✓','success');
+  }
+  // Guardar cliente en CRM automáticamente si tiene nombre
+  if(clienteNombre&&currentNegocioId){
+    const cliPayload={negocio_id:currentNegocioId,nombre:clienteNombre};
+    if(clienteRut) cliPayload.rut=clienteRut;
+    if(clienteTel) cliPayload.telefono=clienteTel;
+    if(clienteEmail) cliPayload.email=clienteEmail;
+    if(clienteRut){
+      await sbRun(()=>sb.from('clientes').upsert(cliPayload,{onConflict:'negocio_id,rut',ignoreDuplicates:false}));
+    } else {
+      const yaExiste=clientes.find(c=>c.nombre?.toLowerCase()===clienteNombre.toLowerCase());
+      if(yaExiste){
+        await sbRun(()=>sb.from('clientes').update(cliPayload).eq('id',yaExiste.id));
+      } else {
+        await sbRun(()=>sb.from('clientes').insert(cliPayload));
+      }
+    }
+    cargarClientes();
   }
   cerrarFormOrden();
   renderOrdenes();
