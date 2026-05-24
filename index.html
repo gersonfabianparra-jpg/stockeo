@@ -7376,10 +7376,6 @@ function abrirModalCotizacion(cotId=null){
             <input type="tel" id="cot-cli-tel" class="cot-finput" placeholder="Teléfono" value="${cot?.cliente_tel||''}" oninput="cotUpdatePreview()"/>
             <input type="email" id="cot-cli-email" class="cot-finput" placeholder="Email" value="${cot?.cliente_email||''}" oninput="cotUpdatePreview()"/>
           </div>
-          <label id="cot-save-cli-label" style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin-bottom:8px;user-select:none;padding:7px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;">
-            <input type="checkbox" id="cot-save-cliente" style="width:15px;height:15px;accent-color:var(--gold);flex-shrink:0;" ${cot?'':'checked'}/>
-            <span id="cot-save-cli-txt">Guardar como nuevo cliente en el CRM</span>
-          </label>
           <textarea id="cot-notas" class="cot-finput" rows="2" placeholder="Notas o condiciones (opcional)" oninput="cotUpdatePreview()" style="resize:vertical;">${cot?.notas||''}</textarea>
         </div>
         <div>
@@ -7726,9 +7722,8 @@ async function guardarCotizacion(cotId){
     if(!ok) toast('⚠ Guardado local. Sin conexión a internet.','info');
     cotizaciones.unshift(nueva);
   }
-  // Guardar / actualizar cliente en CRM si el checkbox está marcado
-  const saveCliente=document.getElementById('cot-save-cliente')?.checked;
-  if(saveCliente&&cliente&&currentNegocioId){
+  // Guardar cliente en CRM automáticamente si tiene nombre
+  if(cliente&&currentNegocioId){
     const payload={negocio_id:currentNegocioId,nombre:cliente};
     if(cliente_rut) payload.rut=cliente_rut;
     if(cliente_tel) payload.telefono=cliente_tel;
@@ -7736,7 +7731,6 @@ async function guardarCotizacion(cotId){
     if(cliente_rut){
       await sbRun(()=>sb.from('clientes').upsert(payload,{onConflict:'negocio_id,rut',ignoreDuplicates:false}));
     } else {
-      // Sin RUT: evitar duplicados por nombre exacto
       const yaExiste=clientes.find(c=>c.nombre?.toLowerCase()===cliente.toLowerCase());
       if(yaExiste){
         await sbRun(()=>sb.from('clientes').update(payload).eq('id',yaExiste.id));
@@ -7744,13 +7738,13 @@ async function guardarCotizacion(cotId){
         await sbRun(()=>sb.from('clientes').insert(payload));
       }
     }
-    cargarClientes(); // Refrescar lista en background
+    cargarClientes();
   }
 
   guardarCotizaciones();
   cerrarFormCotizacion();
   renderCotizaciones();
-  toast(saveCliente&&cliente?'Cotización guardada y cliente registrado ✓':'Cotización guardada ✓','success');
+  toast('Cotización guardada ✓','success');
 }
 
 function _telWA(tel){
