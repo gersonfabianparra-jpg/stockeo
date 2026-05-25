@@ -8167,6 +8167,24 @@ function _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto){
   modal.id='modal-compartir';
   const cerrar=()=>modal.remove();
   const msgPreview=msgTexto.replace(/\*/g,'').replace(/\n/g,'<br/>');
+
+  // Siempre sin número prefijado — el usuario elige el contacto desde WhatsApp
+  const _waUrl=()=>'https://api.whatsapp.com/send?text='+encodeURIComponent(msgTexto);
+
+  const _compartirPDFNativo=async()=>{
+    const {blob,filename}=await _generarPDFCotizacion(id);
+    const file=new File([blob],filename,{type:'application/pdf'});
+    if(navigator.canShare?.({files:[file]})){
+      await navigator.share({files:[file],title:numCot,text:msgTexto});
+      return true;
+    }
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=filename;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+    return false;
+  };
+
   modal.innerHTML=`
     <div class="modal" style="max-width:440px;">
       <div class="modal-drag"></div>
@@ -8177,45 +8195,32 @@ function _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto){
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
         <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.85rem 1rem;font-size:12.5px;color:var(--text-secondary);line-height:1.7;">${msgPreview}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-outline" id="_cm-wa" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;">💬 WhatsApp + PDF</button>
+          <button class="btn btn-outline" id="_cm-email" style="flex:1;min-width:140px;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.35);color:#3b82f6;">📧 Correo + PDF</button>
           <button class="btn btn-gold" id="_cm-cp" style="flex:1;min-width:130px;">📋 Copiar link</button>
-          <button class="btn btn-outline" id="_cm-wa" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;">💬 WhatsApp</button>
-          <button class="btn btn-outline" id="_cm-wa-pdf" style="width:100%;background:rgba(37,211,102,.08);border-color:rgba(37,211,102,.3);color:#16a34a;">💬 WhatsApp + PDF adjunto</button>
-          <button class="btn btn-outline" id="_cm-email" style="width:100%;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.3);color:#3b82f6;">📧 Correo con PDF adjunto</button>
           <button class="btn btn-outline" id="_cm-pdf" style="width:100%;">📄 Descargar PDF</button>
         </div>
-        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente para enviar directo a su WhatsApp</div>`}
       </div>
     </div>`;
   document.body.appendChild(modal);
   modal.addEventListener('click',e=>{if(e.target===modal)cerrar();});
   modal.querySelector('#_cm-close').onclick=cerrar;
-  modal.querySelector('#_cm-cp').onclick=()=>{
-    navigator.clipboard.writeText(url);
-    toast('✓ Link copiado','success');
-    cerrar();
-  };
-  const _waUrl=()=>telWA
-    ?'https://wa.me/'+telWA+'?text='+encodeURIComponent(msgTexto)
-    :'https://api.whatsapp.com/send?text='+encodeURIComponent(msgTexto);
-  modal.querySelector('#_cm-wa').onclick=()=>{ window.open(_waUrl(),'_blank'); cerrar(); };
-  modal.querySelector('#_cm-wa-pdf').onclick=async()=>{
+
+  modal.querySelector('#_cm-wa').onclick=async()=>{
     cerrar();
     try{
-      const {blob,filename}=await _generarPDFCotizacion(id);
-      const file=new File([blob],filename,{type:'application/pdf'});
-      if(navigator.canShare?.({files:[file]})){
-        await navigator.share({files:[file],title:numCot,text:msgTexto});
-        return;
-      }
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);a.download=filename;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(a.href),8000);
-      toast('PDF guardado — adjúntalo en el chat de WhatsApp','info');
-    }catch(e){ if(e?.name==='AbortError') return; console.warn('[PDF cot WA]',e);toast('Error al generar PDF','error');return; }
+      const nativo=await _compartirPDFNativo();
+      if(nativo) return;
+      toast('PDF guardado — adjúntalo en WhatsApp','info');
+    }catch(e){
+      if(e?.name==='AbortError') return;
+      console.warn('[PDF cot WA]',e);
+    }
     setTimeout(()=>window.open(_waUrl(),'_blank'),700);
   };
+
   modal.querySelector('#_cm-email').onclick=async function(){ await _enviarCotizacionCorreo(id,this); };
+  modal.querySelector('#_cm-cp').onclick=()=>{ navigator.clipboard.writeText(url); toast('✓ Link copiado','success'); cerrar(); };
   modal.querySelector('#_cm-pdf').onclick=()=>{ cerrar(); _descargarPDFCotizacion(id,null); };
 }
 
