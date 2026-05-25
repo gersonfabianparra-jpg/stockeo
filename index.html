@@ -8443,6 +8443,7 @@ async function compartirBoleta(id){
         <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.85rem 1rem;font-size:12.5px;color:var(--text-secondary);line-height:1.7;">${msgPreview}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn btn-outline" id="_bm-wa" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;">💬 WhatsApp + PDF</button>
+          <button class="btn btn-outline" id="_bm-email" style="flex:1;min-width:140px;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.35);color:#3b82f6;">📧 Correo + PDF</button>
           <button class="btn btn-gold" id="_bm-cp" style="flex:1;min-width:130px;">📋 Copiar mensaje</button>
           <button class="btn btn-outline" id="_bm-pdf" style="width:100%;">📄 Descargar PDF</button>
         </div>
@@ -8465,6 +8466,33 @@ async function compartirBoleta(id){
     }
     const waUrl=telWA?'https://wa.me/'+telWA+'?text='+encodeURIComponent(mensaje):'https://api.whatsapp.com/send?text='+encodeURIComponent(mensaje);
     setTimeout(()=>window.open(waUrl,'_blank'),700);
+  };
+
+  modal.querySelector('#_bm-email').onclick=async()=>{
+    cerrar();
+    try{
+      const {blob,filename}=await _generarPDFBoleta(id);
+      const file=new File([blob],filename,{type:'application/pdf'});
+      // Móvil: sheet nativo (el usuario elige su app de correo con PDF adjunto)
+      if(navigator.canShare?.({files:[file]})){
+        await navigator.share({files:[file],title:numBol,text:'Adjunto tu boleta '+numBol+(negNom?' de '+negNom:'')+'.'});
+        return;
+      }
+      // Desktop: descargar PDF + abrir cliente de correo
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download=filename;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+      const emailDest=b.cliente?.email||'';
+      const subj=encodeURIComponent(numBol+(negNom?' — '+negNom:''));
+      const body=encodeURIComponent('Hola'+(cliNom?' '+cliNom:'')+',\n\nAdjunto encontrarás tu '+numBol+'.\n\nTotal: '+fmt(b.total||0)+'\n\n— '+negNom);
+      setTimeout(()=>{ window.location.href='mailto:'+emailDest+'?subject='+subj+'&body='+body; },600);
+      toast('PDF listo — adjúntalo al correo que se va a abrir','success');
+    }catch(e){
+      if(e?.name==='AbortError') return;
+      console.error(e);
+      toast('Error al generar PDF','error');
+    }
   };
 
   modal.querySelector('#_bm-cp').onclick=()=>{
