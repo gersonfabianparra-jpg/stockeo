@@ -2090,11 +2090,22 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
 
     <!-- HISTORIAL -->
     <div class="page" id="page-historial">
-      <div class="filter-bar" style="margin-bottom:1rem;">
-        <input type="date" id="hist-desde" style="max-width:160px;" onchange="renderHistorial()"/>
-        <input type="date" id="hist-hasta" style="max-width:160px;" onchange="renderHistorial()"/>
-        <button class="btn btn-outline btn-sm" onclick="clearHistFiltro()">Limpiar</button>
-        <button class="btn btn-danger-outline btn-sm" style="margin-left:auto;" onclick="clearAllVentas()">Limpiar historial</button>
+      <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:1rem;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;">Filtrar por fecha</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">Desde</div>
+            <input type="date" id="hist-desde" style="width:100%;font-size:13px;" onchange="renderHistorial()"/>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">Hasta</div>
+            <input type="date" id="hist-hasta" style="width:100%;font-size:13px;" onchange="renderHistorial()"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="clearHistFiltro()">Limpiar fechas</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="clearAllVentas()">Borrar historial</button>
+        </div>
       </div>
       <div class="stats-grid" id="hist-stats" style="margin-bottom:1.25rem;"></div>
 
@@ -2298,12 +2309,21 @@ label{font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px
         </div>
       </div>
       <!-- Historial -->
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:1rem;">
-        <div style="font-size:13px;font-weight:600;">🧾 Boletas emitidas <span id="boleta-count" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-          <input type="date" id="bol-desde" style="max-width:145px;" onchange="renderBoletas()"/>
-          <input type="date" id="bol-hasta" style="max-width:145px;" onchange="renderBoletas()"/>
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('bol-desde').value='';document.getElementById('bol-hasta').value='';renderBoletas()">Limpiar</button>
+      <div style="font-size:13px;font-weight:600;margin-bottom:0.75rem;">🧾 Boletas emitidas <span id="boleta-count" style="color:var(--text-muted);font-weight:400;font-size:12px;"></span></div>
+      <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:1rem;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;">Filtrar por fecha</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">Desde</div>
+            <input type="date" id="bol-desde" style="width:100%;font-size:13px;" onchange="renderBoletas()"/>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">Hasta</div>
+            <input type="date" id="bol-hasta" style="width:100%;font-size:13px;" onchange="renderBoletas()"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="document.getElementById('bol-desde').value='';document.getElementById('bol-hasta').value='';renderBoletas()">Limpiar fechas</button>
           <button class="btn btn-outline btn-sm" onclick="verPapelera()">🗑 Papelera</button>
           <button class="btn btn-danger-outline btn-sm" onclick="clearAllBoletas()">Archivar todo</button>
         </div>
@@ -5407,8 +5427,7 @@ function renderBoletas(){
       <div class="boleta-total-row"><span>Total</span><span class="boleta-total-val">$${Number(b.total).toFixed(0)}</span></div>
       <div class="boleta-actions">
         <button class="btn btn-outline btn-sm" style="flex:1" onclick="verBoleta('${b.id}')">👁 Ver</button>
-        <button class="btn btn-gold btn-sm" style="flex:1" onclick="_boletaActual=boletas.find(x=>x.id==='${b.id}');descargarBoletaPDF()">⬇ PDF</button>
-        <button class="btn btn-outline btn-sm btn-icon" onclick="compartirBoleta('${b.id}')" title="Compartir">📤</button>
+        <button class="btn btn-outline btn-sm" style="flex:1;background:rgba(37,211,102,.08);border-color:rgba(37,211,102,.35);color:#25d366;" onclick="compartirBoleta('${b.id}')">📤 Compartir</button>
         <button class="btn btn-danger-outline btn-sm btn-icon" onclick="deleteBoleta('${b.id}')" title="Eliminar">✕</button>
       </div>
     </div>`;
@@ -5923,7 +5942,7 @@ async function renderClientes(){
 
 function contactarWhatsApp(telefono, nombre){
   const num=telefono.replace(/[\s\-\+\(\)]/g,'');
-  const msg=encodeURIComponent(`Hola ${nombre}, te contactamos desde ${cfgNegocio.nombre||'nuestro negocio'}. ¿En qué podemos ayudarte?`);
+  const msg=encodeURIComponent(`Hola ${nombre}, te contactamos de parte de ${cfgNegocio?.nombre||negNombre||'nuestro equipo'}. ¿En qué podemos ayudarte?`);
   window.open(`https://wa.me/56${num.replace(/^56/,'')}?text=${msg}`,'_blank');
 }
 
@@ -7313,7 +7332,7 @@ function renderCotizaciones(){
         <div class="cot-card-actions">
           <button class="btn btn-sm" style="background:rgba(99,179,237,.12);color:#63b3ed;border:1px solid rgba(99,179,237,.25);" onclick="window.open('https://stockeo.cl/cotizacion/${c.id}','_blank')">🌐 Ver link</button>
           <button class="btn btn-outline btn-sm" onclick="verCotizacion('${c.id}')">Detalle</button>
-          <button class="btn btn-gold btn-sm" onclick="exportarCotizacionPDF('${c.id}')">⬇ PDF</button>
+          <button class="btn btn-gold btn-sm" onclick="_descargarPDFCotizacion('${c.id}',this)">⬇ PDF</button>
           <button class="btn btn-sm" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);" onclick="compartirCotizacion('${c.id}')">🔗 Compartir</button>
           ${c.estado!=='aceptada'?`<button class="btn btn-sm" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.22);" onclick="cambiarEstadoCot('${c.id}','aceptada')">✓ Aceptar</button>`:''}
           ${c.estado!=='rechazada'?`<button class="btn btn-sm" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);" onclick="cambiarEstadoCot('${c.id}','rechazada')">✗ Rechazar</button>`:''}
@@ -7758,32 +7777,386 @@ function _telWA(tel){
   return d;
 }
 
+/* ── PDF real con html2pdf.js ── */
+async function _loadJsPDF(){
+  if(window.jspdf?.jsPDF) return;
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload=res; s.onerror=()=>rej(new Error('No se pudo cargar jsPDF'));
+    document.head.appendChild(s);
+  });
+}
+
+async function _urlToDataUrl(src){
+  if(!src) return null;
+  try{
+    const r=await fetch(src);
+    if(!r.ok) return null;
+    const b=await r.blob();
+    return await new Promise(res=>{
+      const fr=new FileReader();
+      fr.onload=e=>res(e.target.result);
+      fr.onerror=()=>res(null);
+      fr.readAsDataURL(b);
+    });
+  }catch(e){ return null; }
+}
+
+async function _loadHtml2canvas(){
+  if(window.html2canvas) return;
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=res; s.onerror=()=>rej(new Error('No se pudo cargar html2canvas'));
+    document.head.appendChild(s);
+  });
+}
+
+async function _generarPDFCotizacion(id){
+  const c=cotizaciones.find(ct=>ct.id===id);
+  if(!c) throw new Error('Cotizacion no encontrada');
+
+  const neg={
+    nombre:c.negocio_nombre||cfgNegocio?.nombre||negNombre||'',
+    rut:c.negocio_rut||cfgNegocio?.rut||'',
+    direccion:c.negocio_direccion||cfgNegocio?.direccion||'',
+    contacto:c.negocio_contacto||cfgNegocio?.contacto||''
+  };
+  const logoData=await _urlToDataUrl(c.negocio_logo_url||cfgNegocio?.logo_url||'');
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const emitDate=new Date(c.fecha).toLocaleDateString('es-CL');
+  const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*864e5).toLocaleDateString('es-CL');
+  const items=Array.isArray(c.items)?c.items:(typeof c.items==='string'?JSON.parse(c.items||'[]'):[]);
+  const numCot='COT-'+String(c.numero).padStart(4,'0');
+  const filename=numCot+'.pdf';
+  const estadoTxt=c.estado==='aceptada'?'ACEPTADA':c.estado==='rechazada'?'RECHAZADA':'PENDIENTE';
+  const acColor=c.estado==='aceptada'?'#16a34a':c.estado==='rechazada'?'#dc2626':'#b45309';
+  const acBg=c.estado==='aceptada'?'#dcfce7':c.estado==='rechazada'?'#fee2e2':'#fef3c7';
+  const acRgb=c.estado==='aceptada'?[22,163,74]:c.estado==='rechazada'?[220,38,38]:[180,83,9];
+  const acBgRgb=c.estado==='aceptada'?[220,252,231]:c.estado==='rechazada'?[254,226,226]:[254,243,199];
+  const cliMeta=[c.cliente_rut?`RUT ${c.cliente_rut}`:'',c.cliente_email||'',c.cliente_tel||''].filter(Boolean);
+
+  const overlay=document.createElement('div');
+  overlay.id='_pdf-ol';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(13,20,38,.92);z-index:99998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;';
+  overlay.innerHTML='<div style="width:38px;height:38px;border:3px solid rgba(201,168,76,.3);border-top-color:#c9a84c;border-radius:50%;animation:_pdfSpin .75s linear infinite;"></div><div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:.3px;">Generando PDF...</div><style>@keyframes _pdfSpin{to{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(overlay);
+
+  try{
+
+  // ── jsPDF directo (html2canvas descartado por inestabilidad en móvil) ────
+  try{
+    throw new Error('jsPDF only'); // salta directo al fallback jsPDF
+    await Promise.all([_loadJsPDF(),_loadHtml2canvas()]);
+    const {jsPDF}=window.jspdf;
+
+  // ── CSS — idéntico a cotizacion-publica.html, scoped a .pdf-page ──────
+  const css=`.pdf-page *{box-sizing:border-box;}.pdf-page{background:#fff;width:760px;font-family:'Inter','Segoe UI',Arial,sans-serif;}.pdf-page .doc-header{background:linear-gradient(135deg,#0f1624 0%,#162438 60%,#1e3250 100%);padding:36px 44px 32px;position:relative;overflow:hidden;}.pdf-page .doc-header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(201,168,76,.07);}.pdf-page .doc-header::after{content:'';position:absolute;bottom:-60px;left:160px;width:160px;height:160px;border-radius:50%;background:rgba(201,168,76,.05);}.pdf-page .header-inner{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;flex-wrap:wrap;gap:20px;}.pdf-page .neg-logo{max-height:52px;max-width:140px;object-fit:contain;margin-bottom:10px;display:block;}.pdf-page .neg-name{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.2px;}.pdf-page .neg-info{font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;margin-top:4px;}.pdf-page .doc-block{text-align:right;}.pdf-page .doc-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.7);font-weight:700;margin-bottom:6px;}.pdf-page .doc-title{font-size:34px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;}.pdf-page .doc-num{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;font-weight:500;}.pdf-page .doc-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;}.pdf-page .gold-bar{height:3px;background:linear-gradient(90deg,#c9a84c,#f0d585,#c9a84c,#f0d585,#c9a84c);}.pdf-page .info-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f0f0f0;}.pdf-page .info-cell{padding:22px 44px;}.pdf-page .info-cell:first-child{border-right:1px solid #f0f0f0;}.pdf-page .info-cell-label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700;margin-bottom:10px;}.pdf-page .client-name{font-size:18px;font-weight:800;color:#111827;}.pdf-page .client-meta{font-size:12px;color:#6b7280;margin-top:5px;line-height:1.8;}.pdf-page .client-note{font-size:12px;color:#6b7280;margin-top:5px;font-style:italic;line-height:1.5;}.pdf-page .date-rows{display:flex;flex-direction:column;gap:8px;}.pdf-page .date-row{display:flex;justify-content:space-between;align-items:center;}.pdf-page .date-row-lbl{font-size:11px;color:#9ca3af;}.pdf-page .date-row-val{font-size:12px;font-weight:700;color:#111827;}.pdf-page .validez-pill{display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;color:#0369a1;}.pdf-page .table-wrap{padding:0 44px;}.pdf-page .table-title{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700;padding:20px 0 12px;}.pdf-page table{width:100%;border-collapse:collapse;}.pdf-page thead tr{background:#0f1624;}.pdf-page th{padding:11px 14px;text-align:left;font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:.6px;}.pdf-page th:nth-child(1){width:32px;color:rgba(255,255,255,.3);}.pdf-page th:nth-child(3),.pdf-page th:nth-child(4),.pdf-page td:nth-child(3),.pdf-page td:nth-child(4){text-align:center;}.pdf-page th:last-child,.pdf-page td:last-child{text-align:right;}.pdf-page td{padding:11px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6;vertical-align:middle;}.pdf-page td:first-child{color:#d1d5db;font-size:11px;font-weight:600;}.pdf-page td:nth-child(2){font-weight:500;color:#111827;}.pdf-page td:last-child{font-weight:700;color:#111827;}.pdf-page tr:last-child td{border-bottom:2px solid #f3f4f6;}.pdf-page .totals-section{display:flex;justify-content:flex-end;padding:20px 44px 28px;}.pdf-page .totals-card{width:280px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;}.pdf-page .totals-card-inner{padding:16px 20px;}.pdf-page .tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;color:#6b7280;}.pdf-page .tot-grand{background:linear-gradient(135deg,#0f1624,#1e3250);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}.pdf-page .tot-grand-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);font-weight:700;}.pdf-page .tot-grand-val{font-size:22px;font-weight:900;color:#c9a84c;letter-spacing:-.5px;}.pdf-page .doc-footer{background:#f8fafc;border-top:1px solid #e5e7eb;padding:16px 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}.pdf-page .footer-left{font-size:11px;color:#9ca3af;line-height:1.7;}.pdf-page .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}.pdf-page .footer-brand{font-size:11px;font-weight:800;color:#c9a84c;}.pdf-page .footer-brand-sub{font-size:10px;color:#9ca3af;}`;
+
+  // ── HTML — mismo que cotizacion-publica.html genera ─────────────────────
+  const negInfo=[neg.rut?`RUT ${neg.rut}`:'',neg.direccion,neg.contacto].filter(Boolean).join('<br/>');
+  const html=`<div class="pdf-page">
+    <div class="doc-header"><div class="header-inner">
+      <div>
+        ${logoData?`<img src="${logoData}" class="neg-logo"/>`:''}
+        <div class="neg-name">${neg.nombre||'Mi negocio'}</div>
+        ${negInfo?`<div class="neg-info">${negInfo}</div>`:''}
+      </div>
+      <div class="doc-block">
+        <div class="doc-label">Documento comercial</div>
+        <div class="doc-title">COTIZACIÓN</div>
+        <div class="doc-num">N.° ${numCot}</div>
+        <div class="doc-badge" style="background:${acBg};color:${acColor};">${estadoTxt}</div>
+      </div>
+    </div></div>
+    <div class="gold-bar"></div>
+    <div class="info-grid">
+      <div class="info-cell">
+        <div class="info-cell-label">Dirigida a</div>
+        <div class="client-name">${c.cliente||'Sin especificar'}</div>
+        ${cliMeta.length?`<div class="client-meta">${cliMeta.join('<br/>')}</div>`:''}
+        ${c.notas?`<div class="client-note">${c.notas}</div>`:''}
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-label">Detalles del documento</div>
+        <div class="date-rows">
+          <div class="date-row"><span class="date-row-lbl">Fecha de emisión</span><span class="date-row-val">${emitDate}</span></div>
+          <div class="date-row"><span class="date-row-lbl">Válida hasta</span><span class="date-row-val">${venceDate}</span></div>
+          <div class="date-row"><span class="date-row-lbl">Vigencia</span><span><span class="validez-pill">${c.validez||30} días</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-title">Detalle de productos y servicios</div>
+      <table><thead><tr><th>#</th><th>Descripción</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead>
+      <tbody>${items.map((it,i)=>`<tr><td>${i+1}</td><td>${it.desc||'Sin descripción'}</td><td>${it.qty||1}</td><td>${fmt(it.precio)}</td><td>${fmt(it.subtotal)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="totals-section"><div class="totals-card">
+      <div class="totals-card-inner">
+        <div class="tot-row"><span>Subtotal neto</span><span>${fmt(c.sub)}</span></div>
+        <div class="tot-row"><span>IVA (19%)</span><span>${fmt(c.iva)}</span></div>
+      </div>
+      <div class="tot-grand">
+        <span class="tot-grand-lbl">Total a pagar</span>
+        <span class="tot-grand-val">${fmt(c.total)}</span>
+      </div>
+    </div></div>
+    <div class="doc-footer">
+      <div class="footer-left">Esta cotización es válida hasta el <strong>${venceDate}</strong>.<br/>Para aceptarla, contacte a <strong>${neg.contacto||neg.nombre||'el emisor'}</strong>.</div>
+      <div class="footer-right"><span class="footer-brand">stockeo.cl</span><span class="footer-brand-sub">Sistema de gestión</span></div>
+    </div>
+  </div>`;
+
+  // ── Contenedor de render ──────────────────────────────────────────────────
+  const wrap=document.createElement('div');
+  wrap.id='_pdf-wrap';
+  wrap.style.cssText='position:fixed;top:0;left:-9999px;width:760px;background:#eef1f6;padding:32px 16px;';
+  const styleEl=document.createElement('style');
+  styleEl.textContent=css;
+  wrap.appendChild(styleEl);
+  wrap.insertAdjacentHTML('beforeend',html);
+  document.body.appendChild(wrap);
+
+  // Esperar que el DOM renderice completamente
+  await new Promise(r=>setTimeout(r,420));
+
+  let _canvas;
+  try{
+    _canvas=await window.html2canvas(wrap.querySelector('.pdf-page'),{
+      scale:2,
+      useCORS:true,
+      allowTaint:true,
+      backgroundColor:'#ffffff',
+      logging:false,
+      imageTimeout:15000
+    });
+  }finally{
+    wrap.remove();
+  }
+
+  // ── Canvas → PDF A4 ──────────────────────────────────────────────────────
+  const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  const pdfW=doc.internal.pageSize.getWidth();
+  const pdfH=doc.internal.pageSize.getHeight();
+  const totalH=_canvas.height*pdfW/_canvas.width;
+  if(totalH<=pdfH+1){
+    doc.addImage(_canvas.toDataURL('image/jpeg',0.97),'JPEG',0,0,pdfW,Math.min(totalH,pdfH));
+  }else{
+    const pagePixH=Math.floor(_canvas.width*pdfH/pdfW);
+    let py=0;
+    while(py<_canvas.height){
+      if(py>0) doc.addPage();
+      const pc=document.createElement('canvas');
+      pc.width=_canvas.width;
+      pc.height=Math.min(pagePixH,_canvas.height-py);
+      pc.getContext('2d').drawImage(_canvas,0,py,pc.width,pc.height,0,0,pc.width,pc.height);
+      doc.addImage(pc.toDataURL('image/jpeg',0.97),'JPEG',0,0,pdfW,pc.height*pdfW/_canvas.width);
+      py+=pagePixH;
+    }
+  }
+  return {blob:doc.output('blob'),filename};
+
+  }catch(e){
+    console.warn('[PDF] html2canvas falló, usando jsPDF:',e?.message||e);
+    document.getElementById('_pdf-wrap')?.remove();
+  }
+
+  // ── RESPALDO jsPDF (siempre funciona) ─────────────────────────────────────
+  await _loadJsPDF();
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  const PW=doc.internal.pageSize.getWidth(),PH=doc.internal.pageSize.getHeight();
+  const ML=12,MR=PW-12;
+
+  // Header oscuro
+  doc.setFillColor(15,22,36);
+  doc.rect(0,0,PW,48,'F');
+
+  let negNameY=36;
+  if(logoData){
+    try{
+      const props=doc.getImageProperties(logoData);
+      const maxW=40,maxH=18;
+      let lw=maxW,lh=props.height*maxW/props.width;
+      if(lh>maxH){lh=maxH;lw=props.width*maxH/props.height;}
+      doc.addImage(logoData,'',ML,8,lw,lh);
+      negNameY=8+lh+5;
+    }catch(_){}
+  }
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(255,255,255);
+  doc.text(neg.nombre||'Mi negocio',ML,negNameY);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(130,145,165);
+  [neg.rut?`RUT ${neg.rut}`:'',neg.direccion,neg.contacto].filter(Boolean).forEach((ln,i)=>doc.text(ln,ML,negNameY+4.5+i*4));
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(160,130,50);
+  doc.text('DOCUMENTO COMERCIAL',MR,13,{align:'right'});
+  doc.setFontSize(22);doc.setTextColor(255,255,255);
+  doc.text('COTIZACIÓN',MR,24,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(130,145,165);
+  doc.text(`N.° ${numCot}`,MR,30,{align:'right'});
+  doc.setFontSize(7);
+  const bW=doc.getTextWidth(estadoTxt)+8,bX=MR-bW;
+  doc.setFillColor(...acBgRgb);doc.roundedRect(bX,33,bW,6,1.5,1.5,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(...acRgb);
+  doc.text(estadoTxt,bX+bW/2,37.3,{align:'center'});
+
+  // Barra dorada
+  let y=48;
+  doc.setFillColor(201,168,76);doc.rect(0,y,PW,1.5,'F');y+=1.5;
+
+  // Info grid
+  const GS=y,GH=42,HALF=PW/2;
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(170,170,170);
+  doc.text('DIRIGIDA A',ML,GS+10);
+  doc.setFontSize(14);doc.setTextColor(17,24,39);
+  doc.text(c.cliente||'Sin especificar',ML,GS+19);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);
+  cliMeta.forEach((m,i)=>doc.text(m,ML,GS+26+i*5));
+  if(c.notas){const nl=doc.splitTextToSize(c.notas,HALF-ML-6);doc.setFontSize(7.5);nl.slice(0,2).forEach((l,i)=>doc.text(l,ML,GS+26+cliMeta.length*5+2+i*4.5));}
+  doc.setDrawColor(225,225,225);doc.setLineWidth(0.25);doc.line(HALF,GS+3,HALF,GS+GH-3);
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(170,170,170);
+  doc.text('DETALLES DEL DOCUMENTO',HALF+6,GS+10);
+  [['Fecha de emisión',emitDate],['Válida hasta',venceDate],['Vigencia',`${c.validez||30} días`]].forEach(([lbl,val],i)=>{
+    const ry=GS+19+i*8;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(156,163,175);doc.text(lbl,HALF+6,ry);
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(17,24,39);doc.text(val,MR,ry,{align:'right'});
+  });
+  y=GS+GH;doc.setDrawColor(225,225,225);doc.setLineWidth(0.25);doc.line(0,y,PW,y);y+=4;
+
+  // Tabla
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(170,170,170);
+  doc.text('DETALLE DE PRODUCTOS Y SERVICIOS',ML,y+5);y+=10;
+  doc.setFillColor(15,22,36);doc.rect(0,y,PW,9,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(180,180,180);
+  const cC=[ML,26,128,152,MR];
+  doc.text('#',cC[0],y+6);doc.text('DESCRIPCIÓN',cC[1],y+6);
+  doc.text('CANT.',cC[2],y+6,{align:'center'});doc.text('PRECIO UNIT.',(cC[3]+cC[4])/2,y+6,{align:'center'});doc.text('SUBTOTAL',cC[4],y+6,{align:'right'});
+  y+=9;
+  items.forEach((it,i)=>{
+    const RH=10;
+    if(y+RH>PH-40){doc.addPage();y=10;}
+    if(i%2===1){doc.setFillColor(248,250,252);doc.rect(0,y,PW,RH,'F');}
+    const my=y+RH/2+1.8;
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(200,205,215);doc.text(String(i+1),cC[0],my);
+    doc.setFontSize(8.5);doc.setTextColor(17,24,39);
+    const dL=doc.splitTextToSize(it.desc||'Sin descripción',cC[2]-cC[1]-8);
+    doc.text(dL[0]+(dL.length>1?'…':''),cC[1],my);
+    doc.setTextColor(55,65,81);
+    doc.text(String(it.qty||1),cC[2],my,{align:'center'});
+    doc.text(fmt(it.precio),(cC[3]+cC[4])/2,my,{align:'center'});
+    doc.setFont('helvetica','bold');doc.setTextColor(17,24,39);doc.text(fmt(it.subtotal),cC[4],my,{align:'right'});
+    doc.setDrawColor(240,242,244);doc.setLineWidth(0.2);doc.line(0,y+RH,PW,y+RH);
+    y+=RH;
+  });
+  doc.setDrawColor(210,214,220);doc.setLineWidth(0.5);doc.line(0,y,PW,y);
+
+  // Totales
+  y+=8;if(y+40>PH){doc.addPage();y=10;}
+  const TX=PW-82,TW=70;
+  doc.setFillColor(248,250,252);doc.setDrawColor(229,231,235);doc.setLineWidth(0.3);
+  doc.roundedRect(TX,y,TW,18,2,2,'FD');
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);
+  doc.text('Subtotal neto',TX+5,y+7);doc.text(fmt(c.sub),TX+TW-5,y+7,{align:'right'});
+  doc.text('IVA (19%)',TX+5,y+13.5);doc.text(fmt(c.iva),TX+TW-5,y+13.5,{align:'right'});
+  y+=18;
+  doc.setFillColor(15,22,36);doc.roundedRect(TX,y,TW,14,2,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(200,200,200);doc.text('TOTAL A PAGAR',TX+5,y+6);
+  doc.setFontSize(13);doc.setTextColor(201,168,76);doc.text(fmt(c.total),TX+TW-5,y+10,{align:'right'});
+  y+=20;
+
+  // Footer
+  if(y+20>PH){doc.addPage();y=10;}
+  doc.setFillColor(248,250,252);doc.setDrawColor(229,231,235);doc.setLineWidth(0.3);
+  doc.rect(0,y,PW,18,'FD');
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(156,163,175);
+  doc.text(`Esta cotización es válida hasta el ${venceDate}.`,ML,y+6.5);
+  doc.text(`Para aceptarla, contacte a ${neg.contacto||neg.nombre||'el emisor'}.`,ML,y+12.5);
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(201,168,76);
+  doc.text('stockeo.cl',MR,y+6.5,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(156,163,175);
+  doc.text('Sistema de gestión',MR,y+12.5,{align:'right'});
+
+  return {blob:doc.output('blob'),filename};
+
+  }finally{
+    document.getElementById('_pdf-ol')?.remove();
+  }
+}
+
+async function _descargarPDFCotizacion(id,btn){
+  const orig=btn?.innerHTML||'📄 Descargar PDF';
+  if(btn){btn.disabled=true;btn.textContent='⏳ Generando...';}
+  try{
+    const {blob,filename}=await _generarPDFCotizacion(id);
+    const burl=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=burl; a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(burl),8000);
+    toast('✓ PDF descargado','success');
+  }catch(e){
+    console.error('[PDF]',e);
+    window.open(`https://stockeo.cl/cotizacion/${id}?imprimir=1`,'_blank');
+    toast('Usa Imprimir → Guardar PDF en la página que se abrió','info');
+  }finally{
+    if(btn){btn.disabled=false;btn.innerHTML=orig;}
+  }
+}
+
 async function compartirCotizacion(id){
   const c=cotizaciones.find(ct=>ct.id===id);
   if(!c) return;
   const numCot='COT-'+String(c.numero).padStart(4,'0');
   const telWA=_telWA(c.cliente_tel||'');
   const url=`https://stockeo.cl/cotizacion/${id}`;
-  const msgTexto=`Hola${c.cliente?' '+c.cliente:''}, te envío la cotización *${numCot}*:\n${url}`;
+  const negNom=c.negocio_nombre||cfgNegocio?.nombre||negNombre||'';
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const venceDate=new Date(new Date(c.fecha).getTime()+(c.validez||30)*864e5).toLocaleDateString('es-CL');
+  const msgTexto=`Hola${c.cliente?' '+c.cliente:''},👋\n\nTe compartimos tu *${numCot}*${negNom?' de *'+negNom+'*':''}.\n\nPuedes verla aquí:\n${url}\n\n*Total:* ${fmt(c.total)}\n*Válida hasta:* ${venceDate}\n\nCualquier consulta, con gusto te atendemos. 🙌`;
 
-  // Móvil: intentar adjuntar el documento directamente
-  if(/iPhone|iPad|Android/i.test(navigator.userAgent)){
-    exportarCotizacionPDF(id, async(blob, filename)=>{
-      const file=new File([blob],filename+'.pdf',{type:'application/pdf'});
-      if(navigator.canShare?.({files:[file]})){
-        try{ await navigator.share({files:[file],title:numCot,text:`Hola${c.cliente?' '+c.cliente:''}, aquí está tu cotización ${numCot}.`}); return; }
-        catch(e){ if(e.name==='AbortError') return; }
-      }
-      // Fallback: share sheet sin archivo
-      if(navigator.share){
-        try{ await navigator.share({title:numCot,text:msgTexto}); return; }catch(e){}
-      }
-      _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto);
-    });
-    return;
-  }
-
+  // Siempre mostrar modal — el share nativo se dispara desde el botón WA del modal
   _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto);
+}
+
+async function _enviarCotizacionCorreo(id,btn){
+  const c=cotizaciones.find(ct=>ct.id===id);
+  if(!c) return;
+  const orig=btn?.innerHTML||'📧 Enviar por correo';
+  if(btn){btn.disabled=true;btn.textContent='⏳ Generando PDF...';}
+  const numCot='COT-'+String(c.numero).padStart(4,'0');
+  const negNom=c.negocio_nombre||cfgNegocio?.nombre||negNombre||'';
+  try{
+    const {blob,filename}=await _generarPDFCotizacion(id);
+    const file=new File([blob],filename,{type:'application/pdf'});
+    // Móvil: share nativo con archivo → el usuario elige Mail y va adjunto
+    if(navigator.canShare?.({files:[file]})){
+      await navigator.share({
+        files:[file],
+        title:numCot,
+        text:`Hola${c.cliente?' '+c.cliente:''}, adjunto tu ${numCot}.`
+      });
+      return;
+    }
+    // Desktop: descarga el PDF y abre el cliente de correo
+    const burl=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=burl; a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(burl),8000);
+    const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+    const vence=new Date(new Date(c.fecha).getTime()+(c.validez||30)*864e5).toLocaleDateString('es-CL');
+    const subj=encodeURIComponent(`${numCot}${negNom?' — '+negNom:''}`);
+    const body=encodeURIComponent(`Hola${c.cliente?' '+c.cliente:''},\n\nAdjunto encontrarás tu ${numCot}${negNom?' de '+negNom:''}.\n\nTotal: ${fmt(c.total)}\nVálida hasta: ${vence}\n\nCualquier consulta, con gusto te atendemos.\n\n— ${negNom}`);
+    setTimeout(()=>{ window.location.href=`mailto:${c.cliente_email||''}?subject=${subj}&body=${body}`; },600);
+    toast('✓ PDF listo — adjúntalo al correo que se va a abrir','success');
+  }catch(e){
+    if(e?.name==='AbortError') return;
+    console.error('[correo]',e);
+    toast('Error al generar PDF','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.innerHTML=orig;}
+  }
 }
 
 function _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto){
@@ -7792,30 +8165,58 @@ function _mostrarModalCompartirCot(id,numCot,url,telWA,msgTexto){
   modal=document.createElement('div');
   modal.className='modal-overlay open';
   modal.id='modal-compartir';
-  const btnWA=telWA
-    ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(msgTexto)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp</button>`
-    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(msgTexto)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+  const cerrar=()=>modal.remove();
+  const msgPreview=msgTexto.replace(/\*/g,'').replace(/\n/g,'<br/>');
   modal.innerHTML=`
-    <div class="modal" style="max-width:420px;">
+    <div class="modal" style="max-width:440px;">
       <div class="modal-drag"></div>
       <div class="modal-header">
         <span class="modal-title">📤 Compartir ${numCot}</span>
-        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
+        <button class="btn btn-ghost btn-icon" id="_cm-close">✕</button>
       </div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
-        <div style="font-size:13px;color:var(--text-secondary);">El cliente puede ver la cotización sin necesidad de crear cuenta.</div>
-        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--gold);word-break:break-all;cursor:pointer;"
-          onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success')">${url}</div>
+        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.85rem 1rem;font-size:12.5px;color:var(--text-secondary);line-height:1.7;">${msgPreview}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-gold" style="flex:1;" onclick="navigator.clipboard.writeText('${url}');toast('✓ Link copiado','success');document.getElementById('modal-compartir').remove()">📋 Copiar link</button>
-          ${btnWA}
-          <button class="btn btn-outline" style="flex:1;" onclick="exportarCotizacionPDF('${id}');document.getElementById('modal-compartir').remove()">⬇ Descargar PDF</button>
+          <button class="btn btn-gold" id="_cm-cp" style="flex:1;min-width:130px;">📋 Copiar link</button>
+          <button class="btn btn-outline" id="_cm-wa" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;">💬 WhatsApp</button>
+          <button class="btn btn-outline" id="_cm-wa-pdf" style="width:100%;background:rgba(37,211,102,.08);border-color:rgba(37,211,102,.3);color:#16a34a;">💬 WhatsApp + PDF adjunto</button>
+          <button class="btn btn-outline" id="_cm-email" style="width:100%;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.3);color:#3b82f6;">📧 Correo con PDF adjunto</button>
+          <button class="btn btn-outline" id="_cm-pdf" style="width:100%;">📄 Descargar PDF</button>
         </div>
         ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente para enviar directo a su WhatsApp</div>`}
       </div>
     </div>`;
   document.body.appendChild(modal);
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  modal.addEventListener('click',e=>{if(e.target===modal)cerrar();});
+  modal.querySelector('#_cm-close').onclick=cerrar;
+  modal.querySelector('#_cm-cp').onclick=()=>{
+    navigator.clipboard.writeText(url);
+    toast('✓ Link copiado','success');
+    cerrar();
+  };
+  const _waUrl=()=>telWA
+    ?'https://wa.me/'+telWA+'?text='+encodeURIComponent(msgTexto)
+    :'https://api.whatsapp.com/send?text='+encodeURIComponent(msgTexto);
+  modal.querySelector('#_cm-wa').onclick=()=>{ window.open(_waUrl(),'_blank'); cerrar(); };
+  modal.querySelector('#_cm-wa-pdf').onclick=async()=>{
+    cerrar();
+    try{
+      const {blob,filename}=await _generarPDFCotizacion(id);
+      const file=new File([blob],filename,{type:'application/pdf'});
+      if(navigator.canShare?.({files:[file]})){
+        await navigator.share({files:[file],title:numCot,text:msgTexto});
+        return;
+      }
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download=filename;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+      toast('PDF guardado — adjúntalo en el chat de WhatsApp','info');
+    }catch(e){ if(e?.name==='AbortError') return; console.warn('[PDF cot WA]',e);toast('Error al generar PDF','error');return; }
+    setTimeout(()=>window.open(_waUrl(),'_blank'),700);
+  };
+  modal.querySelector('#_cm-email').onclick=async function(){ await _enviarCotizacionCorreo(id,this); };
+  modal.querySelector('#_cm-pdf').onclick=()=>{ cerrar(); _descargarPDFCotizacion(id,null); };
 }
 
 async function compartirOrden(id){
@@ -7832,8 +8233,7 @@ async function compartirOrden(id){
   const mensaje=`Hola${o.cliente_nombre?' '+o.cliente_nombre:''},👋\n\nTe informamos el estado de tu vehículo 🚗\n\n*Patente:* ${o.patente||'—'}\n${vehiculo?`*Vehículo:* ${vehiculo}\n`:''}\n*Estado:* ${est}\n\n*Servicios:*\n${svLineas||'—'}\n\n*Total:* ${fmt(o.total||0)}\n*Entrega estimada:* ${entrega}\n\n— ${negNom}`;
 
   if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
-    try{ await navigator.share({title:`OT ${o.patente}`,text:mensaje}); }catch(e){}
-    return;
+    try{ await navigator.share({title:`OT ${o.patente}`,text:mensaje}); return; }catch(e){ if(e?.name==='AbortError') return; }
   }
   let modal=document.getElementById('modal-compartir');
   if(modal) modal.remove();
@@ -7842,7 +8242,7 @@ async function compartirOrden(id){
   modal.id='modal-compartir';
   const btnWA=telWA
     ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
-    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+    :`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`;
   modal.innerHTML=`
     <div class="modal" style="max-width:420px;">
       <div class="modal-drag"></div>
@@ -7863,6 +8263,138 @@ async function compartirOrden(id){
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
 
+async function _generarPDFBoleta(id){
+  const b=boletas.find(x=>x.id===id);
+  if(!b) throw new Error('Boleta no encontrada');
+  const numBol=numBoleta(b.numero);
+  const filename=numBol+'.pdf';
+  const neg=b.negocio||{};
+  const cli=b.cliente||{};
+  const fmt=n=>'$'+Math.round(n||0).toLocaleString('es-CL');
+  const fecha=new Date(b.fecha).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const items=b.items||[];
+
+  const overlay=document.createElement('div');
+  overlay.id='_pdf-bol-ol';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(13,20,38,.92);z-index:99998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;';
+  overlay.innerHTML='<div style="width:38px;height:38px;border:3px solid rgba(201,168,76,.3);border-top-color:#c9a84c;border-radius:50%;animation:_pdfSpin .75s linear infinite;"></div><div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:.3px;">Generando PDF...</div><style>@keyframes _pdfSpin{to{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(overlay);
+
+  try{
+    await _loadJsPDF();
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'mm',format:'a5',orientation:'portrait'});
+    const PW=doc.internal.pageSize.getWidth(),PH=doc.internal.pageSize.getHeight();
+    const ML=12,MR=PW-12;
+    let y=12;
+
+    // Logo — solo si es data URL (base64), las URLs normales fallan en jsPDF
+    if(_logoBase64&&typeof _logoBase64==='string'&&_logoBase64.startsWith('data:')){
+      try{
+        const props=doc.getImageProperties(_logoBase64);
+        const maxW=40,maxH=20;
+        let lw=maxW,lh=props.height*maxW/props.width;
+        if(lh>maxH){lh=maxH;lw=props.width*maxH/props.height;}
+        doc.addImage(_logoBase64,'',PW/2-lw/2,y,lw,lh);y+=lh+4;
+      }catch(_e){}
+    }
+
+    doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(17,24,39);
+    doc.text(String(neg.nombre||'Mi negocio'),PW/2,y,{align:'center'});y+=6;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(85,85,85);
+    if(neg.rut){doc.text('RUT: '+String(neg.rut),PW/2,y,{align:'center'});y+=4;}
+    if(neg.direccion){doc.text(String(neg.direccion),PW/2,y,{align:'center'});y+=4;}
+    if(neg.contacto){doc.text(String(neg.contacto),PW/2,y,{align:'center'});y+=4;}
+    doc.setDrawColor(17,24,39);doc.setLineWidth(0.5);doc.line(ML,y+2,MR,y+2);y+=7;
+
+    doc.setFillColor(248,248,248);doc.roundedRect(ML,y,PW-ML*2,16,2,2,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(136,136,136);
+    doc.text('Boleta Nº',ML+4,y+6);
+    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(201,168,76);
+    doc.text(String(numBol),ML+4,y+13);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(136,136,136);
+    doc.text('Fecha',MR-4,y+6,{align:'right'});
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(17,24,39);
+    doc.text(String(fecha),MR-4,y+13,{align:'right'});
+    y+=20;
+
+    const tieneCliente=cli.nombre||cli.rut||cli.telefono||cli.email;
+    const nCampos=[cli.nombre,cli.rut,cli.telefono,cli.email].filter(Boolean).length;
+    const cliH=tieneCliente?Math.max(18,8+nCampos*4.5):14;
+    doc.setFillColor(248,248,248);doc.roundedRect(ML,y,PW-ML*2,cliH,2,2,'F');
+    doc.setFillColor(201,168,76);doc.rect(ML,y,0.8,cliH,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(136,136,136);
+    doc.text('CLIENTE',ML+4,y+5);
+    if(tieneCliente){
+      let cy=y+10;
+      doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(17,24,39);
+      if(cli.nombre){doc.text(String(cli.nombre),ML+4,cy);cy+=4.5;}
+      doc.setFont('helvetica','normal');doc.setTextColor(85,85,85);
+      if(cli.rut){doc.text('RUT: '+String(cli.rut),ML+4,cy);cy+=4;}
+      if(cli.telefono){doc.text('Tel: '+String(cli.telefono),ML+4,cy);cy+=4;}
+      if(cli.email){doc.text(String(cli.email),ML+4,cy);cy+=4;}
+    }else{
+      doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(170,170,170);
+      doc.text('Consumidor final',ML+4,y+10);
+    }
+    y+=cliH+5;
+
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(136,136,136);
+    doc.text('PRODUCTO',ML,y);doc.text('CANT.',ML+58,y,{align:'center'});
+    doc.text('P.UNIT',MR-18,y,{align:'right'});doc.text('SUBTOTAL',MR,y,{align:'right'});
+    y+=2;doc.setDrawColor(17,24,39);doc.setLineWidth(0.5);doc.line(ML,y,MR,y);y+=4;
+
+    items.forEach(it=>{
+      if(y>PH-30){doc.addPage();y=12;}
+      const my=y+4.5;
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(17,24,39);
+      const nombre=String(it.nombre||'—');
+      const nomL=doc.splitTextToSize(nombre,52);
+      doc.text(nomL[0]||'—',ML,my);
+      doc.setTextColor(55,65,81);
+      doc.text(String(it.qty||1),ML+58,my,{align:'center'});
+      doc.text(fmt(it.precioUnit),MR-18,my,{align:'right'});
+      doc.setFont('helvetica','bold');doc.setTextColor(17,24,39);
+      doc.text(fmt(it.neto),MR,my,{align:'right'});
+      doc.setDrawColor(238,238,238);doc.setLineWidth(0.2);doc.line(ML,y+8,MR,y+8);
+      y+=8;
+    });
+    y+=4;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(85,85,85);
+    doc.text('Neto',ML,y);doc.text(fmt(b.neto),MR,y,{align:'right'});y+=5;
+    doc.text('IVA (19%)',ML,y);doc.text(fmt(b.iva),MR,y,{align:'right'});y+=3;
+    doc.setDrawColor(17,24,39);doc.setLineWidth(0.5);doc.line(ML,y,MR,y);y+=5;
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(17,24,39);
+    doc.text('Total',ML,y);doc.setTextColor(201,168,76);doc.text(fmt(b.total),MR,y,{align:'right'});
+    y+=10;
+
+    if(y+10>PH){doc.addPage();y=12;}
+    for(let xd=ML;xd<MR;xd+=4){doc.setDrawColor(204,204,204);doc.setLineWidth(0.3);doc.line(xd,y,Math.min(xd+2,MR),y);}
+    y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(136,136,136);
+    doc.text('¡Gracias por su compra! · Documento no tributario',PW/2,y,{align:'center'});y+=4;
+    if(neg.nombre) doc.text(String(neg.nombre)+(neg.rut?' · RUT '+String(neg.rut):''),PW/2,y,{align:'center'});
+
+    return {blob:doc.output('blob'),filename};
+  }finally{
+    document.getElementById('_pdf-bol-ol')?.remove();
+  }
+}
+
+async function _enviarBoletaWA(id, tel, mensaje){
+  document.getElementById('modal-compartir')?.remove();
+  try{
+    const {blob,filename}=await _generarPDFBoleta(id);
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+    toast('PDF guardado — adjúntalo en el chat de WhatsApp','info');
+  }catch(e){ console.warn('[PDF boleta WA]',e); }
+  const waUrl=tel?`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`:`https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
+  setTimeout(()=>window.open(waUrl,'_blank'),600);
+}
+
 async function compartirBoleta(id){
   const b=boletas.find(x=>x.id===id);
   if(!b) return;
@@ -7870,41 +8402,88 @@ async function compartirBoleta(id){
   const fmt=n=>'$'+Math.round(n).toLocaleString('es-CL');
   const numBol=numBoleta(b.numero);
   const fecha=new Date(b.fecha).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const items=(b.items||[]).map(it=>`• ${it.nombre} x${it.qty}: ${fmt(it.precioUnit*it.qty)}`).join('\n');
+  const itemsLineas=(b.items||[]).map(it=>'• '+it.nombre+' x'+it.qty+': '+fmt(it.precioUnit*it.qty)).join('\n');
   const negNom=b.negocio?.nombre||cfgNegocio?.nombre||negNombre||'';
   const cliNom=b.cliente?.nombre||'';
-  const mensaje=`Hola${cliNom?' '+cliNom:''},👋\n\nAquí está tu boleta 🧾\n\n*${numBol}* — ${negNom}\n*Fecha:* ${fecha}\n\n*Detalle:*\n${items||'—'}\n\n*Total:* ${fmt(b.total||0)}\n\n¡Gracias por tu compra! 🙌`;
+  const mensaje='Hola'+(cliNom?' '+cliNom:'')+',👋\n\nTe compartimos tu boleta 🧾\n\n*'+numBol+'*'+(negNom?' — '+negNom:'')+'\n*Fecha:* '+fecha+'\n\n*Detalle:*\n'+(itemsLineas||'—')+'\n\n*Total:* '+fmt(b.total||0)+'\n\n¡Gracias por tu compra! 🙌';
 
-  if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
-    try{ await navigator.share({title:numBol,text:mensaje}); }catch(e){}
-    return;
-  }
+  // Siempre mostrar modal propio — el share nativo se dispara desde el botón WA
   let modal=document.getElementById('modal-compartir');
   if(modal) modal.remove();
   modal=document.createElement('div');
   modal.className='modal-overlay open';
   modal.id='modal-compartir';
-  const btnWA=telWA
-    ?`<button class="btn btn-outline" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;" onclick="window.open('https://wa.me/${telWA}?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 Enviar por WhatsApp</button>`
-    :`<button class="btn btn-outline" style="flex:1;min-width:140px;" onclick="window.open('https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}','_blank');document.getElementById('modal-compartir').remove()">💬 WhatsApp Web</button>`;
+  const msgPreview=mensaje.replace(/\*/g,'').replace(/\n/g,'<br/>');
+  const cerrar=()=>modal.remove();
+
+  const _compartirPDF=async()=>{
+    const {blob,filename}=await _generarPDFBoleta(id);
+    const file=new File([blob],filename,{type:'application/pdf'});
+    // Móvil: sheet nativo del SO con PDF adjunto
+    if(navigator.canShare?.({files:[file]})){
+      await navigator.share({files:[file],title:numBol,text:'Hola'+(cliNom?' '+cliNom:'')+', adjunto tu boleta '+numBol+(negNom?' de '+negNom:'')+'.'});
+      return true; // compartido nativamente
+    }
+    // Desktop: descargar PDF
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=filename;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+    return false; // PDF descargado, abrir WA manualmente
+  };
+
   modal.innerHTML=`
     <div class="modal" style="max-width:420px;">
       <div class="modal-drag"></div>
       <div class="modal-header">
         <span class="modal-title">📤 Compartir ${numBol}</span>
-        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('modal-compartir').remove()">✕</button>
+        <button class="btn btn-ghost btn-icon" id="_bm-close">✕</button>
       </div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
-        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--text-secondary);white-space:pre-wrap;line-height:1.6;">${mensaje.replace(/\*/g,'')}</div>
+        <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius);padding:.85rem 1rem;font-size:12.5px;color:var(--text-secondary);line-height:1.7;">${msgPreview}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-gold" style="flex:1;min-width:140px;" onclick="navigator.clipboard.writeText(${JSON.stringify(mensaje)});toast('✓ Mensaje copiado','success');document.getElementById('modal-compartir').remove()">📋 Copiar mensaje</button>
-          ${btnWA}
+          <button class="btn btn-outline" id="_bm-wa" style="flex:1;min-width:140px;background:#25d366;border-color:#25d366;color:#fff;">💬 WhatsApp + PDF</button>
+          <button class="btn btn-gold" id="_bm-cp" style="flex:1;min-width:130px;">📋 Copiar mensaje</button>
+          <button class="btn btn-outline" id="_bm-pdf" style="width:100%;">📄 Descargar PDF</button>
         </div>
-        ${telWA?'':`<div style="font-size:11px;color:var(--text-muted);text-align:center;">Agrega el teléfono del cliente en la boleta para enviar directo a su WhatsApp</div>`}
       </div>
     </div>`;
   document.body.appendChild(modal);
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  modal.addEventListener('click',e=>{if(e.target===modal)cerrar();});
+  modal.querySelector('#_bm-close').onclick=cerrar;
+
+  modal.querySelector('#_bm-wa').onclick=async()=>{
+    cerrar();
+    try{
+      const compartidoNativo=await _compartirPDF();
+      if(compartidoNativo) return; // el sheet nativo manejó todo
+      toast('PDF guardado — adjúntalo en WhatsApp','info');
+    }catch(e){
+      if(e?.name==='AbortError') return; // usuario canceló el sheet nativo
+      console.warn('[PDF boleta WA]',e);
+      // Sin PDF: abrir WA igual con el mensaje de texto
+    }
+    const waUrl=telWA?'https://wa.me/'+telWA+'?text='+encodeURIComponent(mensaje):'https://api.whatsapp.com/send?text='+encodeURIComponent(mensaje);
+    setTimeout(()=>window.open(waUrl,'_blank'),700);
+  };
+
+  modal.querySelector('#_bm-cp').onclick=()=>{
+    navigator.clipboard.writeText(mensaje);
+    toast('✓ Mensaje copiado','success');
+    cerrar();
+  };
+
+  modal.querySelector('#_bm-pdf').onclick=async()=>{
+    cerrar();
+    try{
+      await _compartirPDF();
+      toast('✓ PDF descargado','success');
+    }catch(e){
+      if(e?.name==='AbortError') return;
+      console.error(e);
+      toast('Error al generar PDF','error');
+    }
+  };
 }
 
 async function cambiarEstadoCot(id, estado){
@@ -8063,7 +8642,8 @@ function verCotizacion(id){
       <div class="modal-footer">
         <button class="btn btn-outline" onclick="document.getElementById('modal-cot-detalle').remove()">Cerrar</button>
         <button class="btn btn-outline" onclick="document.getElementById('modal-cot-detalle').remove();abrirModalCotizacion('${c.id}')">✏ Editar</button>
-        <button class="btn btn-gold" onclick="exportarCotizacionPDF('${c.id}');document.getElementById('modal-cot-detalle').remove()">📄 Descargar PDF</button>
+        <button class="btn btn-outline" style="color:#3b82f6;border-color:rgba(59,130,246,.4);" onclick="_enviarCotizacionCorreo('${c.id}',this)">📧 Correo</button>
+        <button class="btn btn-gold" onclick="_descargarPDFCotizacion('${c.id}',this)">📄 Descargar PDF</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
