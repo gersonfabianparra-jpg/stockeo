@@ -25,6 +25,9 @@
   ],
   "rewrites": [
     { "source": "/cotizacion/:id", "destination": "/cotizacion-publica.html" },
+    { "source": "/software-inventario-pyme", "destination": "/software-inventario-pyme.html" },
+    { "source": "/boletas-sii", "destination": "/boletas-sii.html" },
+    { "source": "/control-de-stock-gratis", "destination": "/control-de-stock-gratis.html" },
     { "source": "/((?!api/|cotizacion-publica|cotizacion/|robots\\.txt|sitemap\\.xml).*)", "destination": "/index.html" }
   ]
 }

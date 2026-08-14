@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Cómo emitir boletas con IVA para el SII | Stockeo</title>
+<meta name="description" content="Aprende a emitir boletas con IVA (19%) para tu negocio en Chile: qué campos exige el SII, neto vs total y cómo generarlas en PDF desde el celular con Stockeo."/>
+<link rel="canonical" href="https://stockeo.cl/boletas-sii"/>
+<meta name="robots" content="index, follow, max-image-preview:large"/>
+<meta name="geo.region" content="CL"/>
+<meta name="theme-color" content="#0f1c2e"/>
+<meta property="og:type" content="article"/>
+<meta property="og:site_name" content="Stockeo"/>
+<meta property="og:locale" content="es_CL"/>
+<meta property="og:url" content="https://stockeo.cl/boletas-sii"/>
+<meta property="og:title" content="Cómo emitir boletas con IVA para el SII | Stockeo"/>
+<meta property="og:description" content="Qué campos exige el SII, cómo calcular el IVA 19% y generar tus boletas en PDF desde el celular."/>
+<meta property="og:image" content="https://stockeo.cl/og-stockeo.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://stockeo.cl/og-stockeo.jpg"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSIxMSIgZmlsbD0iIzBkMTUyNiIvPjxjaXJjbGUgY3g9IjI4IiBjeT0iMTIiIHI9IjMuNSIgZmlsbD0iI2M5YTg0YyIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjIuNSIgZmlsbD0iI2M5YTg0YyIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMjAiIGN5PSIxMiIgcj0iMi41IiBmaWxsPSIjYzlhODRjIiBvcGFjaXR5PSIuNTUiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjIwIiByPSIyLjUiIGZpbGw9IiNjOWE4NGMiIG9wYWNpdHk9Ii41NSIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjIuNSIgZmlsbD0iI2M5YTg0YyIgb3BhY2l0eT0iLjc1Ii8+PGNpcmNsZSBjeD0iMjgiIGN5PSIyMCIgcj0iMi41IiBmaWxsPSIjYzlhODRjIiBvcGFjaXR5PSIuNzUiLz48L3N2Zz4="/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://stockeo.cl/" },
+      { "@type": "ListItem", "position": 2, "name": "Boletas con IVA para el SII", "item": "https://stockeo.cl/boletas-sii" }
+    ]},
+    { "@type": "Article", "headline": "Cómo emitir boletas con IVA para el SII", "inLanguage": "es-CL", "image": "https://stockeo.cl/og-stockeo.jpg", "author": {"@type":"Organization","name":"Stockeo"}, "publisher": {"@type":"Organization","name":"Stockeo","logo":{"@type":"ImageObject","url":"https://stockeo.cl/og-stockeo.jpg"}}, "mainEntityOfPage":"https://stockeo.cl/boletas-sii" },
+    { "@type": "FAQPage", "mainEntity": [
+      { "@type": "Question", "name": "¿Cómo se calcula el IVA de una boleta?", "acceptedAnswer": {"@type":"Answer","text":"El IVA en Chile es 19%. Si tienes el monto neto, el IVA es neto × 0,19 y el total es neto × 1,19. Si tienes el total con IVA incluido, el neto es total ÷ 1,19."}},
+      { "@type": "Question", "name": "¿Qué campos debe tener una boleta?", "acceptedAnswer": {"@type":"Answer","text":"RUT del emisor, detalle de los productos o servicios, monto neto, IVA (19%) y total. Stockeo arma estos campos automáticamente y te entrega la boleta en PDF."}}
+    ]}
+  ]
+}
+</script>
+<style>
+:root{--navy:#05080f;--navy2:#0d1526;--card:#101a2e;--border:rgba(255,255,255,.09);--gold:#c9a84c;--gold-l:#f0d585;--text:#eaf1fb;--muted:#8aaac8;--dim:#5a7ba0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--navy);color:var(--text);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--gold-l);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:820px;margin:0 auto;padding:0 22px}
+header.nav{position:sticky;top:0;z-index:10;background:rgba(5,8,15,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-in{max-width:1080px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:9px;font-family:'DM Serif Display',serif;font-size:22px;color:var(--text)}
+.logo svg{width:26px;height:26px}
+.cta{background:var(--gold);color:var(--navy2);padding:9px 18px;border-radius:10px;font-weight:700;font-size:14px}
+.cta:hover{background:var(--gold-l);text-decoration:none}
+.crumbs{font-size:13px;color:var(--dim);padding:22px 0 0}
+.crumbs a{color:var(--muted)}
+article{padding:14px 0 60px}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);line-height:1.12;letter-spacing:-.5px;margin:18px 0 10px}
+h1 em{color:var(--gold);font-style:normal}
+.lede{font-size:1.18rem;color:var(--muted);margin-bottom:8px}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,3.5vw,2rem);margin:44px 0 12px;letter-spacing:-.3px}
+h3{font-size:1.15rem;margin:26px 0 6px;color:var(--gold-l)}
+p{margin:0 0 16px;color:#d4deec}
+ul{margin:0 0 18px;padding-left:4px;list-style:none}
+li{position:relative;padding:7px 0 7px 30px;color:#d4deec;border-bottom:1px solid rgba(255,255,255,.05)}
+li::before{content:'✓';position:absolute;left:0;top:7px;color:var(--gold);font-weight:700}
+.box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 26px;margin:28px 0}
+.box h3{margin-top:0}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0 4px}
+.btn-p{background:var(--gold);color:var(--navy2);padding:13px 26px;border-radius:11px;font-weight:700}
+.btn-p:hover{background:var(--gold-l);text-decoration:none}
+.btn-s{border:1px solid var(--border);color:var(--text);padding:13px 24px;border-radius:11px;font-weight:600}
+.btn-s:hover{background:rgba(255,255,255,.05);text-decoration:none}
+.note{font-size:13px;color:var(--dim);margin-top:8px}
+.calc{background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.28);border-radius:14px;padding:20px 24px;margin:22px 0;font-size:15px}
+.calc b{color:var(--gold-l)}
+.related{border-top:1px solid var(--border);padding:30px 0;display:grid;gap:12px}
+.related a{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;color:var(--text)}
+.related a:hover{border-color:rgba(201,168,76,.4);text-decoration:none}
+.related small{color:var(--dim)}
+footer{border-top:1px solid var(--border);padding:26px 22px;text-align:center;color:var(--dim);font-size:13px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="/"><svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="11" fill="#0d1526"/><circle cx="28" cy="12" r="3.5" fill="#f0d585"/><circle cx="12" cy="12" r="2.5" fill="#c9a84c" opacity=".55"/><circle cx="20" cy="12" r="2.5" fill="#c9a84c" opacity=".55"/><circle cx="12" cy="20" r="2.5" fill="#c9a84c" opacity=".55"/><circle cx="20" cy="20" r="2.5" fill="#c9a84c" opacity=".75"/><circle cx="28" cy="20" r="2.5" fill="#c9a84c" opacity=".75"/></svg><span>Stockeo</span></a>
+    <a class="cta" href="/">Probar gratis</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumbs"><a href="/">Inicio</a> › Boletas con IVA para el SII</nav>
+  <article>
+    <h1>Cómo emitir <em>boletas con IVA</em><br/>para el SII</h1>
+    <p class="lede">Toda venta en Chile lleva IVA (19%). Aquí te explicamos qué campos exige el SII, cómo se calcula el IVA y cómo generar tus boletas en segundos.</p>
+
+    <p>Si vendes productos o servicios, tarde o temprano necesitas documentar tus ventas. La boleta es el comprobante más común, y aunque suena burocrático, entender su estructura es simple.</p>
+
+    <h2>Qué campos debe tener una boleta</h2>
+    <ul>
+      <li><strong>RUT del emisor</strong> (tu negocio).</li>
+      <li><strong>Detalle</strong> de los productos o servicios vendidos.</li>
+      <li><strong>Monto neto</strong> (el valor sin IVA).</li>
+      <li><strong>IVA 19%</strong> calculado sobre el neto.</li>
+      <li><strong>Total</strong> a pagar (neto + IVA).</li>
+      <li><strong>Fecha</strong> de la venta.</li>
+    </ul>
+
+    <h2>Cómo se calcula el IVA (19%)</h2>
+    <div class="calc">
+      <p style="margin:0 0 8px"><b>Si tienes el monto neto:</b></p>
+      <p style="margin:0 0 4px">IVA = neto × 0,19 &nbsp;·&nbsp; Total = neto × 1,19</p>
+      <p style="margin:12px 0 8px"><b>Si tienes el total con IVA incluido:</b></p>
+      <p style="margin:0">Neto = total ÷ 1,19 &nbsp;·&nbsp; IVA = total − neto</p>
+    </div>
+    <p><strong>Ejemplo:</strong> vendes un producto en $11.900 con IVA incluido. El neto es $10.000 (11.900 ÷ 1,19) y el IVA es $1.900. Simple, pero hacerlo a mano en cada venta es lento y propenso a errores.</p>
+
+    <h2>Hazlo automático con Stockeo</h2>
+    <p>En lugar de calcular a mano, Stockeo arma la boleta por ti: registras la venta, y el sistema calcula el neto, el IVA 19% y el total, e incluye el RUT y el detalle. Descargas la boleta en <strong>PDF</strong> y la compartes por WhatsApp o correo al instante.</p>
+
+    <div class="box">
+      <h3>Boletas con IVA en segundos, desde el celular</h3>
+      <p>Emite boletas con todos los campos que el SII requiere (RUT, IVA 19%, neto y total), en PDF, sin calculadora ni planillas. Además controlas tu inventario y ves tus reportes en el mismo lugar.</p>
+      <div class="ctas">
+        <a class="btn-p" href="/">Comenzar gratis →</a>
+        <a class="btn-s" href="/software-inventario-pyme">Ver el software completo</a>
+      </div>
+      <p class="note">Plan gratis: hasta 20 boletas al mes · Sin tarjeta de crédito</p>
+    </div>
+
+    <p class="note">Nota: para la emisión de documentos tributarios electrónicos (DTE) oficiales debes estar habilitado en el portal del SII. Stockeo te ayuda a generar y ordenar tus boletas con todos los campos y montos correctos para tu registro y respaldo.</p>
+
+    <div class="related">
+      <a href="/software-inventario-pyme"><strong>Software de inventario para pymes</strong><br/><small>Controla tu stock y tus ventas en un solo lugar</small></a>
+      <a href="/control-de-stock-gratis"><strong>Control de stock gratis</strong><br/><small>Ordena tu inventario sin pagar nada</small></a>
+    </div>
+  </article>
+</div>
+
+<footer>© 2026 Stockeo · Boletas con IVA y control de inventario · <a href="/">stockeo.cl</a></footer>
+</body>
+</html>
